@@ -1,0 +1,17 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/BTClock/CopilotIndices/17.13.439.2385
+/.vs
+/Attendance/.vs
+/Attendance/bin/Debug/net8.0
+/Attendance/obj
+/Attendance.Api.Contracts/bin/Debug/net8.0
+/Attendance.Api.Contracts/obj
+/Attendance.Application/bin/Debug/net8.0
+/Attendance.Application/obj
+/Attendance.Domain/bin/Debug/net8.0
+/Attendance.Domain/obj
+/Attendance.Infrastructure.Efcore/bin/Debug/net8.0
+/Attendance.Infrastructure.Efcore/obj

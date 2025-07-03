@@ -1,0 +1,267 @@
+@{
+	ViewData["Title"] = "Dashboard";
+}
+<script>
+	// Use let instead of const for compatibility, and parse as int for backend
+	let employeeId = parseInt('@ViewBag.EmployeeId');
+	console.log('EmployeeId:', employeeId);
+	if (isNaN(employeeId) || employeeId <= 0) {
+		alert('Error: Employee ID is not set. Please log in again.');
+
+	}
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+
+<style>
+
+	body {
+		margin: 0;
+		padding: 0;
+		font-family: 'Poppins', sans-serif;
+		min-height: 100vh;
+		background: linear-gradient(135deg, #e0f7fa 0%, #c8e6c9 100%);
+	}
+
+	.dashboard-wrapper {
+		min-height: 100vh;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.card-dashboard {
+		background: rgba(255, 255, 255, 0.95);
+		padding: 40px 30px;
+		border-radius: 20px;
+		box-shadow: 0 10px 30px rgba(44, 62, 80, 0.15);
+		max-width: 500px;
+		width: 100%;
+		margin-top: 40px;
+		text-align: center;
+	}
+
+		.card-dashboard h2 {
+			color: #388e3c;
+			font-weight: 700;
+			margin-bottom: 18px;
+		}
+
+		.card-dashboard .icon {
+			font-size: 3em;
+			color: #4caf50;
+			margin-bottom: 10px;
+		}
+
+		.card-dashboard p {
+			color: #555;
+			font-size: 1.1em;
+			margin-bottom: 20px;
+		}
+
+	.btn-logout {
+		background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%);
+		color: #fff;
+		border: none;
+		border-radius: 25px;
+		padding: 12px 30px;
+		font-weight: 600;
+		font-size: 1em;
+		transition: all 0.3s ease;
+	}
+
+		.btn-logout:hover {
+			background: linear-gradient(135deg, #8bc34a 0%, #4caf50 100%);
+			color: #fff;
+			box-shadow: 0 4px 12px rgba(44, 62, 80, 0.12);
+		}
+</style>
+<div class="dashboard-wrapper" style="min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+	<div class="card-dashboard" style="max-width:700px; width:100%;">
+		<div class="time-tracker" style="max-width:600px;margin:auto;text-align:center;margin-bottom:30px;">
+			<h4 style="color:#388e3c;font-weight:600;">Work Time Tracker</h4>
+			<div>
+				<button id="clockInBtn" class="btn btn-success" style="margin-right:10px;">Clock In</button>
+				<button id="clockOutBtn" class="btn btn-danger">Clock Out</button>
+			</div>
+			<div style="margin:20px 0;">
+				<span id="startTime" style="font-weight:600;"></span>
+				<span id="endTime" style="font-weight:600;"></span>
+			</div>
+			<div>
+				<span id="workDuration" style="font-size:1.2em;color:#4caf50;font-weight:600;"></span>
+			</div>
+			<div id="liveCounter" style="margin-top:18px;font-size:1.1em;color:#388e3c;font-weight:600;"></div>
+			<div style="margin-top:30px;">
+				<h5 style="color:#388e3c;font-weight:600;">Daily Attendance Records</h5>
+				<table class="table table-bordered table-sm" style="background:#fff;max-width:100%;margin:auto;">
+					<thead style="background:#e8f5e9;">
+						<tr>
+							<th>Date</th>
+							<th>Clock In</th>
+							<th>Clock Out</th>
+							<th>Total Time</th>
+						</tr>
+					</thead>
+					<tbody id="attendanceTableBody">
+						<!-- Records will be inserted here -->
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<form asp-action="Logout" asp-controller="Auth" method="post">
+			@Html.AntiForgeryToken()
+			<button type="submit" class="btn btn-logout"><i class="bi bi-box-arrow-right"></i> Logout</button>
+		</form>
+	</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript">
+	let liveInterval;
+	let sessionStart = null;
+	let attendanceRecords = [];
+	let todayStr = new Date().toLocaleDateString();
+	function updateButtonStates() {
+		if (sessionStart) {
+			document.getElementById('clockInBtn').hidden = true;
+			document.getElementById('clockOutBtn').hidden = false;
+		} else {
+			document.getElementById('clockInBtn').hidden = false;
+			document.getElementById('clockOutBtn').hidden = true;
+		}
+	}
+		function fetchAttendance() {
+		fetch(`/Attendance/GetLastFiveRecords?employeeId=${employeeId}`)
+			.then(res => res.json())
+			.then(data => {
+				attendanceRecords = data;
+				renderAttendanceTable();
+			});
+	}
+
+	function renderAttendanceTable() {
+		const tbody = document.getElementById('attendanceTableBody');
+		tbody.innerHTML = '';
+		attendanceRecords.slice(-5).forEach(r => {
+			const tr = document.createElement('tr');
+			tr.innerHTML = `<td>${new Date(r.clockIn).toLocaleDateString()}</td>
+							<td>${new Date(r.clockIn).toLocaleTimeString()}</td>
+							<td>${r.clockOut ? new Date(r.clockOut).toLocaleTimeString() : ''}</td>
+							<td>${r.clockOut ? getDuration(r.clockIn, r.clockOut) : ''}</td>`;
+			tbody.appendChild(tr);
+		});
+	}
+
+	// function renderAttendanceTable() {
+	// 	const tbody = document.getElementById('attendanceTableBody');
+	// 	tbody.innerHTML = '';
+	// 	Show only today's records, up to 4 sessions
+	// 	let todaysRecords = attendanceRecords.filter(r => new Date(r.clockIn).toLocaleDateString() === todayStr);
+	// 	todaysRecords.slice(-5).forEach(r => {
+	// 		const tr = document.createElement('tr');
+	// 		tr.innerHTML = `<td>${new Date(r.clockIn).toLocaleDateString()}</td><td>${new Date(r.clockIn).toLocaleTimeString()}</td><td>${r.clockOut ? new Date(r.clockOut).toLocaleTimeString() : ''}</td><td>${r.clockOut ? getDuration(r.clockIn, r.clockOut) : ''}</td>`;
+	// 		tbody.appendChild(tr);
+	// 	});
+	// }
+
+	function getDuration(clockIn, clockOut) {
+		let diffMs = new Date(clockOut) - new Date(clockIn);
+		let diffHrs = Math.floor(diffMs / 3600000);
+		let diffMins = Math.floor((diffMs % 3600000) / 60000);
+		let diffSecs = Math.floor((diffMs % 60000) / 1000);
+		return `${diffHrs}h ${diffMins}m ${diffSecs}s`;
+	}
+
+	function fetchAttendance(IsLiveInterval) {
+				fetch('/Attendance/Report?employeeId=${employeeId}')
+			.then(res => res.json())
+			.then(data => {
+				attendanceRecords = data;
+				renderAttendanceTable();
+				clearInterval(liveInterval);
+				document.getElementById('liveCounter').textContent = "";
+
+				if(data[data.length-1].clockOut == null){
+					sessionStart = new Date(data[data.length-1].clockIn);
+					let SessionStartTime = sessionStart;
+					if(IsLiveInterval == 0){
+						SessionStartTime = new Date();
+					}
+					liveInterval = setInterval(function() {
+						let now = new Date();
+						let diffMs = now - SessionStartTime;
+						let diffHrs = Math.floor(diffMs / 3600000);
+						let diffMins = Math.floor((diffMs % 3600000) / 60000);
+						let diffSecs = Math.floor((diffMs % 60000) / 1000);
+						document.getElementById('liveCounter').textContent = `Working: ${diffHrs}h ${diffMins}m ${diffSecs}s`;
+					}, 1000);
+				}
+				updateButtonStates();
+			});
+	}
+
+		function IsUserClockedIn() {
+			fetch('/Attendance/IsUserClockedIn')
+			.then(res => res.json())
+			.then(data => {
+				debugger;
+				   if (data) {
+
+				document.getElementById('clockInBtn').hidden = true;
+				document.getElementById('clockOutBtn').hidden = false;
+			} else {
+				document.getElementById('clockInBtn').hidden = false;
+				document.getElementById('clockOutBtn').hidden = true;
+			}
+			});
+	}
+
+	document.getElementById('clockInBtn').addEventListener('click', function() {
+		fetch('/Attendance/ClockIn', {
+			method: 'GET',
+			headers: { 'Content-Type': 'application/json' }
+			//, body: JSON.stringify({ EmployeeId: employeeId })
+		})
+		.then(async res => {
+			if (!res.ok) {
+				const error = await res.json().catch(() => ({ error: 'Unknown error' }));
+				alert('Clock In failed: ' + (error.error || res.statusText));
+				throw new Error(error.error || res.statusText);
+			}
+			return res.json();
+		})
+		.then(record => {
+			sessionStart = new Date(record.clockIn);
+			document.getElementById('startTime').textContent = "Clock In: " + sessionStart.toLocaleTimeString();
+			document.getElementById('endTime').textContent = "";
+			document.getElementById('workDuration').textContent = "";
+			fetchAttendance(0);
+			updateButtonStates();
+		});
+	});
+
+	document.getElementById('clockOutBtn').addEventListener('click', function() {
+		fetch('/Attendance/ClockOut', {
+			method: 'GET',
+			headers: { 'Content-Type': 'application/json' }
+		})
+		.then(res => res.json())
+		.then(record => {
+			if (!record || !record.clockOut) return;
+			let sessionEnd = new Date(record.clockOut);
+			document.getElementById('endTime').textContent = " | Clock Out: " + sessionEnd.toLocaleTimeString();
+			document.getElementById('workDuration').textContent = getDuration(record.clockIn, record.clockOut);
+			sessionStart = null;
+			updateButtonStates();
+			clearInterval(liveInterval);
+			document.getElementById('liveCounter').textContent = "";
+			fetchAttendance(1);
+		});
+	});
+
+	// Initial render and button state
+	fetchAttendance(1);
+	updateButtonStates();
+</script>
