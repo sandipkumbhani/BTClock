@@ -1,5 +1,4 @@
 ﻿using Attendance.Domain.Models;
-using System.Threading.Tasks;
 
 namespace Attendance.Application.Interface
 {

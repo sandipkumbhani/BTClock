@@ -80,12 +80,19 @@
 </style>
 <div class="dashboard-wrapper" style="min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;">
 	<div class="card-dashboard" style="max-width:700px; width:100%;">
+		<div class="modal fade" id="settingsModal" tabindex="-1">
+			<div class="modal-dialog">
+				<div class="modal-content">
+				</div>
+			</div>
+		</div>
 		<div class="time-tracker" style="max-width:600px;margin:auto;text-align:center;margin-bottom:30px;">
 			<h4 style="color:#388e3c;font-weight:600;">Work Time Tracker</h4>
 			<div>
 				<button id="clockInBtn" class="btn btn-success" style="margin-right:10px;">Clock In</button>
 				<button id="clockOutBtn" class="btn btn-danger">Clock Out</button>
 			</div>
+			<span id="error-message" style="color: red; display: none;"></span>
 			<div style="margin:20px 0;">
 				<span id="startTime" style="font-weight:600;"></span>
 				<span id="endTime" style="font-weight:600;"></span>
@@ -118,118 +125,125 @@
 	</div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 <script type="text/javascript">
-	let liveInterval;
-	let sessionStart = null;
-	let attendanceRecords = [];
-	let todayStr = new Date().toLocaleDateString();
-	function updateButtonStates() {
-		if (sessionStart) {
-			document.getElementById('clockInBtn').hidden = true;
-			document.getElementById('clockOutBtn').hidden = false;
-		} else {
-			document.getElementById('clockInBtn').hidden = false;
-			document.getElementById('clockOutBtn').hidden = true;
-		}
-	}
-		function fetchAttendance() {
-		fetch(`/Attendance/GetLastFiveRecords?employeeId=${employeeId}`)
-			.then(res => res.json())
-			.then(data => {
-				attendanceRecords = data;
-				renderAttendanceTable();
-			});
-	}
-
-	function renderAttendanceTable() {
-		const tbody = document.getElementById('attendanceTableBody');
-		tbody.innerHTML = '';
-		attendanceRecords.slice(-5).forEach(r => {
-			const tr = document.createElement('tr');
-			tr.innerHTML = `<td>${new Date(r.clockIn).toLocaleDateString()}</td>
-							<td>${new Date(r.clockIn).toLocaleTimeString()}</td>
-							<td>${r.clockOut ? new Date(r.clockOut).toLocaleTimeString() : ''}</td>
-							<td>${r.clockOut ? getDuration(r.clockIn, r.clockOut) : ''}</td>`;
-			tbody.appendChild(tr);
-		});
-	}
-
-	// function renderAttendanceTable() {
-	// 	const tbody = document.getElementById('attendanceTableBody');
-	// 	tbody.innerHTML = '';
-	// 	Show only today's records, up to 4 sessions
-	// 	let todaysRecords = attendanceRecords.filter(r => new Date(r.clockIn).toLocaleDateString() === todayStr);
-	// 	todaysRecords.slice(-5).forEach(r => {
-	// 		const tr = document.createElement('tr');
-	// 		tr.innerHTML = `<td>${new Date(r.clockIn).toLocaleDateString()}</td><td>${new Date(r.clockIn).toLocaleTimeString()}</td><td>${r.clockOut ? new Date(r.clockOut).toLocaleTimeString() : ''}</td><td>${r.clockOut ? getDuration(r.clockIn, r.clockOut) : ''}</td>`;
-	// 		tbody.appendChild(tr);
-	// 	});
-	// }
-
-	function getDuration(clockIn, clockOut) {
-		let diffMs = new Date(clockOut) - new Date(clockIn);
-		let diffHrs = Math.floor(diffMs / 3600000);
-		let diffMins = Math.floor((diffMs % 3600000) / 60000);
-		let diffSecs = Math.floor((diffMs % 60000) / 1000);
-		return `${diffHrs}h ${diffMins}m ${diffSecs}s`;
-	}
-
-	function fetchAttendance(IsLiveInterval) {
-				fetch('/Attendance/Report?employeeId=${employeeId}')
-			.then(res => res.json())
-			.then(data => {
-				attendanceRecords = data;
-				renderAttendanceTable();
-				clearInterval(liveInterval);
-				document.getElementById('liveCounter').textContent = "";
-
-				if(data[data.length-1].clockOut == null){
-					sessionStart = new Date(data[data.length-1].clockIn);
-					let SessionStartTime = sessionStart;
-					if(IsLiveInterval == 0){
-						SessionStartTime = new Date();
-					}
-					liveInterval = setInterval(function() {
-						let now = new Date();
-						let diffMs = now - SessionStartTime;
-						let diffHrs = Math.floor(diffMs / 3600000);
-						let diffMins = Math.floor((diffMs % 3600000) / 60000);
-						let diffSecs = Math.floor((diffMs % 60000) / 1000);
-						document.getElementById('liveCounter').textContent = `Working: ${diffHrs}h ${diffMins}m ${diffSecs}s`;
-					}, 1000);
-				}
-				updateButtonStates();
-			});
-	}
-
-		function IsUserClockedIn() {
-			fetch('/Attendance/IsUserClockedIn')
-			.then(res => res.json())
-			.then(data => {
-				debugger;
-				   if (data) {
-
+		let liveInterval;
+		let sessionStart = null;
+		let attendanceRecords = [];
+		let todayStr = new Date().toLocaleDateString();
+		function updateButtonStates() {
+			if (sessionStart) {
 				document.getElementById('clockInBtn').hidden = true;
 				document.getElementById('clockOutBtn').hidden = false;
 			} else {
 				document.getElementById('clockInBtn').hidden = false;
 				document.getElementById('clockOutBtn').hidden = true;
 			}
-			});
-	}
+		}
+			function fetchAttendance() {
+			fetch(`/Attendance/GetLastFiveRecords?employeeId=${employeeId}`)
+				.then(res => res.json())
+				.then(data => {
+					attendanceRecords = data;
+					renderAttendanceTable();
+				});
+		}
 
-	document.getElementById('clockInBtn').addEventListener('click', function() {
+		function renderAttendanceTable() {
+			const tbody = document.getElementById('attendanceTableBody');
+			tbody.innerHTML = '';
+			attendanceRecords.forEach(r => {
+				const tr = document.createElement('tr');
+				tr.innerHTML = `<td>${new Date(r.clockIn).toLocaleDateString()}</td>
+								<td>${new Date(r.clockIn).toLocaleTimeString()}</td>
+								<td>${r.clockOut ? new Date(r.clockOut).toLocaleTimeString() : ''}</td>
+								<td>${r.clockOut ? getDuration(r.clockIn, r.clockOut) : ''}</td>`;
+				tbody.appendChild(tr);
+			});
+		}
+
+		// function renderAttendanceTable() {
+		// 	const tbody = document.getElementById('attendanceTableBody');
+		// 	tbody.innerHTML = '';
+		// 	Show only today's records, up to 4 sessions
+		// 	let todaysRecords = attendanceRecords.filter(r => new Date(r.clockIn).toLocaleDateString() === todayStr);
+		// 	todaysRecords.slice(-5).forEach(r => {
+		// 		const tr = document.createElement('tr');
+		// 		tr.innerHTML = `<td>${new Date(r.clockIn).toLocaleDateString()}</td><td>${new Date(r.clockIn).toLocaleTimeString()}</td><td>${r.clockOut ? new Date(r.clockOut).toLocaleTimeString() : ''}</td><td>${r.clockOut ? getDuration(r.clockIn, r.clockOut) : ''}</td>`;
+		// 		tbody.appendChild(tr);
+		// 	});
+		// }
+
+		function getDuration(clockIn, clockOut) {
+			let diffMs = new Date(clockOut) - new Date(clockIn);
+			let diffHrs = Math.floor(diffMs / 3600000);
+			let diffMins = Math.floor((diffMs % 3600000) / 60000);
+			let diffSecs = Math.floor((diffMs % 60000) / 1000);
+			return `${diffHrs}h ${diffMins}m ${diffSecs}s`;
+		}
+
+		function fetchAttendance(IsLiveInterval) {
+					fetch('/Attendance/Report?employeeId=${employeeId}')
+				.then(res => res.json())
+				.then(data => {
+					attendanceRecords = data;
+					renderAttendanceTable();
+					clearInterval(liveInterval);
+					document.getElementById('liveCounter').textContent = "";
+					
+						 data.forEach(x => {
+							if(x.clockOut == null)
+							{
+						sessionStart = new Date(x.clockIn);
+						let SessionStartTime = sessionStart;
+						if(IsLiveInterval == 0){
+							SessionStartTime = new Date();
+						}
+								liveInterval = setInterval(function() {
+									let now = new Date();
+									let diffMs = now - SessionStartTime;
+									let diffHrs = Math.floor(diffMs / 3600000);
+									let diffMins = Math.floor((diffMs % 3600000) / 60000);
+									let diffSecs = Math.floor((diffMs % 60000) / 1000);
+									document.getElementById('liveCounter').textContent = `Working: ${diffHrs}h ${diffMins}m ${diffSecs}s`;
+								}, 1000);
+							}
+
+						 });
+
+					updateButtonStates();
+				});
+		}
+
+			function IsUserClockedIn() {
+				fetch('/Attendance/IsUserClockedIn')
+				.then(res => res.json())
+				.then(data => {
+					debugger;
+					   if (data) {
+
+					document.getElementById('clockInBtn').hidden = true;
+					document.getElementById('clockOutBtn').hidden = false;
+				} else {
+					document.getElementById('clockInBtn').hidden = false;
+					document.getElementById('clockOutBtn').hidden = true;
+				}
+				});
+		}
+
+		document.getElementById('clockInBtn').addEventListener('click', function() {
 		fetch('/Attendance/ClockIn', {
 			method: 'GET',
 			headers: { 'Content-Type': 'application/json' }
-			//, body: JSON.stringify({ EmployeeId: employeeId })
 		})
 		.then(async res => {
 			if (!res.ok) {
 				const error = await res.json().catch(() => ({ error: 'Unknown error' }));
-				alert('Clock In failed: ' + (error.error || res.statusText));
-				throw new Error(error.error || res.statusText);
+				document.getElementById('error-message').innerText = error.error || '';
+				document.getElementById('error-message').style.display = 'inline';
+				return; // Do not throw, just stop here
 			}
+			document.getElementById('error-message').style.display = 'none';
 			return res.json();
 		})
 		.then(record => {
@@ -240,14 +254,23 @@
 			fetchAttendance(0);
 			updateButtonStates();
 		});
-	});
+		});
 
-	document.getElementById('clockOutBtn').addEventListener('click', function() {
+		document.getElementById('clockOutBtn').addEventListener('click', function() {
 		fetch('/Attendance/ClockOut', {
 			method: 'GET',
 			headers: { 'Content-Type': 'application/json' }
 		})
-		.then(res => res.json())
+		.then(async res => {
+			if (!res.ok) {
+				const error = await res.json().catch(() => ({ error: 'Unknown error' }));
+				document.getElementById('error-message').innerText = error.error || '';
+				document.getElementById('error-message').style.display = 'inline';
+				return;
+			}
+			document.getElementById('error-message').style.display = 'none';
+			return res.json();
+		})
 		.then(record => {
 			if (!record || !record.clockOut) return;
 			let sessionEnd = new Date(record.clockOut);
@@ -259,9 +282,13 @@
 			document.getElementById('liveCounter').textContent = "";
 			fetchAttendance(1);
 		});
+		});
+
+
+	// After DOM is ready, check backend status and fetch attendance
+	window.addEventListener('DOMContentLoaded', function() {
+		fetchAttendance(1);
+			updateButtonStates();
 	});
 
-	// Initial render and button state
-	fetchAttendance(1);
-	updateButtonStates();
 </script>

@@ -8,7 +8,7 @@ namespace Attendance.Application.Extension
 	{
 		public static IServiceCollection AddApplicationServices(this IServiceCollection services)
 		{
-			// Register application services
+			
 			services.AddScoped<IUserRegisterService, UserRegisterService>();
 			services.AddScoped<IAttendanceService, AttendanceService>();
 

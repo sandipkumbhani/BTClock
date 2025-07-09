@@ -28,6 +28,10 @@ namespace Attendance.Controllers
 				var record = await _service.ClockInAsync(userId, DateTime.Now);
 				return Ok(record);
 			}
+			catch (InvalidOperationException ex)
+			{
+				return BadRequest(new { error = ex.Message });
+			}
 			catch (Exception ex)
 			{
 				System.Diagnostics.Debug.WriteLine($"[ClockIn] Exception: {ex.Message}");
@@ -49,6 +53,11 @@ namespace Attendance.Controllers
 				var record = await _service.ClockOutAsync(userId, DateTime.Now);
 				if (record == null) return NotFound();
 				return Ok(record);
+			}
+			catch (InvalidOperationException ex)
+			{
+				// Only show the message, not a server error
+				return BadRequest(new { error = ex.Message });
 			}
 			catch (Exception ex)
 			{
