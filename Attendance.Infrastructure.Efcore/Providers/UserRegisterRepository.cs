@@ -1,7 +1,6 @@
 ﻿using Attendance.Domain.Interfaces;
 using Attendance.Domain.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 
 namespace Attendance.Infrastructure.Efcore.Repositories
 {

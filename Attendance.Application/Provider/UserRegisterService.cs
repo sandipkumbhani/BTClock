@@ -1,8 +1,6 @@
 ﻿using Attendance.Application.Interface;
 using Attendance.Domain.Interfaces;
 using Attendance.Domain.Models;
-using System;
-using System.Threading.Tasks;
 
 namespace Attendance.Application.Provider
 {

@@ -1,3 +1,4 @@
+
 using Attendance.Domain.Interfaces;
 using Attendance.Domain.Models;
 using Microsoft.EntityFrameworkCore;
@@ -26,7 +27,7 @@ namespace Attendance.Infrastructure.Efcore.Providers
 				{
 					EmployeeId = employeeId,
 					ClockIn = clockIn,
-					Date = clockIn.Date
+					Date = DateTime.Now
 				};
 				_context.AttendanceRecords.Add(record);
 				await _context.SaveChangesAsync();
@@ -42,7 +43,7 @@ namespace Attendance.Infrastructure.Efcore.Providers
 		public async Task<AttendanceRecord> ClockOutAsync(int employeeId, DateTime clockOut)
 		{
 			var record = await _context.AttendanceRecords
-				.Where(r => r.EmployeeId == employeeId && r.Date == clockOut.Date && r.ClockOut == null)
+				.Where(r => r.EmployeeId == employeeId && r.ClockIn.Date == clockOut.Date && r.ClockOut == null)
 				.OrderByDescending(r => r.ClockIn)
 				.FirstOrDefaultAsync();
 			if (record != null)
@@ -60,6 +61,14 @@ namespace Attendance.Infrastructure.Efcore.Providers
 				.Where(r => r.EmployeeId == employeeId)
 				.OrderByDescending(r => r.Date)
 				.ToListAsync();
+		}
+		
+		public async Task<AttendanceRecord?> GetClockInRecord(int employeeId)
+		{
+			return await _context.AttendanceRecords
+				.Where(r => r.EmployeeId == employeeId  && r.ClockOut == null)
+				.OrderByDescending(r => r.Date)
+				.FirstOrDefaultAsync();
 		}
 
 		public async Task<bool> IsUserClockedIn(int userId)
@@ -85,6 +94,15 @@ namespace Attendance.Infrastructure.Efcore.Providers
 				.Take(5)
 				.ToListAsync();
 		}
+
+		public async Task<List<AttendanceRecord>> GetAllOpenAttendancesAsync()
+		{
+			// Return all attendance records where ClockOut is null
+			return await _context.AttendanceRecords
+				.Where(r => r.ClockOut == null)
+				.ToListAsync();
+		}
+
 
 	}
 }
