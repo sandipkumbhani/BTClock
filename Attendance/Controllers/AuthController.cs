@@ -44,7 +44,7 @@ namespace Attendance.Controllers
             var principal = new System.Security.Claims.ClaimsPrincipal(identity);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
-            return RedirectToAction("Index", "Dashboard");
+            return RedirectToAction("Dashboard", "Dashboard");
         }
 
         [HttpPost]
