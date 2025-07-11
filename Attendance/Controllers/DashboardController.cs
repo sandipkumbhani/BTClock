@@ -5,7 +5,7 @@ namespace Attendance.Controllers
 {
     public class DashboardController : Controller
     {
-        public IActionResult Index()
+        public IActionResult Dashboard()
         {
             // Get EmployeeId from claims (NameIdentifier)
             var employeeIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;

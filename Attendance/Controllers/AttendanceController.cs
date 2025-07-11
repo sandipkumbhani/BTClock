@@ -71,10 +71,14 @@ namespace Attendance.Controllers
 		{
 			var userId = UserUtility.GetUserId(HttpContext.User);
 			var records = await _service.GetAttendanceByEmployeeAsync(userId);
-			return Ok(records);
+			var topFive = records
+				.OrderByDescending(x => x.ClockIn)
+				.Take(5)
+				.ToList();
+			return Ok(topFive);
 		}
-		
-		
+
+
 		[HttpGet]
 		public async Task<IActionResult> IsUserClockedIn()
 		{
