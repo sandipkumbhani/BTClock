@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 
-namespace Attendance.Controllers
+namespace Attendance.Controllers 
 {
     [Authorize]
     public class AttendanceController : Controller
