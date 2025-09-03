@@ -1,20 +1,26 @@
-using Attendance.Domain.Utility;
+﻿using Attendance.UI.Domain.Helper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Attendance.Controllers
 {
+
     public class DashboardController : Controller
     {
-        public IActionResult Index()
+        private readonly ILogger<DashboardController> _logger;
+        private ApplicationURL applicationURL;
+        private readonly IConfiguration _configuration;
+
+        public DashboardController(ILogger<DashboardController> logger, IConfiguration configuration)
         {
-            // Get EmployeeId from claims (NameIdentifier)
-            var employeeIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(employeeIdStr) || !int.TryParse(employeeIdStr, out int employeeId) || employeeId <= 0)
-            {
-                // If claim is missing or invalid, redirect to login
-                return RedirectToAction("Login", "Auth");
-            }
-            ViewBag.EmployeeId = UserUtility.GetUserId(HttpContext.User);
+            _logger = logger;
+            _configuration = configuration;
+            applicationURL = new ApplicationURL(configuration);
+        }
+        [AllowAnonymous]
+        public async Task<IActionResult> Dashboard()
+        {
+
             return View();
         }
     }

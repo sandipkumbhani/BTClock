@@ -1,70 +1,63 @@
 using Attendance.Application.Extension;
-using Attendance.Application.Interface;
-using Attendance.Application.Provider;
-using Attendance.Infrastructure.Efcore;
+using Attendance.Domain.Models;
 using Attendance.Infrastructure.Efcore.Extensions;
-using Attendance.MapperProfile;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Quartz;
 
 var builder = WebApplication.CreateBuilder(args);
-
+var globalClass = new GlobalClass();
 builder.Services.AddAuthentication("Cookies")
    .AddCookie("Cookies", options =>
    {
-      options.LoginPath = "/Auth/Login";
-      options.AccessDeniedPath = "/Auth/Login";
+      options.LoginPath = "/Login/Login";
+      //options.AccessDeniedPath = "/Login/Login";
    });
-
+builder.Services.AddAuthorization();
 // Configure logging
 builder.Logging.ClearProviders(); // Clear default providers
 builder.Logging.AddConsole(); // Add console logging
 builder.Logging.AddDebug(); // Add debug logging
 builder.Logging.AddFile("Logs/app-{Date}.txt"); // Add file logging (requires a file logging provider)
 
-
-// Add other services
-builder.Services.AddSingleton<IAttendanceSettingsProvider, Attendance.Infrastructure.Efcore.Providers.AttendanceSettingsProvider>();
-builder.Services.AddSingleton(typeof(Attendance.Application.Interface.IAttendanceSettingsProvider),
-    provider => new Attendance.Infrastructure.Efcore.Providers.AttendanceSettingsProvider(
-        provider.GetRequiredService<IConfiguration>()));
-builder.Services.AddScoped<IAttendanceService, AttendanceService>();
-
-// Register Quartz
-builder.Services.AddQuartz(q =>
-{
-    // Define the job and trigger
-    var jobKey = new JobKey("AttendanceQuartzJob");
-    q.AddJob<AttendanceQuartzJob>(opts => opts.WithIdentity(jobKey));
-    q.AddTrigger(opts => opts
-        .ForJob(jobKey)
-        .WithIdentity("AttendanceQuartzJob-trigger")
-        .WithCronSchedule("0 0 0 * * ?", x => x.InTimeZone(TimeZoneInfo.Local))); // Every day at midnight (12:00 AM) local time
-});
-builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 builder.Services.AddApplicationServices();
-builder.Services.AddAttendanceServices();
-builder.Services.AddAutoMapper(typeof(AutoMapperRegister));
+builder.Services.AddEfcoreInfrastructureService();
 builder.Services.AddControllers();
-builder.Services.AddSwaggerGen();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddDbContext<AppDbContext>(options =>
-   options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")),
-   ServiceLifetime.Scoped); 
-builder.Services.AddControllersWithViews()
-      .AddMvcOptions(options => {
-         options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
-      });
+builder.Services.AddHttpClient();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddControllersWithViews();
+builder.Services.AddSingleton(globalClass);
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:7191")
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .SetIsOriginAllowedToAllowWildcardSubdomains();
+        });
+});
 
 var app = builder.Build();
-app.UseStaticFiles();
+
+app.Use(async (context, next) =>
+{
+   
+    var token = context.Request.Cookies["jwtToken"];
+    globalClass.Token = token;
+    await next.Invoke();
+});
+
+
 app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
+app.UseCors(MyAllowSpecificOrigins);
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllerRoute(
    name: "default",
-   pattern: "{controller=Auth}/{action=Login}/{id?}"); // Set default controller and action
+   pattern: "{controller=Login}/{action=Login}/{id?}");
 
 if (app.Environment.IsDevelopment())
 {

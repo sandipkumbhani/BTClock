@@ -15,3 +15,4 @@
 /Attendance.Domain/obj
 /Attendance.Infrastructure.Efcore/bin/Debug/net8.0
 /Attendance.Infrastructure.Efcore/obj
+/Attendance/Logs

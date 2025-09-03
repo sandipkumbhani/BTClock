@@ -1,0 +1,127 @@
+﻿/* Basic arrow style */
+.pagination .arrow > a {
+    border: none !important;
+    background: transparent !important;
+    padding: 0 0.75rem;
+    color: #6c757d; /* default gray */
+    line-height: 1;
+    font-size: 1.2rem;
+    transition: color 0.2s ease;
+}
+
+/* Highlight arrow on hover ONLY if not disabled */
+.pagination .arrow:not(.disabled) > a:hover {
+    color: #0466C8 !important; /* Custom hover color */
+}
+
+/* Disabled state */
+.pagination .arrow.disabled > a {
+    color: #adb5bd !important;
+    pointer-events: none;
+    cursor: default;
+}
+
+/* Optional: spacing and numbered button style */
+.pagination .page-item {
+    margin: 0 3px;
+}
+
+.pagination .page-link {
+    padding: 4px 10px;
+    border-radius: 6px;
+}
+
+#franchiseTable th,
+#franchiseTable td {
+    text-align: center;
+}
+/* Force full-width table */
+#franchiseTable {
+    width: 100% !important;
+    table-layout: auto;
+    border-collapse: collapse;
+    margin: 0;
+}
+
+    /* Force visible bottom border for last row */
+    #franchiseTable tbody tr:last-child td {
+        border-bottom: 1px solid #dee2e6 !important;
+    }
+
+/* Ensure container matches table width */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 1px; /* tiny space prevents visual cutoff */
+}
+
+/* Prevent visual clip due to box shadows or scrollbars */
+.card.com-profile-info {
+    overflow-x: visible;
+}
+
+#exportExcel {
+    background-color: white;
+    color: #0078d4;
+    border: 2px solid #0078d4;
+    border-radius: 8px;
+    padding: 6px 26px;
+    font-weight: 600;
+    font-size: 15px;
+    width: 130px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+    #exportExcel i {
+        font-size: 20px;
+    }
+
+    #exportExcel:hover {
+        background-color: #0078d4;
+        color: white;
+    }
+
+.table-search-box button i {
+    font-size: 1.5rem;
+    color: var(--ft-tertiary);
+    margin-bottom: 20px;
+}
+
+/* Hide Bootstrap’s default caret so only the ri-arrow-down icon shows */
+.month-filter::after {
+    display: none !important;
+}
+
+.month-filter {
+    height: 42px;
+    font-size: larger;
+    background: #fff !important;
+    border: 1px solid #cfd8dc !important;
+    color: #4a6880 !important;
+    border-radius: 8px;
+    padding: 6px 15px;
+    font-weight: 500;
+    box-shadow: none !important;
+    transition: none !important;
+    cursor: pointer;
+}
+
+    /* Remove background/border effect on hover or focus */
+    .month-filter:hover,
+    .month-filter:focus,
+    .month-filter:active,
+    .show > .month-filter.dropdown-toggle {
+        background: #fff !important;
+        border-color: #cfd8dc !important;
+        color: #4a6880 !important;
+        box-shadow: none !important;
+    }
+
+.ri-arrow-down-s-fill:before {
+    content: "\ea4d";
+    font-size: large
+}

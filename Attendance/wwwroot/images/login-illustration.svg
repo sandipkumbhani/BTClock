@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background Circle -->
+    <circle cx="200" cy="150" r="140" fill="#E9F3FF"/>
+    
+    <!-- House -->
+    <path d="M180 120H220V180H180V120Z" fill="#666CFF"/>
+    <path d="M160 100H240L220 120H180L160 100Z" fill="#666CFF"/>
+    
+    <!-- Door -->
+    <rect x="190" y="140" width="20" height="40" fill="white"/>
+    <circle cx="200" cy="160" r="2" fill="#666CFF"/>
+    
+    <!-- Windows -->
+    <rect x="165" y="130" width="10" height="10" fill="white"/>
+    <rect x="225" y="130" width="10" height="10" fill="white"/>
+    
+    <!-- Decorative Elements -->
+    <circle cx="100" cy="100" r="20" fill="#666CFF" opacity="0.2"/>
+    <circle cx="300" cy="200" r="30" fill="#666CFF" opacity="0.2"/>
+    <circle cx="150" cy="250" r="15" fill="#666CFF" opacity="0.2"/>
+</svg> 

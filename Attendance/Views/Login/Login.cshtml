@@ -1,0 +1,109 @@
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTClock | Login In</title>
+    <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
+    <meta content="FleetLynk" name="author" />
+    <!-- Figtree FONT -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <!-- intl-tel-input CSS -->
+    <link href="~/css/intlTelInput-largeFlags.css" rel="stylesheet" type="text/css" />
+    <!-- Select2 CSS -->
+    <link href="~/css/select2.min.css" rel="stylesheet" type="text/css" />
+    <!-- Datatables css -->
+    <link rel="stylesheet" href="~/css/dataTables.bootstrap5.min.css" />
+    <link rel="stylesheet" href="~/css/buttons.bootstrap5.min.css" />
+    <link rel="stylesheet" href="~/css/responsive.bootstrap5.min.css" />
+    <!-- Dropzone CSS -->
+    <link href="~/css/dropzone.min.css" rel="stylesheet" type="text/css" />
+    <!-- Select2 Bootstrap4 CSS -->
+    <link href="~/css/select2-bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <!-- Remixicon CSS -->
+    <link href="~/css/remixicon.css" rel="stylesheet" type="text/css" />
+    <!-- SimpleBar CSS -->
+    <link href="~/css/simplebar.css" rel="stylesheet" type="text/css" />
+    <!-- Bootstrap css -->
+    <link href="~/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <!-- App css -->
+    <link href="~/css/app-style.css" rel="stylesheet" type="text/css" />
+    <script src="~/js/jquery.min.js"></script>
+
+</head>
+<body data-sidenav-size="default">
+    <div class="wrapper single-page">
+        <div class="sign-inner">
+            <div class="sign-page-center">
+                <a href="@ViewBag.appUrl/Dashboard/Dashboard" class="side-nav-link d-flex" style="color:#0466C8;">
+                    <i class="ri-home-4-fill" style="font-size:xx-large;"></i>
+                    <span style="margin-top:20px;font-weight:bold;margin-left:2px;">Home</span>
+                </a>
+                <div class="sign-right">
+                    <a href="@ViewBag.appUrl/Dashboard/Dashboard">
+                        <img src="~/images/login-illustration.svg" />
+
+                    </a>
+                </div>
+                <div class="sign-left">
+                    <div class="inner-sign-info">
+                        <div class="login-main">
+                            @{
+                                var returnUrl = Context.Request.Query["returnUrl"].ToString();
+                            }
+                            <form class="theme-form all-custom-class requires-validation" method="post" action="@Url.Action("Login", "Login")" novalidate>
+                                <h2 style="color:#0466C8;">Welcome to BTClock</h2>
+                                <input type="hidden" name="returnUrl" value="@returnUrl" />
+                                <div class="login-social-title mb-5">
+                                </div>
+                                <div class="item-input">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input class="form-control" type="email" required="" id="email" name="email" placeholder="Email" />
+                                    <div class="invalid-feedback"><i class="ri-information-line"></i> Please put valid Email Id</div>
+                                </div>
+                                <div class="item-input">
+                                    <label for="password" class="form-label">Password</label>
+                                    <div class="form-input position-relative">
+                                        <input id="password" name="password" class="form-control" type="password" required="" placeholder="Password" />
+                                        <div class="show-hide">
+                                            <span class="show">
+                                            </span>
+                                        </div>
+                                        <div class="invalid-feedback"><i class="ri-information-line"></i> Password field cannot be blank!</div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="login-btns">
+                                    Log In
+                                </button>
+                            </form>
+                        </div>
+                        <div>
+                            <span class="text-danger d-flex justify-content-center mt-3 fw-bold">@ViewData["LoginMessage"]</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <script>
+        $(".show-hide span").click(function () {
+            if ($(this).hasClass("show")) {
+                      $('input[name="password"]').attr("type", "text");
+                  $(this).removeClass("show");
+            }
+            else
+            {
+                  $('input[name="password"]').attr("type", "password");
+              $(this).addClass("show");
+            }
+        });
+    </script>
+</body>
+</html>

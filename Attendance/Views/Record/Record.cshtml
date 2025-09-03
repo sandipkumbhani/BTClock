@@ -1,0 +1,75 @@
+﻿@{
+    Layout = "_LayoutTimesheet";
+    ViewData["Title"] = "Records";
+}
+<!-- DataTables CSS -->
+@* <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css " /> *@
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+<link href="~/css/record.css" rel="stylesheet" />
+
+<div class="content-page" style="margin:35px 0 0 0">
+    <div class="content">
+        <div class="main-inner container-fluid">
+            <div class="row">
+                <!-- Month Filter Dropdown (styled exactly like screenshot) -->
+                <div class="col-12 mb-3">
+                    <div class="dropdown">
+                        <button id="filterDropdown"
+                                class="btn btn-outline-secondary dropdown-toggle month-filter"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                            -- All Months -- <i class="ri-arrow-down-s-fill" style="font-size:larger"></i>
+                        </button>
+                        <ul class="dropdown-menu" id="monthDropdownMenu" aria-labelledby="filterDropdown"></ul>
+                    </div>
+
+                </div>
+                <div class="col-12">
+                    <div class="card com-profile-info">
+                        <!-- Top Header -->
+                        <div class="table-top-header">
+                            <h3>Records</h3>
+                            <div class="d-flex gap-2">
+                                <div class="table-search-box">
+                                    <input type="text" id="customFranchiseSearch" class="form-control form-control-sm" placeholder="Search...">
+                                    <button type="submit"><i class="ri-search-line"></i></button>
+                                </div>
+                                <div id="exportFranchiseButtons">
+                                    <button id="exportExcel" class="btn-btn-outline-secondary" >
+                                        <i class="bi bi-file-earmark-excel"></i> Export
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Table -->
+                        <div class="table-responsive">
+                            <table id="franchiseTable" class="table dt-responsive nowrap">
+                                <thead>
+                                    <tr>
+                                        <th class="dt-orderable-asc dt-orderable-desc">Date</th>
+                                        <th>Clock In</th>
+                                        <th>Clock Out</th>
+                                        <th>Total Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                            <!-- Bottom Area -->
+                            <div class="datatable-footer-bottom">
+                                <div class="totle-left">
+                                    <span id="totalList">Total List: <span id="recordCount">0</span></span>
+                                </div>
+                                <div id="customFranchisePagination" class="dataTables_paginate paging_simple_numbers"></div>
+                                <div class="show-page">
+                                    <span>Show per page:</span>
+                                    <select id="pageLength" class="form-select"></select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="~/js/record.js" defer></script>

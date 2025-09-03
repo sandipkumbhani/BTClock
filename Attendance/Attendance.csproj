@@ -48,13 +48,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Attendance.Api.Contracts\Attendance.Api.Contracts.csproj" />
     <ProjectReference Include="..\Attendance.Application\Attendance.Application.csproj" />
     <ProjectReference Include="..\Attendance.Infrastructure.Efcore\Attendance.Infrastructure.Efcore.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="BackgroundJob\" />
   </ItemGroup>
 
 </Project>

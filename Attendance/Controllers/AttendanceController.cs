@@ -1,86 +1,98 @@
 using Attendance.Application.Interface;
+using Attendance.Domain.Models;
 using Attendance.Domain.Utility;
+using Attendance.UI.Domain.Helper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Attendance.Controllers
 {
-	[Route("[controller]/[action]")]
-	public class AttendanceController : Controller
-	{
-		private readonly IAttendanceService _service;
-		public AttendanceController(IAttendanceService service)
-		{
-			_service = service;
-		}
+    [Authorize]
+    public class AttendanceController : Controller
+    {
+        private readonly IConfiguration _configuration;
+        private ApplicationURL applicationURL;
+        private readonly GlobalClass _globalClass;
+        private readonly IAttendanceService _service;
 
+        public AttendanceController(IConfiguration configuration, GlobalClass globalClass, IAttendanceService service)
+        {
+            _configuration = configuration;
+            _globalClass = globalClass;
+            _service = service;
+            applicationURL = new ApplicationURL(configuration);
+        }
+        public IActionResult ClockIn()
+        {
+            if (_globalClass.Token != null)
+            {
+                var jwt = new JwtSecurityTokenHandler().ReadJwtToken(_globalClass.Token);
+                var claims = UserUtility.addClaimstoUser(HttpContext, jwt.Claims);
+                string currentPage = "Clock-In";
+                ViewBag.appUrl = applicationURL.url;
+                //var canAccess = UserUtility.CanAccessMenu(HttpContext, currentPage);
+                //if (canAccess == true)
+                //{
+                //    var employee = claims.Claims.FirstOrDefault(x => x.Type == "EmployeeId");
+                //    int EmployeeId = employee != null ? (!string.IsNullOrEmpty(employee.Value) ? Convert.ToInt32(employee.Value) : 0) : 0;
+                //    ViewBag.EmployeeId = EmployeeId;
+                //    ViewBag.appUrl = applicationURL.url;
+                //    return View();
+                //}
+                //else
+                //{
+                //    return RedirectToAction("AccessDenied", "Home");
+                //}
+            }
+            return View();
+        }
+        [HttpGet]
+        public async Task<IActionResult> ClockInAttendance(int employeeId)
+        {
+            try
+            {
 
-		[HttpGet]
-		public async Task<IActionResult> ClockIn()
-		{
-			try
-			{
-				int userId = UserUtility.GetUserId(HttpContext.User);
+                if (_globalClass.Token != null)
+                {
+                    var clockin = await _service.ClockInAsync();
+                    if (clockin != null)
+                    {
+                        return Json(new { clockIn = clockin.ClockIn, message = "OK" });
+                    }
+                }
+                return Json(new { clockIn = (DateTime?)null });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { clockIn = (DateTime?)null, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> ClockOutAttendance(int employeeId)
+        {
+            if (_globalClass.Token != null)
+            {
+                var clockout = await _service.ClockOutAsync();
+                if (clockout != null)
+                {
+                    return Json(new { clockOut = clockout.ClockOut, clockIn = clockout.ClockIn });
+                }
+            }
+            return Json(new { clockOut = (DateTime?)null, clockIn = (DateTime?)null });
+        }
+        [HttpGet]
+        public async Task<IActionResult> Report(int employeeId)
+        {
+            if (_globalClass.Token != null)
+            {
+                var report = await _service.GetAttendanceByEmployeeAsync(employeeId);
+                var topFive = report.OrderByDescending(x => x.ClockIn).Take(6).ToList();
+                ViewBag.appUrl = applicationURL.url;
+                return Json(topFive);
+            }
+            return Json(null);
+        }
 
-				if (userId == 0)
-				{
-					return BadRequest(new { error = "Invalid user ID in claims." });
-				}
-				var record = await _service.ClockInAsync(userId, DateTime.Now);
-				return Ok(record);
-			}
-			catch (InvalidOperationException ex)
-			{
-				return BadRequest(new { error = ex.Message });
-			}
-			catch (Exception ex)
-			{
-				System.Diagnostics.Debug.WriteLine($"[ClockIn] Exception: {ex.Message}");
-				return StatusCode(500, new { error = "Server error: " + ex.Message });
-			}
-		}
-
-		[HttpGet]
-		public async Task<IActionResult> ClockOut()
-		{
-			try
-			{
-				var userId = UserUtility.GetUserId(HttpContext.User);
-
-				if (userId == 0)
-				{
-					return BadRequest(new { error = "Invalid user ID in claims." });
-				}
-				var record = await _service.ClockOutAsync(userId, DateTime.Now);
-				if (record == null) return NotFound();
-				return Ok(record);
-			}
-			catch (InvalidOperationException ex)
-			{
-				// Only show the message, not a server error
-				return BadRequest(new { error = ex.Message });
-			}
-			catch (Exception ex)
-			{
-				System.Diagnostics.Debug.WriteLine($"[ClockOut] Exception: {ex.Message}");
-				return StatusCode(500, new { error = "Server error: " + ex.Message });
-			}
-		}
-
-		[HttpGet]
-		public async Task<IActionResult> Report(int employeeId)
-		{
-			var userId = UserUtility.GetUserId(HttpContext.User);
-			var records = await _service.GetAttendanceByEmployeeAsync(userId);
-			return Ok(records);
-		}
-		
-		
-		[HttpGet]
-		public async Task<IActionResult> IsUserClockedIn()
-		{
-			var userId = UserUtility.GetUserId(HttpContext.User);
-			var records = await _service.IsUserClockedIn(userId);
-			return Ok(records);
-		}
-	}
+    }
 }

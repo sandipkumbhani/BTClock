@@ -9,20 +9,29 @@
     }
   },
   "profiles": {
-    "https": {
+    "http": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
-      "launchUrl": "Auth/Login",
-      "applicationUrl": "https://localhost:7118;http://localhost:5039",
+      "launchUrl": "Login/Login",
+      "applicationUrl": "https://localhost:7191;http://localhost:5208",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
+    "https": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "https://localhost:7191;http://localhost:5208"
+    },
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "Register/URegister", 
+      "launchUrl": "Login/Login",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

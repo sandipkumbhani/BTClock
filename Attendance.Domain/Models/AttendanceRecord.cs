@@ -2,14 +2,24 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Attendance.Domain.Models
 {
-	public class AttendanceRecord
-	{
-		public int Id { get; set; }
-		public int EmployeeId { get; set; } // FK to UserRegister
-		[ForeignKey("EmployeeId")]
-		public Users User { get; set; }
-		public DateTime Date { get; set; }
-		public DateTime ClockIn { get; set; }
-		public DateTime? ClockOut { get; set; }
-	}
+    public class AttendanceRecord
+    {
+        public AttendanceRecord()
+        {
+            attendanceRecordDto = new List<AttendanceRecordDto>();
+        }
+        public List<AttendanceRecordDto> attendanceRecordDto { get; set; }
+
+
+    }
+    public class AttendanceRecordDto
+    {
+        public int Id { get; set; }
+        [ForeignKey("EmployeeId")]
+        public int EmployeeId { get; set; }
+        public Employee? employee { get; set; }
+        public DateTime Date { get; set; }
+        public DateTime ClockIn { get; set; }
+        public DateTime? ClockOut { get; set; }
+    }
 }
