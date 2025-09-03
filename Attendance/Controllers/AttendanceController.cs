@@ -44,6 +44,7 @@ namespace Attendance.Controllers
                 //{
                 //    return RedirectToAction("AccessDenied", "Home");
                 //}
+
             }
             return View();
         }
