@@ -35,7 +35,7 @@ namespace Attendance.Controllers
         [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Login(Employee model, string? returnUrl)
-        {
+        {   
             if (ModelState.IsValid)
             {
                 var token = await _loginServices.Login(model);
@@ -75,11 +75,11 @@ namespace Attendance.Controllers
             return View();
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> Logout()
-        //{
-        //    await HttpContext.SignOutAsync();
-        //    return RedirectToAction("Login", "Login");
-        //}
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
+            return RedirectToAction("Login", "Login");
+        }
     }
 }

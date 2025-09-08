@@ -1265,7 +1265,7 @@ table.dataTable thead th.sorting_desc::after {
         .table-search-box button i {
             font-size: 1.5rem;
             color: var(--ft-tertiary);
-            margin-bottom: 20px;
+/*            margin-bottom: 20px;*/
         }
 
     .table-search-box .form-control {
