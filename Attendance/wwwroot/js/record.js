@@ -1,15 +1,30 @@
 ﻿let allRecords = [];
 let currentPage = 1;
-let recordsPerPage = 5;
+let recordsPerPage = 20;
 let filteredRecords = [];
 let monthFilteredRecords = [];
-let selectedMonthNum = null;  // 1‑12, null = all
-let selectedMonthName = null;  // "January" … "December", null = all
-
+let data = [];
 let currentSort = {
     column: null,
     dir: 'asc'
 };
+$(document).ready(async function () {
+    await fetchAttendanceData();
+    populatePageSizeOptions();
+    setupSearch();
+    attachHeaderSortHandlers();
+    addExportButton();
+    setupMonthPicker();
+
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const currentMonth = `${year}-${month}`;
+    await fetchAndApplyMonth(currentMonth);
+    $("#dataLoader").hide();
+
+});
+
 
 $('#customFranchiseSearch').on('keyup', function () {
     const term = this.value.trim().toLowerCase();
@@ -30,13 +45,15 @@ $('#customFranchiseSearch').on('keyup', function () {
 
 async function fetchAttendanceData() {
     try {
-        const response = await fetch('/Attendance/GetAttendanceTableData');
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const response = await fetch('/Record/GetAttendanceTableData');
+        $("#dataLoader").show()
 
-        const data = await response.json();
-        allRecords = data || [];
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        data = await response.json();
+        allRecords = (data || []).filter(r => r.clockOut !== null && r.clockOut !== "-");
         monthFilteredRecords = [...allRecords];
         filteredRecords = [...allRecords];
+
 
     } catch (err) {
         console.error("Error fetching attendance data:", err);
@@ -63,26 +80,25 @@ function sortFilteredRecords() {
         let aVal, bVal;
 
         switch (col) {
-            case 0: /* Date */
+            case 0:
                 aVal = new Date(a.date);
                 bVal = new Date(b.date);
                 break;
-            case 1: /* Clock In */
+            case 1:
                 aVal = timeToSeconds(a.clockIn);
                 bVal = timeToSeconds(b.clockIn);
                 break;
-            case 2: /* Clock Out */
+            case 2:
                 aVal = timeToSeconds(a.clockOut);
                 bVal = timeToSeconds(b.clockOut);
                 break;
-            case 3: /* Total Time */
+            case 3:
                 aVal = timeToSeconds(a.totalTime);
                 bVal = timeToSeconds(b.totalTime);
                 break;
             default:
                 aVal = bVal = 0;
         }
-
         if (aVal < bVal) return -1 * dir;
         if (aVal > bVal) return 1 * dir;
         return 0;
@@ -90,20 +106,20 @@ function sortFilteredRecords() {
 }
 
 function renderTable() {
+    $("#dataLoader").show()
     sortFilteredRecords();
-
     const tbody = document.querySelector("#franchiseTable tbody");
     if (!tbody) return;
-
     tbody.innerHTML = "";
-
     const start = (currentPage - 1) * recordsPerPage;
     const paginatedData = filteredRecords.slice(start, start + recordsPerPage);
 
-    if (paginatedData.length === 0) {
+    if (paginatedData.length === 0 && data.length > 0) {
         const row = document.createElement("tr");
         row.innerHTML = `<td colspan="4" style="text-align:center;">No records found.</td>`;
         tbody.appendChild(row);
+        $("#dataLoader").hide();
+
     } else {
         paginatedData.forEach(rec => {
             const row = document.createElement("tr");
@@ -114,50 +130,69 @@ function renderTable() {
                 <td>${rec.totalTime}</td>
             `;
             tbody.appendChild(row);
+            $("#dataLoader").hide();
+
         });
     }
-
 
     const totalListElement = document.getElementById("totalList");
     if (totalListElement) {
         totalListElement.innerHTML = `Total List: <span id="recordCount">${filteredRecords.length}</span>`;
     }
+    const headers = document.querySelectorAll('#franchiseTable thead th');
+    updateSortIcons(headers);
+}
+
+function updateSortIcons(headers) {
+    headers.forEach((th, i) => {
+        th.innerHTML = th.textContent.trim();
+    });
 }
 
 function renderPagination() {
     const wrapper = document.getElementById("customFranchisePagination");
     if (!wrapper) return;
-
     wrapper.innerHTML = "";
+
     const totalPages = Math.ceil(filteredRecords.length / recordsPerPage);
     if (totalPages <= 1) return;
 
     const ul = document.createElement("ul");
     ul.className = "pagination";
 
+    // Prev button
     ul.appendChild(createPageItem("prev", currentPage - 1, currentPage === 1, true));
 
-    const windowSize = recordsPerPage; /* pages to show before ellipsis */
+    const addPage = (page) => {
+        ul.appendChild(createPageItem(page, page));
+    };
 
-    if (totalPages <= windowSize + 1) {
-        for (let i = 1; i <= totalPages; i++) ul.appendChild(createPageItem(i, i));
+    if (totalPages <= 7) {
+        for (let i = 1; i <= totalPages; i++) {
+            addPage(i);
+        }
     } else {
-        if (currentPage <= windowSize) {
-            for (let i = 1; i <= windowSize; i++) ul.appendChild(createPageItem(i, i));
+        if (currentPage <= 5) {
+            // Show first 5 + ... + last
+            for (let i = 1; i <= 5; i++) addPage(i);
             ul.appendChild(createEllipsis());
-            ul.appendChild(createPageItem(totalPages, totalPages));
-        } else if (currentPage >= totalPages - 4) {
-            ul.appendChild(createPageItem(1, 1));
+            addPage(totalPages);
+        } else if (currentPage >= totalPages - 3) {
+            // Show 1 + ... + last 5
+            addPage(1);
             ul.appendChild(createEllipsis());
-            for (let i = totalPages - 4; i <= totalPages; i++) ul.appendChild(createPageItem(i, i));
+            for (let i = totalPages - 4; i <= totalPages; i++) addPage(i);
         } else {
-            ul.appendChild(createPageItem(1, 1));
+            // Show 1 + ... + current-1, current, current+1 + ... + last
+            addPage(1);
             ul.appendChild(createEllipsis());
-            for (let i = currentPage - 1; i <= currentPage + 1; i++) ul.appendChild(createPageItem(i, i));
+            for (let i = currentPage - 1; i <= currentPage + 1; i++) addPage(i);
             ul.appendChild(createEllipsis());
-            ul.appendChild(createPageItem(totalPages, totalPages));
+            addPage(totalPages);
         }
     }
+
+    // Next button
     ul.appendChild(createPageItem("next", currentPage + 1, currentPage === totalPages, true));
 
     wrapper.appendChild(ul);
@@ -217,83 +252,6 @@ function populatePageSizeOptions() {
         renderPagination();
     });
 }
-async function loadMonthFilterOptions() {
-    const dropdownMenu = document.getElementById("monthDropdownMenu");
-    const dropdownBtn = document.getElementById("filterDropdown");
-
-    if (!dropdownMenu || !dropdownBtn) return;
-
-    dropdownMenu.innerHTML = "";
-
-    const resp = await fetch('/Attendance/GetAvailableMonths');
-    if (!resp.ok) {
-        console.error("Failed to load available months");
-        return;
-    }
-
-    const availableMonths = await resp.json(); // ["January 2025", "March 2025", ...]
-
-    const now = new Date();
-    const currentMonth = now.getMonth();  // 0-based
-    const currentYear = now.getFullYear();
-
-    const monthNames = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-    ];
-
-    // Set initial label
-    dropdownBtn.innerHTML = `${monthNames[currentMonth]} ${currentYear} <i class="ri-arrow-down-s-fill" style="font-size: smaller;"></i>`;
-
-    // -- All Months --
-    const allItem = document.createElement("li");
-    allItem.innerHTML = `<a class="dropdown-item" href="#">-- All Months --</a>`;
-    allItem.onclick = () => {
-        dropdownBtn.innerHTML = `-- All Months -- <i class="ri-arrow-down-s-fill" style="font-size: smaller;"></i>`;
-        applyMonthFilter(null);
-    };
-    dropdownMenu.appendChild(allItem);
-
-    for (let i = 0; i < 12; i++) {
-        const monthName = monthNames[i];
-        const fullLabel = `${monthName} ${currentYear}`;
-        const isAvailable = availableMonths.includes(fullLabel);
-
-        const li = document.createElement("li");
-        li.innerHTML = `<a class="dropdown-item${!isAvailable ? ' text-muted' : ''}" href="#">${monthName}</a>`;
-
-        li.onclick = () => {
-           
-            dropdownBtn.innerHTML = `${monthName} ${currentYear} <i class="ri-arrow-down-s-fill" style="font-size: smaller;"></i>`;
-            applyMonthFilter(i + 1);
-        };
-
-        dropdownMenu.appendChild(li);
-    }
-    applyMonthFilter(currentMonth + 1);
-}
-
-function applyMonthFilter(monthNum) {
-    monthFilteredRecords = (!monthNum)
-        ? [...allRecords]
-        : allRecords.filter(r => r.date?.slice(5, 7) === String(monthNum).padStart(2, '0'));
-
-    /* Re‑apply search term after month filter */
-    const term = $('#customFranchiseSearch').val().trim().toLowerCase();
-    filteredRecords = term === ""
-        ? [...monthFilteredRecords]
-        : monthFilteredRecords.filter(r =>
-            (r.date ?? "").toLowerCase().includes(term) ||
-            (r.clockIn ?? "").toLowerCase().includes(term) ||
-            (r.clockOut ?? "").toLowerCase().includes(term) ||
-            (r.totalTime ?? "").toLowerCase().includes(term)
-        );
-
-    currentPage = 1;
-    renderTable();
-    renderPagination();
-}
-
 
 function addExportButton() {
     const btn = document.getElementById("exportExcel");
@@ -301,9 +259,8 @@ function addExportButton() {
 
     btn.addEventListener("click", () => {
         const exportData = [...monthFilteredRecords];
-
         if (!exportData || exportData.length === 0) {
-            alert("No records found for the selected month.");
+            alert("No records found for the selected month or range.");
             return;
         }
 
@@ -316,11 +273,23 @@ function addExportButton() {
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Attendance");
 
-        const dropdownBtn = document.getElementById("filterDropdown");
-        let fileLabel = dropdownBtn?.textContent
-            .trim()
-            .replace(/^--\s*|\s*--$/g, '') 
-            .replace(/\s+/g, '_') || 'All_Months';
+        let fileLabel = "All_Months";
+
+        const rangeSpan = document.querySelector("#reportrange span");
+        const monthLabel = document.getElementById("selectedMonthLabel");
+
+        if (rangeSpan && rangeSpan.textContent.trim()) {
+            fileLabel = rangeSpan.textContent.trim();
+        } else if (monthLabel && monthLabel.textContent.trim()) {
+            fileLabel = monthLabel.textContent.trim();
+        }
+
+
+        fileLabel = fileLabel
+            .replace(/[,]/g, '')
+            .replace(/\s*-\s*/g, '_to_')
+            .replace(/\s+/g, '_')
+            .replace(/[^a-zA-Z0-9_-]/g, '');
 
         const fileName = `Attendance_${fileLabel}.xlsx`;
 
@@ -360,75 +329,116 @@ function setupSearch() {
         renderPagination();
     });
 }
-
-//function attachHeaderSortHandlers() {
-//    const headers = document.querySelectorAll('#franchiseTable thead th');
-//    if (headers.length === 0) return;
-
-//    headers.forEach((th, idx) => {
-//        if (idx > 3) return; // Limit sorting to first 4 columns
-//        th.style.cursor = 'pointer';
-
-//        th.addEventListener('click', () => {
-//            // Cycle: unsorted → asc → desc → unsorted
-//            if (currentSort.column !== idx) {
-//                currentSort.column = idx;
-//                currentSort.dir = 'asc';
-//            } else if (currentSort.dir === 'asc') {
-//                currentSort.dir = 'desc';
-//            } else if (currentSort.dir === 'desc') {
-//                currentSort.column = null;
-//                currentSort.dir = 'asc';
-//            }
-
-//            currentPage = 1;
-//            renderTable();
-//            renderPagination();
-//        });
-//    });
-//}
 function attachHeaderSortHandlers() {
     const headers = document.querySelectorAll('#franchiseTable thead th');
-    if (headers.length === 0) return;
-
     headers.forEach((th, idx) => {
-        if (idx > 3) return; // Only allow sorting on the first 4 columns
+        if (idx > 3) return;
         th.style.cursor = 'pointer';
-
         th.addEventListener('click', () => {
             if (currentSort.column !== idx) {
-                currentSort.column = idx;
-                currentSort.dir = 'desc'; // 👈 first click is descending
-            } else {
-                currentSort.dir = currentSort.dir === 'desc' ? 'asc' : 'desc';
-            }
 
+                currentSort.column = idx;
+                currentSort.dir = 'asc';
+            } else {
+                currentSort.dir = currentSort.dir === 'asc' ? 'desc' : 'asc';
+            }
             currentPage = 1;
             renderTable();
             renderPagination();
+            updateSortIcons(headers);
         });
     });
 }
+function setupMonthPicker() {
+    const monthInput = document.getElementById("filterDatePicker");
+    if (!monthInput) return;
 
-function updateSortIcons(headers) {
-    headers.forEach((th, i) => {
-        /* strip previous arrows */
-        th.innerHTML = th.textContent.replace(/[\u25B2\u25BC]\s*$/, '').trim();
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const currentMonth = `${year}-${month}`;
 
-        if (currentSort.column === i) {
-            th.innerHTML += currentSort.dir === 'asc' ? ' ▲' : ' ▼';
+    monthInput.value = currentMonth;
+    monthInput.addEventListener("change", function () {
+        const selectedMonth = this.value;
+        if (selectedMonth) {
+            fetchAndApplyMonth(selectedMonth);
         }
     });
 }
 
-$(document).ready(async function () {
-    await fetchAttendanceData();
-    populatePageSizeOptions();
-    await loadMonthFilterOptions();
-    setupSearch();
+
+async function fetchAndApplyMonth(monthStr) {
+    const userId = UserID;
+    try {
+        const response = await fetch(`/Record/GetAttendanceByMonth?userId=${userId}&month=${monthStr}`);
+        if (!response.ok) throw new Error(`Fetch failed: ${response.statusText}`);
+        const data = await response.json();
+        monthFilteredRecords = [...data];
+        filteredRecords = [...data];
+        currentPage = 1;
+        renderTable();
+        renderPagination();
+
+        updateMonthLabel(monthStr);
+    } catch (err) {
+        console.error("Error fetching month data:", err);
+        const tbody = document.querySelector("#franchiseTable tbody");
+        if (tbody) {
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">Failed to load data.</td></tr>`;
+        }
+    }
+}
+function updateMonthLabel(monthStr) {
+    const labelElement = document.getElementById("selectedMonthLabel");
+    if (!labelElement) return;
+    const [year, month] = monthStr.split("-");
+    const date = new Date(`${year}-${month}-01`);
+    const monthName = date.toLocaleString('default', { month: 'long' });
+
+    labelElement.textContent = `${monthName} ${year}`;
+}
+
+function filterByDateRange(start, end) {
+    const startDate = start.startOf('day');
+    const endDate = end.endOf('day');
+
+    monthFilteredRecords = allRecords.filter(rec => {
+        const recDate = moment(rec.date, 'DD-MMM-YYYY');
+        return recDate.isBetween(startDate, endDate, null, '[]');
+    });
+
+    filteredRecords = [...monthFilteredRecords];
+    currentPage = 1;
     renderTable();
     renderPagination();
-    attachHeaderSortHandlers();
-    addExportButton();
-});
 
+    const labelElement = document.getElementById("selectedMonthLabel");
+    if (labelElement) {
+        labelElement.textContent = `${start.format('MMMM D, YYYY')} - ${end.format('MMMM D, YYYY')}`;
+    }
+}
+
+$(function () {
+    const defaultStart = moment().startOf('month');
+    const defaultEnd = moment().endOf('month');
+
+    function cb(start, end) {
+        $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+        filterByDateRange(start, end);
+    }
+
+    $('#reportrange').daterangepicker({
+        startDate: defaultStart,
+        endDate: defaultEnd,
+        ranges: {
+            'This Month': [moment().startOf('month'), moment().endOf('month')],
+            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+            //'Custom Range': [moment().subtract(7, 'days'), moment()]
+        },
+        locale: {
+            format: 'MMMM D, YYYY'
+        }
+    }, cb);
+    cb(defaultStart, defaultEnd);
+});

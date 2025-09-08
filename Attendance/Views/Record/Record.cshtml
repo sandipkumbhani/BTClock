@@ -1,18 +1,25 @@
 ﻿@{
     Layout = "_LayoutTimesheet";
+    int UserID = ViewBag.UserID;
     ViewData["Title"] = "Records";
 }
 <!-- DataTables CSS -->
 @* <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css " /> *@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 <link href="~/css/record.css" rel="stylesheet" />
-
+<link href="~/css/daterangepicker.css" rel="stylesheet" />
 <div class="content-page" style="margin:35px 0 0 0">
     <div class="content">
         <div class="main-inner container-fluid">
             <div class="row">
                 <!-- Month Filter Dropdown (styled exactly like screenshot) -->
-                <div class="col-12 mb-3">
+                <div class="col-4 mb-3" style="width:auto;">
+                    <div class="datepicker" id="reportrange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: auto">
+                        <i class="fa fa-calendar"></i>&nbsp;
+                        <span></span> <i class="fa fa-caret-down" style="margin-left:16px;"></i>
+                    </div>
+                </div>
+                @* <div class="col-12 mb-3">
                     <div class="dropdown">
                         <button id="filterDropdown"
                                 class="btn btn-outline-secondary dropdown-toggle month-filter"
@@ -21,8 +28,7 @@
                         </button>
                         <ul class="dropdown-menu" id="monthDropdownMenu" aria-labelledby="filterDropdown"></ul>
                     </div>
-
-                </div>
+                </div> *@
                 <div class="col-12">
                     <div class="card com-profile-info">
                         <!-- Top Header -->
@@ -33,8 +39,8 @@
                                     <input type="text" id="customFranchiseSearch" class="form-control form-control-sm" placeholder="Search...">
                                     <button type="submit"><i class="ri-search-line"></i></button>
                                 </div>
-                                <div id="exportFranchiseButtons">
-                                    <button id="exportExcel" class="btn-btn-outline-secondary" >
+                                <div id="exportFranchiseButtons" style="display:none">
+                                    <button id="exportExcel" class="btn-btn-outline-secondary">
                                         <i class="bi bi-file-earmark-excel"></i> Export
                                     </button>
                                 </div>
@@ -53,6 +59,11 @@
                                 </thead>
                                 <tbody></tbody>
                             </table>
+                            <div id="dataLoader" class=" justify-content-center" style="display:none; margin-left: 598px;">
+                                <div class="spinner-border" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
                             <!-- Bottom Area -->
                             <div class="datatable-footer-bottom">
                                 <div class="totle-left">
@@ -71,5 +82,15 @@
         </div>
     </div>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="~/js/record.js" defer></script>
+@section Scripts
+{
+
+    <script type="text/javascript">
+        var UserID = Number.parseInt(@UserID);
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="~/js/record.js"></script>
+    <script src="~/js/moment.min.js"></script>
+    <script src="~/js/daterangepicker.js"></script>
+}
+

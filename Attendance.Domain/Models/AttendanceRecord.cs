@@ -21,5 +21,11 @@ namespace Attendance.Domain.Models
         public DateTime Date { get; set; }
         public DateTime ClockIn { get; set; }
         public DateTime? ClockOut { get; set; }
+        public TimeSpan WorkingHour { get; set; }
+        public TimeSpan OvertimeHours { get; set; }
+        public int? CreatedBy { get; set; }
+        public DateTime? CreatedAt { get; set; }
+        public int? UpdatedBy { get; set; }
+        public DateTime? UpdatedAt { get; set; }
     }
 }

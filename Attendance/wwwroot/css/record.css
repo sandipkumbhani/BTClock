@@ -88,7 +88,7 @@
 .table-search-box button i {
     font-size: 1.5rem;
     color: var(--ft-tertiary);
-    margin-bottom: 20px;
+    /*    margin-bottom: 20px;*/
 }
 
 /* Hide Bootstrap’s default caret so only the ri-arrow-down icon shows */
@@ -124,4 +124,40 @@
 .ri-arrow-down-s-fill:before {
     content: "\ea4d";
     font-size: large
+}
+
+.table-top-header .btn-group .btn-secondary {
+    display: none;
+}
+
+.datepicker {
+    border: 1px solid #cfd8dc !important;
+    height: 42px;
+    background: #fff !important;
+    color: #4a6880 !important;
+    border-radius: 8px;
+    padding: 6px 15px;
+    font-weight: 500;
+    box-shadow: none !important;
+    transition: none !important;
+    cursor: pointer;
+    outline: none;
+    font-size: larger;
+}
+
+.daterangepicker .ranges li.active {
+    background-color: #0466C8;
+    color: #fff;
+}
+
+.daterangepicker td.active, .daterangepicker td.active:hover {
+    background-color: #0466C8;
+    border-color: transparent;
+    color: #fff;
+}
+
+.btn-primary {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: #0466C8;
+    --bs-btn-border-color: #0466C8;
 }
