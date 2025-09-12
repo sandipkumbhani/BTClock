@@ -1,0 +1,130 @@
+﻿@model Attendance.Domain.Models.EmployeeDto
+@using System.Security.Claims
+@{
+	Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+<head>
+	<link href="~/css/calender.css" rel="stylesheet" />
+</head>
+<body>
+	<div class="main-inner container-fluid">
+		<div class="col-12">
+			<div class="page-title-box" style="margin-top:20px;">
+				<h1 class="page-title">Add Employee</h1>
+			</div>
+		</div>
+		<div class="col-12">
+			<div class="card com-profile-info">
+				<form class="form" id="userForm" method="post" action="@Url.Action("Employee", "Employee")">
+					<div class="top-details">
+						<h2 class="page-form-title">Add Employee</h2>
+						<div class="file-input">
+						</div>
+
+						<div class="">
+							<div class="item-input">
+								<label for="name" class="form-label col-form-label required fw-semibold fs-6; form-label">Name</label>
+								<input type="text" class="form-control userinput" id="name" name="name" required placeholder="Enter Name" style="width:359.46px; height:48px;">
+								@* <span asp-validation-for="Name" class="text-danger"></span> *@
+							</div>
+						</div>
+						<div class="">
+							<div class="item-input">
+								<label for="email" class="form-label col-form-label required fw-semibold fs-6; form-label">Email</label>
+								<input type="email" class="form-control userinput" id="email" name="email" required placeholder="Enter Email" style="width:359.46px; height:48px;">
+								@* <span asp-validation-for="Email" class="text-danger"></span> *@
+							</div>
+						</div>
+						<div class="">
+							<div class="item-input">
+								<label for="mobileNo" class="form-label col-form-label required fw-semibold fs-6;form-label">Mobile No.</label>
+								<input type="tel" class="form-control userinput" id="mobileNo" name="mobileNo" required placeholder="Enter Mobile No" style="width:359.46px; height:48px;">
+								@* <span asp-validation-for="MobileNo" class="text-danger"></span> *@
+
+							</div>
+						</div>
+						<div class="">
+							<div class="item-input">
+								<label for="password" class="form-label col-form-label required fw-semibold fs-6;form-label">Password</label>
+								<input type="password" class="form-control userinput" id="password" name="password" placeholder="Enter Password" required style="width:359.46px; height:48px;">
+								@* <span asp-validation-for="Password" class="text-danger"></span> *@
+							</div>
+						</div>
+						<div class="col-xl-4 col-lg-6">
+							<div class="item-input">
+								<label for="Department" class="form-label col-form-label required fw-semibold fs-6; form-label">Department</label>
+								<select class="select2-custom form-control select2-hidden-accessible; form-select" style="width: 100%;" data-placeholder="Select Department" id="DepartmentId" name="DepartmentId">
+									@* <select class="form-select" aria-label="Default select example" id="RoleId" name="RoleId"> *@
+									<option selected disabled>Select Department</option>
+									<option value="1">IT</option>
+									<option value="2">HR</option>
+									<option value="3">Finance</option>
+									<option value="4">Admin</option>
+								</select>
+							</div>
+							<div class="item-input">
+								<label for="DesignationId" class="form-label col-form-label required fw-semibold fs-6; form-label">Designation</label>
+								<select class="select2-custom form-control select2-hidden-accessible; form-select" style="width: 100%;" data-placeholder="Select Designation" id="DesignationId" name="DesignationId">
+									@* <select class="form-select" aria-label="Default select example" id="RoleId" name="RoleId"> *@
+									<option selected disabled>Select Designation</option>
+									<option value="1">Software Engineer</option>
+									<option value="2">Senior Software Engineer</option>
+									<option value="3">Lead</option>
+									<option value="4">Manager</option>
+								</select>
+							</div>
+							<div class="item-input">
+								<label for="ManagerId" class="form-label col-form-label required fw-semibold fs-6; form-label">Manager</label>
+								<select class="select2-custom form-control select2-hidden-accessible; form-select" style="width: 100%;" data-placeholder="Select Manager" id="ManagerId" name="ManagerId">
+									@* <select class="form-select" aria-label="Default select example" id="RoleId" name="RoleId"> *@
+									<option selected disabled>Select Manager</option>
+									<option value="1">John Doe</option>
+									<option value="2">Jane Smith</option>
+									<option value="3">Michael Johnson</option>
+									<option value="4">Emily Davis</option>
+								</select>
+							</div>
+							<div class="item-input">
+								<label for="DateOfJoining" class="form-label col-form-label required fw-semibold fs-6; form-label">Date Of Joining</label><br />
+								<input type="text" class="form-control userinput" id="datepicker" name="DateOfJoining" placeholder="Select a Date">
+							</div>
+							<div class="item-input">
+								<label for="DateofLeaving" class="form-label col-form-label required fw-semibold fs-6; form-label">Date Of Leaveing</label><br />
+								<input type="text" id="datepicker" name="DateofLeaving" placeholder="Select a Date">
+							</div>
+							<div class="col-xl-6">
+								@if (ViewData["Message"] != null)
+								{
+									<div class="usermsg" id="temporaryMessage">
+										<span style="color:#00af00;font-weight:600;">@ViewData["Message"]</span>
+									</div>
+								}
+								else
+								{
+									<div class="usermsg" id="temporaryMessage">
+										<span style="color:#d21313;font-weight:600;"> @ViewData["ErrorMessage"]</span>
+									</div>
+								}
+							</div>
+						</div>
+					</div>
+					<div class="button-main">
+						<button type="submit" class="btn btn-primary me-2" style="width:95px;height:38px;background-color: #0466c8;">Add</button>
+						@*<button type="submit" formaction="@Url.Action("MasterView", "MenuMaster")" class="btn btn-primary me-2" style="width:95px;height:38px;background-color: #0466c8;">View</button>*@
+						<a class="btn btn-primary me-2" href="/Employee/ViewEmployee" style=" width: 95px;height: 38px;background-color: #0466c8;">View</a>
+					</div>
+
+				</form>
+			</div>
+		</div>
+	</div>
+	<script src="~/js/calender.js"></script>
+	<script>
+		flatpickr("#datepicker", {
+		  dateFormat: "Y-m-d",
+		  minDate: "today",   // prevents past dates
+		  disableMobile: false // true = always desktop calendar, false = native mobile picker
+		});
+	</script>
+	<script src="~/js/msgtimeout.js"></script>
+</body>

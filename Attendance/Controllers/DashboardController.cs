@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Attendance.Controllers
 {
-
-    public class DashboardController : Controller
+	[Authorize]
+	public class DashboardController : Controller
     {
         private readonly ILogger<DashboardController> _logger;
         private ApplicationURL applicationURL;

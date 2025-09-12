@@ -1,0 +1,170 @@
+﻿@model Attendance.Domain.Models.ModuleMasterDto
+@using System.Security.Claims
+@{
+	Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+@{
+    var openPanel = TempData["OpenPanel"]?.ToString() ?? "";
+}
+<head>
+	<link href="~/css/mastertable.css" rel="stylesheet" />
+
+</head>
+<body>
+    <!-- ===== Improved accordion-style dropdowns (4 items) ===== -->
+    <div class="main-inner container" style="width:100%; max-width:800px;margin-left:inherit;">
+        <div style="margin-top:20px;">
+            <h1 class="page-title">Master Table</h1>
+        </div>
+
+        <div  style="margin-top:10px;">
+           
+            <!-- Toggle 1 -->
+            <button class="accordion-toggle" id="btn-module" aria-expanded="@(openPanel=="module" ? "true" : "false")" aria-controls="panel-module">
+                <span>Add Module</span>
+                <svg class="chev" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                    <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </button>
+            <div id="panel-module" class="accordion-panel @(openPanel=="module" ? "open" : "")" role="region" aria-labelledby="btn-module">
+                <form method="post" action="@Url.Action("ModuleMaster","Master")">
+                    <div class="field">
+                        <label for="ModuleName">Module Name</label>
+                        <input id="ModuleName" name="ModuleName" required placeholder="Enter Module Name">
+                    </div>
+                    <div class="col-xl-6">
+                        @if (TempData["ModelSuccessMsg"] != null)
+                        {
+                            <div class="usermsg" id="temporaryMessage">
+                                <span style="color:#00af00;font-weight:600;">@TempData["ModelSuccessMsg"]</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="usermsg" id="temporaryMessage">
+                                <span style="color:#d21313;font-weight:600;"> @TempData["ModelErrorMsg"]</span>
+                            </div>
+                        }
+                    </div>
+                    <div class="actions">
+                        <button type="submit" class="btn btn-primary me-2" style="width:95px;height:38px;background-color: #0466c8;">Add</button>
+                        <a class="btn btn-primary me-2" href="/Employee/ViewEmployee" style=" width: 95px;height: 38px;background-color: #0466c8;">View</a>
+
+                    </div>
+                    
+                </form>
+            </div>
+
+            <!-- Toggle 2 -->
+            <button class="accordion-toggle" id="btn-dept" aria-expanded="@(openPanel=="dept" ? "true" : "false")" aria-controls="panel-dept">
+                <span>Add Department</span>
+                <svg class="chev" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                    <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </button>
+            <div id="panel-dept" class="accordion-panel @(openPanel=="dept" ? "open" : "")" role="region" aria-labelledby="btn-dept">
+                <form method="post" action="@Url.Action("Department","Master")">
+                    <div class="field">
+                        <label for="Name">Department Name</label>
+                        <input id="Name" name="Name" required placeholder="Enter Department Name">
+                    </div>
+                    <div class="col-xl-6">
+                        @if (TempData["DeptSuccessMsg"] != null)
+                        {
+                            <div class="usermsg" id="deptTemporaryMessage">
+                                <span style="color:#00af00;font-weight:600;">@TempData["DeptSuccessMsg"]</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="usermsg" id="deptTemporaryMessage">
+                                <span style="color:#d21313;font-weight:600;"> @TempData["DeptErrorMsg"]</span>
+                            </div>
+                        }
+                    </div>
+                    <div class="actions">
+                        <button type="submit" class="btn btn-primary me-2" style="width:95px;height:38px;background-color: #0466c8;">Add</button>
+                        <a class="btn btn-primary me-2" href="/Employee/ViewEmployee" style=" width: 95px;height: 38px;background-color: #0466c8;">View</a>
+                    </div>
+                    
+                </form>
+            </div>
+
+            <!-- Toggle 3 -->
+            <button class="accordion-toggle" id="btn-designation" aria-expanded="@(openPanel=="desig" ? "true" : "false")" aria-controls="panel-designation">
+                <span>Add Designation</span>
+                <svg class="chev" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                    <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </button>
+            <div id="panel-designation" class="accordion-panel @(openPanel=="desig" ? "open" : "")" role="region" aria-labelledby="btn-designation">
+                <form method="post" action="@Url.Action("Designation","Master")">
+                    <div class="field">
+                        <label for="DesignationName">Designation Name</label>
+                        <input id="DesignationName" name="DesignationName" required placeholder="Enter Designation Name">
+                    </div>
+                    <div class="col-xl-6">
+                        @if (TempData["DesigsSuccessMsg"] != null)
+                        {
+                            <div class="usermsg" id="desigtemporaryMessage">
+                                <span style="color:#00af00;font-weight:600;">@TempData["DesigsSuccessMsg"]</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="usermsg" id="desigtemporaryMessage">
+                                <span style="color:#d21313;font-weight:600;"> @TempData["DesigErrorMsg"]</span>
+                            </div>
+                        }
+                    </div>
+                    <div class="actions">
+                        <button type="submit" class="btn btn-primary me-2" style="width:95px;height:38px;background-color: #0466c8;">Add</button>
+                        <a class="btn btn-primary me-2" href="/Employee/ViewEmployee" style=" width: 95px;height: 38px;background-color: #0466c8;">View</a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Toggle 4 -->
+            <button class="accordion-toggle" id="btn-leave" aria-expanded="@(openPanel=="leave" ? "true" : "false")" aria-controls="panel-leave">
+                <span>Add Leave</span>
+                <svg class="chev" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                    <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </button>
+            <div id="panel-leave" class="accordion-panel @(openPanel=="leave" ? "open" : "")" role="region" aria-labelledby="btn-leave">
+                <form method="post" action="@Url.Action("Leave","Master")">
+                    <div class="field">
+                        <label for="LeaveType">Leave Type</label>
+                        <input id="LeaveType" name="LeaveType" required placeholder="Enter Leave Type">
+                    </div>
+                    <div class="col-xl-6">
+                        @if (TempData["LeaveSuccessMsg"] != null)
+                        {
+                            <div class="usermsg" id="leavetemporaryMessage">
+                                <span style="color:#00af00;font-weight:600;">@TempData["LeaveSuccessMsg"]</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="usermsg" id="leavetemporaryMessage">
+                                <span style="color:#d21313;font-weight:600;"> @TempData["LeaveErrorMsg"]</span>
+                            </div>
+                        }
+                    </div>
+                    <div class="actions">
+                        <button type="submit" class="btn btn-primary me-2" style="width:95px;height:38px;background-color: #0466c8;">Add</button>
+                        <a class="btn btn-primary me-2" href="/Employee/ViewEmployee" style=" width: 95px;height: 38px;background-color: #0466c8;">View</a>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        var openPanel = @openPanel.ToString() ?? "";
+         console.log(openPanel);
+        </script>
+	<script src="~/js/mastertable.js"></script>
+	<script src="~/js/msgtimeout.js"></script>
+</body>

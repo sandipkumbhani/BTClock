@@ -12,8 +12,12 @@ namespace Attendance.Application.Extension
 			
 			services.AddScoped<IAttendanceService, AttendanceService>();
 			services.AddScoped<ILoginServices, LoginServices>();
-
-            return services;
+			services.AddScoped<IEmployeeService, EmployeeService>();
+			services.AddScoped<IDepartmentService, DepartmentService>();
+			services.AddScoped<IDesignationService, DesignationService>();
+			services.AddScoped<ILeaveMasterService, LeaveMasterService>();
+			services.AddScoped<IModuleMasterService, ModuleMasterService>();
+			return services;
 		}
 	}
 }

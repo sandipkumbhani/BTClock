@@ -13,7 +13,7 @@ namespace Attendance.Domain.Models
         public int EmployeeId { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
-        public string Password { get; set; }
+        public string? Password { get; set; }
         public string MobileNo { get; set; }
         [ForeignKey("DesignationId")]
         public int DesignationId { get; set; }

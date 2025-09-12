@@ -323,12 +323,10 @@ $(document).ready(function () {
             }
         }
     });
-
     // Add child row toggle
     $('#corporateTable tbody').on('click', 'td.details-control', function () {
         const tr = $(this).closest('tr');
         const row = table.row(tr);
-
         if (row.child.isShown()) {
             row.child.hide();
             tr.removeClass('shown fulltable');
@@ -337,88 +335,15 @@ $(document).ready(function () {
             tr.addClass('shown fulltable'); // Add your custom class here
         }
     });
-
     // Function to format child row content ${rowData[1]}
-    function format(rowData) {
-        return `
-            <table class="table sub-table dt-responsive w-100 mb-0">
-                <thead>
-                    <tr>
-                        <th>Company Person Name</th>
-                        <th>Email</th>
-                        <th>PAN Number</th>
-                        <th>Franchise Name</th>
-                        <th>Phone Number</th>
-                        <th>WhatsApp Number </th>
-                        <th class="no-sort">Action</th>
-
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <div class="user-list-bx d-flex align-items-center">
-                                <img src="images/avatar-1.png" alt="" class="flex-shrink-0 me-12">
-                                <h6 class="text-md mb-0">Darrell_Steward</h6>
-                            </div>
-                        </td>
-                        <td>ronaldrichards@gmail.com</td>
-                        <td>BAJPC4350M</td>
-                        <td>Amazon</td>
-                        <td>+91 9876543210</td>
-                        <td>+91 9876543210</td>
-                        <td class="action-items">
-                            <a href="#" class="icon-btn">
-                                <i class="ri-edit-2-line"></i>
-                            </a>
-                            <a href="#" class="icon-btn">
-                                <i class="ri-delete-bin-3-line"></i>
-                            </a>
-                            <a href="#" class="icon-btn">
-                                <i class="ri-eye-line"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="user-list-bx d-flex align-items-center">
-                                <img src="images/avatar-1.png" alt="" class="flex-shrink-0 me-12">
-                                <h6 class="text-md mb-0">Darrell_Steward</h6>
-                            </div>
-                        </td>
-                        <td>ronaldrichards@gmail.com</td>
-                        <td>BAJPC4350M</td>
-                        <td>Amazon</td>
-                        <td>+91 9876543210</td>
-                        <td>+91 9876543210</td>
-                        <td class="action-items">
-                            <a href="#" class="icon-btn">
-                                <i class="ri-edit-2-line"></i>
-                            </a>
-                            <a href="#" class="icon-btn">
-                                <i class="ri-delete-bin-3-line"></i>
-                            </a>
-                            <a href="#" class="icon-btn">
-                                <i class="ri-eye-line"></i>
-                            </a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        `;
-    }
-
     // Move export buttons
     table.buttons().container().appendTo('#exportcorporateButtons');
-
     // Search
     $('#customcorporateSearch').on('keyup', function () {
         table.search(this.value).draw();
     });
-
     // Move pagination
     $('#corporateTable_paginate').appendTo('#customcorporatePagination');
-
     // Filter dropdown
     $('.filter-option-corporate').on('click', function () {
         const value = $(this).data('value');
@@ -426,12 +351,10 @@ $(document).ready(function () {
         $('#filterDropdownCorporate').text(label === 'All Status' ? 'Filter' : `${label}`);
         table.column(2).search(value).draw();
     });
-
     // Page length
     $('#pageLength').on('change', function () {
         table.page.len(this.value).draw();
     });
-
     // Update total reminders
     $('#totalRemindersCorporate').text(`Total List: ${table.rows().count()}`);
 });
