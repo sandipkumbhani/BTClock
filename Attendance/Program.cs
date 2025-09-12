@@ -41,7 +41,7 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 app.Use(async (context, next) =>
-{
+ {
    
     var token = context.Request.Cookies["jwtToken"];
     globalClass.Token = token;
@@ -57,7 +57,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllerRoute(
    name: "default",
-   pattern: "{controller=Login}/{action=Login}/{id?}");
+   pattern: "{controller=Dashboard}/{action=Dashboard}/{id?}");
 
 if (app.Environment.IsDevelopment())
 {

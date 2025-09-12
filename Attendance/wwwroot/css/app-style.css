@@ -1861,7 +1861,8 @@ tr.shown td.details-control::before {
 }
 
 td.details-control::before {
-    content: "\ea6e";
+    content: none;
+    display:none;
     font-family: 'remixicon';
     font-size: 1.5rem;
     color: var(--ft-secondary);

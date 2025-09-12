@@ -1,6 +1,6 @@
 ﻿@{
     Layout = "_LayoutTimesheet";
-    int UserID = ViewBag.UserID;
+    // int UserID = ViewBag.UserID;
     ViewData["Title"] = "Records";
 }
 <!-- DataTables CSS -->
@@ -85,9 +85,9 @@
 @section Scripts
 {
 
-    <script type="text/javascript">
+@*     <script type="text/javascript">
         var UserID = Number.parseInt(@UserID);
-    </script>
+    </script> *@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="~/js/record.js"></script>
     <script src="~/js/moment.min.js"></script>

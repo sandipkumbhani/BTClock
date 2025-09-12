@@ -11,8 +11,12 @@ namespace Attendance.Infrastructure.Efcore.Extensions
 		{
 			services.AddScoped<IAttendanceAdaptor,AttendanceAdaptor>();
 			services.AddScoped<ILoginAdaptor, LoginAdaptor>();
-
-            return services;
+			services.AddScoped<IEmployeeAdaptor, EmployeeAdaptor>();
+			services.AddScoped<IDepartmentAdaptor, DepartmentAdaptor>();
+			services.AddScoped<IDesignationAdaptor, DesignationAdaptor>();
+			services.AddScoped<ILeaveMasterAdaptor, LeaveMasterAdaptor>();
+			services.AddScoped<IModuleMasterAdaptor, ModuleMasterAdaptor>();
+			return services;
 		}
 	}
 }
