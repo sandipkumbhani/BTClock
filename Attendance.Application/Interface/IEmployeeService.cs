@@ -10,7 +10,7 @@ namespace Attendance.Application.Interface
     public interface IEmployeeService
     {
 		Task<EmployeeDto> GetEmployeeById(int employeeId);
-		Task<List<EmployeeDto>> GetAllEmployee(EmployeeDto employeeDto);
+		Task<List<EmployeeDto>> GetAllEmployee();
 		Task<string> AddEmployee(EmployeeDto employeeDto);
 		Task<string> UpdateEmployee(EmployeeDto employeeDto,int employeeId);
 		Task<int> DeleteEmployee(int employeeId);

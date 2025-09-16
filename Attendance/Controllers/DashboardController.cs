@@ -20,7 +20,6 @@ namespace Attendance.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Dashboard()
         {
-
             return View();
         }
     }

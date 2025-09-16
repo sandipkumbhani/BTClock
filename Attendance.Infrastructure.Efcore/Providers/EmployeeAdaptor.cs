@@ -36,7 +36,7 @@ namespace Attendance.Infrastructure.Efcore.Providers
 			}
 			return null;
 		}
-		public async Task<List<EmployeeDto>>GetAllEmployeeAsync(EmployeeDto employeedto)
+		public async Task<List<EmployeeDto>>GetAllEmployeeAsync()
 		{
 			var httpclient = new HttpClient();
 			_httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);

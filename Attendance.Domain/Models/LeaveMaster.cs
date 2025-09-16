@@ -16,7 +16,7 @@ namespace Attendance.Domain.Models
 	}
 	public class LeaveMasterDto
 	{
-		public int LeaveMasterId { get; set; }
+		public int? LeaveMasterId { get; set; }
 		public string LeaveType { get; set; }
 	}
 }

@@ -1,6 +1,6 @@
-﻿using Attendance.Domain.Helper;
 using Attendance.Domain.Interfaces;
 using Attendance.Domain.Models;
+using Attendance.Domain.Helper;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Text;

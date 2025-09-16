@@ -84,13 +84,14 @@ namespace Attendance.Infrastructure.Efcore.Providers
 			var httpClient = _httpClient;
 			_httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);
 			var baseUrl = _apiCredential.url + "Department/UpdateDepartment/" + departmentId;
-			var response = await httpClient.GetAsync(baseUrl);
+			var patient = JsonConvert.SerializeObject(departmentDto);
+			var requestContent = new StringContent(patient, Encoding.UTF8, "application/json");
+			var response = await _httpClient.PutAsync(baseUrl, requestContent);
 			var responseData = await response.Content.ReadAsStringAsync();
 			var responseModel = JsonConvert.DeserializeObject<CommanResponseDto>(responseData);
 			if (response.IsSuccessStatusCode)
 			{
-				var employee = JsonConvert.DeserializeObject<string>(responseModel.Data.ToString());
-				return employee;
+				return responseModel.Data.ToString();
 			}
 			return null;
 		}
@@ -99,7 +100,7 @@ namespace Attendance.Infrastructure.Efcore.Providers
 			var httpClient = _httpClient;
 			_httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);
 			var baseUrl = _apiCredential.url + "Department/DeleteDepartment/" + departmentId;
-			var response = await httpClient.GetAsync(baseUrl);
+			var response = await httpClient.DeleteAsync(baseUrl);
 
 			if (response.IsSuccessStatusCode)
 			{

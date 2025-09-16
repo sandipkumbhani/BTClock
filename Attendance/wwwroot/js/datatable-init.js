@@ -358,3 +358,193 @@ $(document).ready(function () {
     // Update total reminders
     $('#totalRemindersCorporate').text(`Total List: ${table.rows().count()}`);
 });
+
+
+
+$(document).ready(function () {
+    const deptTable = $('#DepartmentTable').DataTable({
+        responsive: false,
+        dom: 'Bfrtip',
+        buttons: [
+            {
+                text: '<i class="ri-file-excel-line"></i> Export All',
+                action: function () {
+                    deptTable.button('.buttons-excel').trigger();
+                }
+            }
+        ],
+        paging: true,
+        info: true,
+        lengthChange: false,
+        pageLength: 10,
+        columnDefs: [
+            { orderable: false, targets: 'no-sort' }
+        ],
+        language: {
+            paginate: {
+                previous: '<i class="ri-arrow-left-s-line"></i>',
+                next: '<i class="ri-arrow-right-s-line"></i>'
+            }
+        }
+    });
+
+    // Move export buttons
+    deptTable.buttons().container().appendTo('#exportcorporateButtons');
+
+    // Search
+    $('#departmentSearch').on('keyup', function () {
+        deptTable.search(this.value).draw();
+    });
+
+    // Move pagination
+    $('#DepartmentTable_paginate').appendTo('#DepartmentPagination');
+
+    // Page length
+    $('#departmentpageLength').on('change', function () {
+        deptTable.page.len(this.value).draw();
+    });
+
+    // Update total list dynamically
+    $('#totalRemindersDepartment').text(`Total List: ${deptTable.rows().count()}`);
+});
+
+$(document).ready(function () {
+    const deptTable = $('#DesignationTable').DataTable({
+        responsive: false,
+        dom: 'Bfrtip',
+        buttons: [
+            {
+                text: '<i class="ri-file-excel-line"></i> Export All',
+                action: function () {
+                    deptTable.button('.buttons-excel').trigger();
+                }
+            }
+        ],
+        paging: true,
+        info: true,
+        lengthChange: false,
+        pageLength: 10,
+        columnDefs: [
+            { orderable: false, targets: 'no-sort' }
+        ],
+        language: {
+            paginate: {
+                previous: '<i class="ri-arrow-left-s-line"></i>',
+                next: '<i class="ri-arrow-right-s-line"></i>'
+            }
+        }
+    });
+
+    // Move export buttons
+    deptTable.buttons().container().appendTo('#exportcorporateButtons');
+
+    // Search
+    $('#designationSearch').on('keyup', function () {
+        deptTable.search(this.value).draw();
+    });
+
+    // Move pagination
+    $('#DesignationTable_paginate').appendTo('#DesignationPagination');
+
+    // Page length
+    $('#designationpageLength').on('change', function () {
+        deptTable.page.len(this.value).draw();
+    });
+
+    // Update total list dynamically
+    $('#totalRemindersDesignation').text(`Total List: ${deptTable.rows().count()}`);
+});
+
+$(document).ready(function () {
+    const deptTable = $('#LeavemasterTable').DataTable({
+        responsive: false,
+        dom: 'Bfrtip',
+        buttons: [
+            {
+                text: '<i class="ri-file-excel-line"></i> Export All',
+                action: function () {
+                    deptTable.button('.buttons-excel').trigger();
+                }
+            }
+        ],
+        paging: true,
+        info: true,
+        lengthChange: false,
+        pageLength: 10,
+        columnDefs: [
+            { orderable: false, targets: 'no-sort' }
+        ],
+        language: {
+            paginate: {
+                previous: '<i class="ri-arrow-left-s-line"></i>',
+                next: '<i class="ri-arrow-right-s-line"></i>'
+            }
+        }
+    });
+
+    // Move export buttons
+    deptTable.buttons().container().appendTo('#exportcorporateButtons');
+
+    // Search
+    $('#leavemasterSearch').on('keyup', function () {
+        deptTable.search(this.value).draw();
+    });
+
+    // Move pagination
+    $('#LeavemasterTable_paginate').appendTo('#LeaveMasterPagination');
+
+    // Page length
+    $('#LeaveMasterpageLength').on('change', function () {
+        deptTable.page.len(this.value).draw();
+    });
+
+    // Update total list dynamically
+    $('#totalRemindersleavemaster').text(`Total List: ${deptTable.rows().count()}`);
+});
+
+$(document).ready(function () {
+    const deptTable = $('#holidaymasterTable').DataTable({
+        responsive: false,
+        dom: 'Bfrtip',
+        buttons: [
+            {
+                text: '<i class="ri-file-excel-line"></i> Export All',
+                action: function () {
+                    deptTable.button('.buttons-excel').trigger();
+                }
+            }
+        ],
+        paging: true,
+        info: true,
+        lengthChange: false,
+        pageLength: 10,
+        columnDefs: [
+            { orderable: false, targets: 'no-sort' }
+        ],
+        language: {
+            paginate: {
+                previous: '<i class="ri-arrow-left-s-line"></i>',
+                next: '<i class="ri-arrow-right-s-line"></i>'
+            }
+        }
+    });
+
+    // Move export buttons
+    deptTable.buttons().container().appendTo('#exportcorporateButtons');
+
+    // Search
+    $('#holidaymasterSearch').on('keyup', function () {
+        deptTable.search(this.value).draw();
+    });
+
+    // Move pagination
+    $('#holidaymasterTable_paginate').appendTo('#HolidayMasterPagination');
+
+    // Page length
+    $('#HolidayMasterpageLength').on('change', function () {
+        deptTable.page.len(this.value).draw();
+    });
+
+    // Update total list dynamically
+    $('#totalRemindersholidaymaster').text(`Total List: ${deptTable.rows().count()}`);
+});

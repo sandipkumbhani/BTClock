@@ -10,92 +10,92 @@ using System.Threading.Tasks;
 
 namespace Attendance.Infrastructure.Efcore.Providers
 {
-	public class DesignationAdaptor : IDesignationAdaptor
+   public  class HolidayMasterAdaptor : IHolidayMasterAdaptor
 	{
 		private readonly HttpClient _httpClient;
 		private readonly IConfiguration _configuration;
 		private readonly APICredential _apiCredential;
 		private readonly GlobalClass _globalClass;
-		public DesignationAdaptor(HttpClient httpClient, IConfiguration configuration, GlobalClass globalClass)
+		public HolidayMasterAdaptor(HttpClient httpClient, IConfiguration configuration, GlobalClass globalClass)
 		{
 			_httpClient = httpClient;
 			_configuration = configuration;
 			_apiCredential = new APICredential(_configuration);
 			_globalClass = globalClass;
 		}
-		public async Task<List<DesignationDto>> GetAllDesignationAsync()
+		public async Task<List<HolidayMasterDto>> GetAllHolidayMasterAsync()
 		{
-			var httpclient = new HttpClient();
+			var httpClient = _httpClient;
 			_httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);
-			var baseUrl = _apiCredential.url + "Designation/GetAllDesignation";
+			var baseUrl = _apiCredential.url + "HolidayMaster/GetAllHolidayMasters";
 			var response = await _httpClient.GetAsync(baseUrl);
 			var responseData = await response.Content.ReadAsStringAsync();
 			var responseModel = Newtonsoft.Json.JsonConvert.DeserializeObject<CommanResponseDto>(responseData);
 			if (response.IsSuccessStatusCode)
 			{
 				// Deserialize response data to PatientDto
-				var designation = Newtonsoft.Json.JsonConvert.DeserializeObject<List<DesignationDto>>(responseModel.Data.ToString());
-				return designation;
+				var holidayMaster = Newtonsoft.Json.JsonConvert.DeserializeObject<List<HolidayMasterDto>>(responseModel.Data.ToString());
+				return holidayMaster;
 			}
 			return null;
 		}
-		public async Task<DesignationDto> GetDesignationByIdAsync(int Id)
+		public async Task<HolidayMasterDto> GetHolidayMasterByIdAsync(int Id)
 		{
 			var httpclient = new HttpClient();
 			_httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);
-			var baseUrl = _apiCredential.url + "Designation/GetDesignationById/" + Id;
+			var baseUrl = _apiCredential.url + "HolidayMaster/GetHolidayMasterById/" + Id;
 			var response = await _httpClient.GetAsync(baseUrl);
 			var responseData = await response.Content.ReadAsStringAsync();
 			var responseModel = Newtonsoft.Json.JsonConvert.DeserializeObject<CommanResponseDto>(responseData);
 			if (response.IsSuccessStatusCode)
 			{
 				// Deserialize response data to PatientDto
-				var designation = Newtonsoft.Json.JsonConvert.DeserializeObject<DesignationDto>(responseModel.Data.ToString());
-				return designation;
+				var holidayMaster = Newtonsoft.Json.JsonConvert.DeserializeObject<HolidayMasterDto>(responseModel.Data.ToString());
+				return holidayMaster;
 			}
 			return null;
 		}
-		public async Task<string> AddDesignationAsync(DesignationDto designationdto)
+		public async Task<string> AddHolidayMasterAsync(HolidayMasterDto holidayMasterdto)
 		{
 			var httpclient = new HttpClient();
 			_httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);
-			var baseUrl = _apiCredential.url + "Designation/AddDesignation";
-			var jsonData = Newtonsoft.Json.JsonConvert.SerializeObject(designationdto);
+			var baseUrl = _apiCredential.url + "HolidayMaster/AddHolidayMaster";
+			var jsonData = Newtonsoft.Json.JsonConvert.SerializeObject(holidayMasterdto);
 			var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
 			var response = await _httpClient.PostAsync(baseUrl, content);
 			var responseData = await response.Content.ReadAsStringAsync();
 			var responseModel = Newtonsoft.Json.JsonConvert.DeserializeObject<CommanResponseDto>(responseData);
 			if (response.IsSuccessStatusCode)
 			{
-				return responseModel.Data.ToString();
+				return responseModel.Message;
 			}
 			return null;
 		}
-		public async Task<string> UpdateDesignationAsync(DesignationDto designationdto, int designationId)
+		public async Task<string> UpdateHolidayMasterAsync(HolidayMasterDto holidayMasterdto, int Id)
 		{
 			var httpclient = new HttpClient();
 			_httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);
-			var baseUrl = _apiCredential.url + "Designation/UpdateDesignation/" + designationId;
-			var jsonData = Newtonsoft.Json.JsonConvert.SerializeObject(designationdto);
+			var baseUrl = _apiCredential.url + "HolidayMaster/UpdateHolidayMaster/" + Id;
+			var jsonData = Newtonsoft.Json.JsonConvert.SerializeObject(holidayMasterdto);
 			var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
 			var response = await _httpClient.PutAsync(baseUrl, content);
 			var responseData = await response.Content.ReadAsStringAsync();
 			var responseModel = Newtonsoft.Json.JsonConvert.DeserializeObject<CommanResponseDto>(responseData);
 			if (response.IsSuccessStatusCode)
 			{
-				return responseModel.Data.ToString();
+				return responseModel.Message;
 			}
 			return null;
 		}
-		public async Task<int> DeleteDesignationAsync(int designationId)
+		public async Task<int> DeleteHolidayMasterAsync(int Id)
 		{
 			var httpclient = new HttpClient();
 			_httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);
-			var baseUrl = _apiCredential.url + "Designation/DeleteDesignation/" + designationId;
+			var baseUrl = _apiCredential.url + "HolidayMaster/DeleteHolidayMaster/" + Id;
 			var response = await _httpClient.DeleteAsync(baseUrl);
 			if (response.IsSuccessStatusCode)
 			{
-				return designationId;	
+				return Id;
 			}
 			return 0;
 		}

@@ -17,7 +17,8 @@ namespace Attendance.Application.service
 		{
 			_adaptor = adaptor;
 		}
-		public async Task<List<ModuleMasterDto>> GetAllModuleMaster( )
+
+		public async Task<List<ModuleMasterDto>> GetAllModuleMaster()
 		{
 			return await _adaptor.GetAllModuleMasterAsync();
 		}

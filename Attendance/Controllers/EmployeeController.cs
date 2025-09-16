@@ -94,7 +94,7 @@ namespace Attendance.Controllers
 				if (_globalClass.Token != null)
 				{
 					var employeedto = new EmployeeDto();
-					var employee = await _employeeService.GetAllEmployee(employeedto);
+					var employee = await _employeeService.GetAllEmployee();
 					if (employee != null)
 					{
 						return Json(new { result = "Success",data = employee });

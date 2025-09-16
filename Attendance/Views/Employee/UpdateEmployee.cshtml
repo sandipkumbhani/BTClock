@@ -95,16 +95,17 @@
 							</div>
 							<div class="item-input">
 								<label for="DateOfJoining" class="form-label col-form-label required fw-semibold fs-6; form-label">Date Of Joining</label><br />
-								<input type="text" class="form-control userinput" value="@Model.DateOfJoining" id="datepicker" name="DateOfJoining" placeholder="Select a Date">
+								<input type="text" data-provide="datepicker" class="form-control userinput" id="datepicker" name="DateOfJoining" value="@Model.DateOfJoining" placeholder="Select a Date" style="width:370px;	">
 							</div>
 							<div class="item-input">
 								<label for="DateofLeaving" class="form-label col-form-label required fw-semibold fs-6; form-label">Date Of Leaveing</label><br />
-								<input type="text" id="datepicker" name="DateofLeaving" value="@Model.DateofLeaving" placeholder="Select a Date">
+								<input type="text" data-provide="datepicker" class="form-control userinput" id="datepicker" value="@Model.DateofLeaving" name="DateofLeaving" placeholder="Select a Date" style="width:370px;	">
+
 							</div>
 							 <div class="col-xl-6">
 								@if (ViewBag.Message != null)
 								{
-										<div class="usermsg" id="temporaryMessage">
+										<div class="us,ermsg" id="temporaryMessage">
 										<span style="color:#00af00;font-weight:600;">@ViewBag.Message</span>
 										</div>
 								}

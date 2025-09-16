@@ -15,9 +15,9 @@ namespace Attendance.Application.service
 		{
 			return await _employeeAdaptor.GetEmployeeByIdAsync(employeeId);
 		}
-		public async Task<List<EmployeeDto>> GetAllEmployee(EmployeeDto employeeDto)
+		public async Task<List<EmployeeDto>> GetAllEmployee()
 		{
-			return await _employeeAdaptor.GetAllEmployeeAsync(employeeDto);
+			return await _employeeAdaptor.GetAllEmployeeAsync();
 		}
 		public async Task<string> AddEmployee(EmployeeDto employeeDto)
 		{

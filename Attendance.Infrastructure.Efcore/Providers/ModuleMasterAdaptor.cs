@@ -85,9 +85,11 @@ namespace Attendance.Infrastructure.Efcore.Providers
 			var httpclient = new HttpClient();
 			_httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);
 			var baseUrl = _apiCredential.url + "ModuleMaster/UpdateModule/" + Id;
-			var response = await _httpClient.GetAsync(baseUrl);
+			var patient = JsonConvert.SerializeObject(moduleMasterDto);
+			var requestContent = new StringContent(patient, Encoding.UTF8, "application/json");
+			var response = await _httpClient.PutAsync(baseUrl, requestContent);
 			var responseData = await response.Content.ReadAsStringAsync();
-			var responseModel = Newtonsoft.Json.JsonConvert.DeserializeObject<CommanResponseDto>(responseData);
+			var responseModel = JsonConvert.DeserializeObject<CommanResponseDto>(responseData);
 			if (response.IsSuccessStatusCode)
 			{
 				return responseModel.Data.ToString();
@@ -99,7 +101,7 @@ namespace Attendance.Infrastructure.Efcore.Providers
 			var httpclient = new HttpClient();
 			_httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);
 			var baseUrl = _apiCredential.url + "ModuleMaster/DeleteModule/" + Id;
-			var response = await _httpClient.GetAsync(baseUrl);
+			var response = await _httpClient.DeleteAsync(baseUrl);
 
 			if (response.IsSuccessStatusCode)
 			{

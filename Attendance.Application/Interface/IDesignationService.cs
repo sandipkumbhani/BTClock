@@ -10,7 +10,7 @@ namespace Attendance.Application.Interface
     public interface IDesignationService
     {
         Task<DesignationDto> GetDesignationById(int designationId);
-        Task<List<DesignationDto>> GetAllDesignation(DesignationDto designationDto);
+        Task<List<DesignationDto>> GetAllDesignation();
         Task<string> AddDesignation(DesignationDto designationDto);
 		Task<string> UpdateDesignation(DesignationDto designationDto, int designationId);
         Task<int> DeleteDesignation(int designationId);
