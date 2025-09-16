@@ -45,8 +45,12 @@ public class RecordController : Controller
             clockOut = r.ClockOut?.ToString(@"hh\:mm\:ss") ?? "-",
             totalTime = r.ClockOut.HasValue
                 ? (r.ClockOut.Value - r.ClockIn).ToString(@"hh\:mm\:ss")
+                : "-",
+            overtimeHours = r.OvertimeHours.HasValue
+                ? r.OvertimeHours.Value.ToString(@"hh\:mm\:ss")
                 : "-"
         });
+
         return Json(result);
     }
     [HttpGet]
@@ -59,14 +63,18 @@ public class RecordController : Controller
         var endDate = startDate.AddMonths(1).AddDays(-1);
         var records = await _service.GetAttendanceByEmployeeAsync(userId);
         var filteredRecords = records
-            .Where(r => r.Date >= startDate && r.Date <= endDate && r.ClockOut.HasValue)
-            .Select(r => new
-            {
-                date = r.Date.ToString("dd-MMM-yyyy"),
-                clockIn = r.ClockIn.ToString(@"hh\:mm\:ss"),
-                clockOut = r.ClockOut?.ToString(@"hh\:mm\:ss") ?? "-",
-                totalTime = (r.ClockOut.Value - r.ClockIn).ToString(@"hh\:mm\:ss")
-            });
+                .Where(r => r.Date >= startDate && r.Date <= endDate && r.ClockOut.HasValue)
+                .Select(r => new
+                {
+                    date = r.Date.ToString("dd-MMM-yyyy"),
+                    clockIn = r.ClockIn.ToString(@"hh\:mm\:ss"),
+                    clockOut = r.ClockOut?.ToString(@"hh\:mm\:ss") ?? "-",
+                    totalTime = (r.ClockOut.Value - r.ClockIn).ToString(@"hh\:mm\:ss"),
+                    overtimeHours = r.OvertimeHours.HasValue
+                        ? r.OvertimeHours.Value.ToString(@"hh\:mm\:ss")
+                        : "-"
+                });
+
         return Json(filteredRecords);
     }
     [HttpGet]

@@ -1,0 +1,101 @@
+.range-container {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: fit-content;
+    padding: 1px;
+    background: #f8f8f8;
+}
+.range-input {
+    width: 45px;
+    text-align: center;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 14px;
+}
+.range-Hourinput {
+    width: 45px;
+    text-align: center;
+    border: 1px solid #dbd9d9;
+    outline: none;
+    background: #fff;
+    font-size: 14px;
+    height: 24px;
+}
+.inner-wrap.max-width, .section-wrap.max-width {
+    max-width: var(--contentMaxWidth);
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--innerWrapPadding);
+    padding-right: var(--innerWrapPadding);
+    margin-top:100px;
+    margin-left:315px;
+}
+.service-cs-grid.max-height {
+    max-height: 1500px;
+}
+.service-cs-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-auto-rows: 380px;
+    grid-gap: 0px;
+    padding-bottom: 200px;
+    overflow: hidden;
+}
+.service-case-study {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    position: relative;
+    grid-column: span 2;
+}
+.project-item > .inner-wrap {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    height: 65%;
+    width:65%;
+    position: relative;
+}
+.project-item .img-cnt {
+    -webkit-box-flex: 1;
+    -ms-flex-positive: 1;
+    flex-grow: 1;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.project-item .img-cnt img:not(.no-hover) {
+    -webkit-transition: .5s;
+    transition: .5s;
+    -webkit-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out;
+    -webkit-transform: scale(1);
+    -ms-transform: scale(1);
+    transform: scale(1);
+}
+.project-item:hover .img-cnt img:not(.no-hover) {
+   
+    transform: scale(1.05);
+}
+img.contain, img.cover{
+    display: block;
+    width: 100%;
+    min-width: inherit;
+    max-width: inherit;
+    height: 100%;
+    min-height: inherit;
+    max-height: inherit;
+}
+img.cover {
+    object-fit: cover;
+}

@@ -1,4 +1,4 @@
-﻿using Attendance.Domain.Interfaces;
+using Attendance.Domain.Interfaces;
 using Attendance.Domain.Models;
 using Attendance.Domain.Helper;
 using Microsoft.Extensions.Configuration;

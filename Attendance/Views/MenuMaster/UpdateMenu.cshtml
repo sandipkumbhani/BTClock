@@ -1,0 +1,122 @@
+﻿@model Attendance.Domain.Models.menuMasterDto
+@using System.Security.Claims
+@using Attendance.Domain.Models
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="main-inner container-fluid">
+    @{
+        ViewBag.Breadcrumbs = new List<Attendance.Domain.Models.BreadcrumbItem>
+        {
+        new BreadcrumbItem { Title = "Dashboard", Url = Url.Action("Dashboard", "Dashboard"), IsActive = false },
+        new BreadcrumbItem { Title = "MenuMaster", Url = Url.Action("MenuMaster", "MenuMaster"), IsActive = false },
+        new BreadcrumbItem { Title = "MasterView", Url = Url.Action("MenuMaster", "MasterView"), IsActive = false },
+        new BreadcrumbItem { Title = "Edit", Url = "", IsActive = true }
+        };
+    }
+    <div class="col-12">
+        <div class="page-title-box" style="margin-top:20px;">
+            <h1 class="page-title">Update Menu Master</h1>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="card com-profile-info">
+            <form class="form" id="userForm" method="post" asp-action="UpdateMenu" asp-controller="MenuMaster">
+                <div class="top-details">
+                    <h2 class="page-form-title">Update Menu Master</h2>
+                    <div class="">
+                        <div class="item-input" style="display:none;">
+                            <label for="MenuId" class="form-label col-form-label required fw-semibold fs-6">Menu Name</label>
+                            <input type="text" class="form-control userinput" id="MenuId" name="MenuId" value="@Model.Menuid" style="width:659.46px; height:48px;" required>
+                        </div>
+                    </div>
+                    <div class="">
+                        <div class="item-input">
+                            <label for="MenuName" class="form-label col-form-label required fw-semibold fs-6">Menu Name</label>
+                            <input type="text" class="form-control userinput" id="MenuName" name="MenuName" value="@Model.Menuname" style="width:659.46px; height:48px;" required>
+                        </div>
+                    </div>
+                    <div class="">
+                        <div class="item-input">
+                            <label for="MenuPath" class="form-label col-form-label required fw-semibold fs-6">Path</label>
+                            <input type="text" class="form-control userinput" id="MenuPath" name="MenuPath" value="@Model.MenuPath" style="width:659.46px; height:48px;" required>
+                        </div>
+                    </div>
+                    <div class="">
+                        <div class="item-input">
+                            <label for="Icon" class="form-label col-form-label required fw-semibold fs-6">Icon</label>
+                            <input type="text" class="form-control userinput" id="Icon" name="Icon" value="@Model.Icon" style="width:659.46px; height:48px;" required>
+                        </div>
+                    </div>
+                    <div class="col-xl-12 col-lg-6">
+                        <div class="item-input">
+                            <label class="form-label col-form-label required fw-semibold fs-6" for="IsDefault">
+                                <input type="checkbox" class="form-check-input" id="IsDefault" value="true" @(Model.isDefault ? "checked" : "") name="IsDefault"> &nbsp;
+                                Is Default
+                            </label>
+                        </div>
+                    </div>
+                    <div class="">
+                        <div class="item-input">
+                            <label for="modules" class="form-label col-form-label required fw-semibold fs-6">Module</label>
+                            <select class="select2-custom form-control select2-hidden-accessible; form-select" id="ModuleMasterId" name="ModuleMasterId" style="width:659.46px; height:48px;">
+                                <option value="@Model.ModuleMasterId" selected>@Model.ModuleMaster?.ModuleName</option>
+                                @foreach (var module in ViewBag.Modules)
+                                {
+                                    @if (module.Id != Model.ModuleMasterId)
+                                    {
+                                        <option value="@module.Id">@module.ModuleName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="item-input">
+                        <label for="Parent" class="form-label col-form-label required fw-semibold fs-6">ParentMenuName</label>
+                        <select class="select2-custom form-control select2-hidden-accessible; form-select" id="ParentId" name="ParentId" style="width:659.46px; height:48px;">
+                            @if (Model.ParentId != 0 && Model.ParentId != null)
+                            {
+                                <option value="@Model.ParentId" selected>
+                                    @foreach (var item in ViewBag.menu)
+                                    {
+                                        ViewBag.ParentMenu = ((List<menuMasterDto>)ViewBag.menu)?.FirstOrDefault(p => p.Menuid == Model.ParentId)?.Menuname;
+                                    }
+                                    @ViewBag.ParentMenu
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="0" disabled selected>Select ParentMenu</option>
+                            }
+                            @foreach (var item in ViewBag.menu)
+                            {
+                                <option value="@item.Menuid">@item.Menuname</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-xl-6" style="margin-left:30px;">
+                    @if (ViewBag.msg != null)
+                    {
+                        <div class="usermsg" id="temporaryMessage">
+                            <span style="color:#00af00;font-weight:600;">@ViewBag.msg</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="usermsg" id="temporaryMessage">
+                            <span style="color:#d21313;font-weight:600;"> @ViewBag.errormsg</span>
+                        </div>
+                    }
+                </div>
+                <div class="button-main">
+
+                    <button type="submit" class="btn btn-primary me-2" style="width:95px;height:38px;background-color: #0466c8;">Update</button>
+                    @*<button type="submit" formaction="@Url.Action("MasterView", "MenuMaster")" class="btn btn-primary me-2" style="width:95px;height:38px;background-color: #0466c8;">View</button>*@
+                    <a class="btn btn-primary me-2" href="/MenuMaster/MasterView" style=" width: 95px;height: 38px;background-color: #0466c8;">Back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

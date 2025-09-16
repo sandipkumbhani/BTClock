@@ -37,6 +37,12 @@ namespace Attendance.Domain.Utility
             Claim userIdClaim = currentUser?.FindFirst(ClaimTypes.UserData);
             return userIdClaim != null ? int.Parse(userIdClaim.Value) : 0;
         }
+        public static string GetDesignation(HttpContext context)
+        {
+            ClaimsPrincipal currentUser = context.User;
+            Claim userIdClaim = currentUser?.FindFirst(ClaimTypes.Role);
+            return userIdClaim?.Value;
+        }
     }
 }
 

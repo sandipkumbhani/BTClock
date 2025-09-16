@@ -34,6 +34,8 @@
 #franchiseTable th,
 #franchiseTable td {
     text-align: center;
+    width:231px;
+
 }
 /* Force full-width table */
 #franchiseTable {
@@ -90,36 +92,6 @@
     color: var(--ft-tertiary);
     /*    margin-bottom: 20px;*/
 }
-
-/* Hide Bootstrap’s default caret so only the ri-arrow-down icon shows */
-.month-filter::after {
-    display: none !important;
-}
-
-.month-filter {
-    height: 42px;
-    font-size: larger;
-    background: #fff !important;
-    border: 1px solid #cfd8dc !important;
-    color: #4a6880 !important;
-    border-radius: 8px;
-    padding: 6px 15px;
-    font-weight: 500;
-    box-shadow: none !important;
-    transition: none !important;
-    cursor: pointer;
-}
-
-    /* Remove background/border effect on hover or focus */
-    .month-filter:hover,
-    .month-filter:focus,
-    .month-filter:active,
-    .show > .month-filter.dropdown-toggle {
-        background: #fff !important;
-        border-color: #cfd8dc !important;
-        color: #4a6880 !important;
-        box-shadow: none !important;
-    }
 
 .ri-arrow-down-s-fill:before {
     content: "\ea4d";

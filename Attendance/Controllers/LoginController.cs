@@ -54,7 +54,7 @@ namespace Attendance.Controllers
                     var claims = new List<Claim>
                     {
                         new Claim(ClaimTypes.Email, email ?? model.Email),
-                        //new Claim("EmployeeId", employeeId ?? "")
+                        new Claim("EmployeeId", employeeId ?? ""),
                         new Claim(ClaimTypes.UserData, employeeId)
                     };
                     var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

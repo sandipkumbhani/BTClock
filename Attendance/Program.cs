@@ -26,17 +26,17 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton(globalClass);
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(name: MyAllowSpecificOrigins,
-        builder =>
-        {
-            builder.WithOrigins("http://localhost:7191")
-            .AllowAnyMethod()
-            .AllowAnyHeader()
-            .SetIsOriginAllowedToAllowWildcardSubdomains();
-        });
-});
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy(name: MyAllowSpecificOrigins,
+//        builder =>
+//        {
+//            builder.WithOrigins("http://localhost:7000")
+//            .AllowAnyMethod()
+//            .AllowAnyHeader()
+//            .SetIsOriginAllowedToAllowWildcardSubdomains();
+//        });
+//});
 
 var app = builder.Build();
 
@@ -45,7 +45,7 @@ app.Use(async (context, next) =>
    
     var token = context.Request.Cookies["jwtToken"];
     globalClass.Token = token;
-    await next.Invoke();
+        await next.Invoke();
 });
 
 

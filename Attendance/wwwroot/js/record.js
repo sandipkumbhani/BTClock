@@ -35,7 +35,8 @@ $('#customFranchiseSearch').on('keyup', function () {
             (r.date ?? "").toLowerCase().includes(term) ||
             (r.clockIn ?? "").toLowerCase().includes(term) ||
             (r.clockOut ?? "").toLowerCase().includes(term) ||
-            (r.totalTime ?? "").toLowerCase().includes(term)
+            (r.totalTime ?? "").toLowerCase().includes(term) ||
+            (r.overtimeHours ?? "").toLowerCase().includes(term)
         );
 
     currentPage = 1;
@@ -96,6 +97,10 @@ function sortFilteredRecords() {
                 aVal = timeToSeconds(a.totalTime);
                 bVal = timeToSeconds(b.totalTime);
                 break;
+            case 4:
+                aVal = timeToSeconds(a.overtimeHours);
+                bVal = timeToSeconds(b.overtimeHours);
+                break;
             default:
                 aVal = bVal = 0;
         }
@@ -116,7 +121,7 @@ function renderTable() {
 
     if (paginatedData.length === 0 && data.length > 0) {
         const row = document.createElement("tr");
-        row.innerHTML = `<td colspan="4" style="text-align:center;">No records found.</td>`;
+        row.innerHTML = `<td colspan="5" style="text-align:center;">No records found.</td>`;
         tbody.appendChild(row);
         $("#dataLoader").hide();
 
@@ -124,15 +129,16 @@ function renderTable() {
         paginatedData.forEach(rec => {
             const row = document.createElement("tr");
             row.innerHTML = `
-                <td>${rec.date}</td>
-                <td>${rec.clockIn}</td>
-                <td>${rec.clockOut}</td>
-                <td>${rec.totalTime}</td>
-            `;
+            <td>${rec.date}</td>
+            <td>${rec.clockIn}</td>
+            <td>${rec.clockOut}</td>
+            <td>${rec.totalTime}</td>
+            <td>${rec.overtimeHours ?? '-'}</td>
+        `;
             tbody.appendChild(row);
-            $("#dataLoader").hide();
-
         });
+
+        $("#dataLoader").hide();
     }
 
     const totalListElement = document.getElementById("totalList");
@@ -264,9 +270,9 @@ function addExportButton() {
             return;
         }
 
-        const header = ["Date", "Clock In", "Clock Out", "Total Time"];
+        const header = ["Date", "Clock In", "Clock Out", "Total Time", "Overtime Hours"];
         const rows = exportData.map(r => [
-            r.date, r.clockIn, r.clockOut, r.totalTime
+            r.date, r.clockIn, r.clockOut, r.totalTime, r.overtimeHours ?? '-'
         ]);
 
         const ws = XLSX.utils.aoa_to_sheet([header, ...rows]);
@@ -321,7 +327,8 @@ function setupSearch() {
                 (r.date ?? "").toLowerCase().includes(term) ||
                 (r.clockIn ?? "").toLowerCase().includes(term) ||
                 (r.clockOut ?? "").toLowerCase().includes(term) ||
-                (r.totalTime ?? "").toLowerCase().includes(term)
+                (r.totalTime ?? "").toLowerCase().includes(term) ||
+                (r.overtimeHours ?? "").toLowerCase().includes(term)
             );
 
         currentPage = 1;
@@ -332,7 +339,7 @@ function setupSearch() {
 function attachHeaderSortHandlers() {
     const headers = document.querySelectorAll('#franchiseTable thead th');
     headers.forEach((th, idx) => {
-        if (idx > 3) return;
+        if (idx > 4) return;
         th.style.cursor = 'pointer';
         th.addEventListener('click', () => {
             if (currentSort.column !== idx) {
