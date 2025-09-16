@@ -1,6 +1,6 @@
 using Attendance.Application.Interface;
 using Attendance.Domain.Models;
-using Attendance.UI.Domain.Helper;
+using Attendance.Domain.Helper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;

@@ -10,7 +10,7 @@ namespace Attendance.Domain.Interfaces
    public interface IEmployeeAdaptor
     {
         Task<EmployeeDto> GetEmployeeByIdAsync(int employeeId);
-        Task<List<EmployeeDto>> GetAllEmployeeAsync(EmployeeDto employeeDto);
+        Task<List<EmployeeDto>> GetAllEmployeeAsync();
 		Task<string> AddEmployeeAsync(EmployeeDto employeeDto);
 		Task<string> UpdateEmployeeAsync(EmployeeDto employeeDto,int employeeId);
 		Task<int> DeleteEmployeeAsync(int employeeId);

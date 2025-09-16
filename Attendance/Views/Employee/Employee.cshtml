@@ -86,11 +86,13 @@
 							</div>
 							<div class="item-input">
 								<label for="DateOfJoining" class="form-label col-form-label required fw-semibold fs-6; form-label">Date Of Joining</label><br />
-								<input type="text" class="form-control userinput" id="datepicker" name="DateOfJoining" placeholder="Select a Date">
+								<input type="text" data-provide="datepicker" class="form-control userinput" id="datepicker" name="DateOfJoining" placeholder="Select a Date" style="width:370px;	">
+
 							</div>
 							<div class="item-input">
 								<label for="DateofLeaving" class="form-label col-form-label required fw-semibold fs-6; form-label">Date Of Leaveing</label><br />
-								<input type="text" id="datepicker" name="DateofLeaving" placeholder="Select a Date">
+								<input type="text" data-provide="datepicker" class="form-control userinput" id="datepicker" name="DateofLeaving" placeholder="Select a Date" style="width:370px;	">
+
 							</div>
 							<div class="col-xl-6">
 								@if (ViewData["Message"] != null)

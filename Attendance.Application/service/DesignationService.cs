@@ -16,9 +16,9 @@ namespace Attendance.Application.service
 		{
 			_designationAdaptor = designationAdaptor;
 		}
-		public async Task<List<DesignationDto>> GetAllDesignation(DesignationDto designationDto)
+		public async Task<List<DesignationDto>> GetAllDesignation()
 		{
-			return await _designationAdaptor.GetAllDesignationAsync(designationDto);
+			return await _designationAdaptor.GetAllDesignationAsync();
 		}
 		public async Task<DesignationDto> GetDesignationById(int designationId)
 		{
