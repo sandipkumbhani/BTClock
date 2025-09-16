@@ -1,6 +1,6 @@
 ﻿using Attendance.Domain.Interfaces;
 using Attendance.Domain.Models;
-using Attendance.UI.Domain.Helper;
+using Attendance.Domain.Helper;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -23,7 +23,7 @@ namespace Attendance.Infrastructure.Efcore.Providers
 			_apiCredential = new APICredential(_configuration);
 			_globalClass = globalClass;
 		}
-		public async Task<List<DesignationDto>> GetAllDesignationAsync(DesignationDto designationDto)
+		public async Task<List<DesignationDto>> GetAllDesignationAsync()
 		{
 			var httpclient = new HttpClient();
 			_httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);

@@ -1,4 +1,4 @@
-﻿using Attendance.UI.Domain.Helper;
+﻿using Attendance.Domain.Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,7 +20,6 @@ namespace Attendance.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Dashboard()
         {
-
             return View();
         }
     }

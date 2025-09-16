@@ -10,95 +10,92 @@ using System.Threading.Tasks;
 
 namespace Attendance.Infrastructure.Efcore.Providers
 {
-   public class LeaveMasterAdaptor:ILeaveMasterAdaptor
-    {
+   public  class HolidayMasterAdaptor : IHolidayMasterAdaptor
+	{
 		private readonly HttpClient _httpClient;
 		private readonly IConfiguration _configuration;
 		private readonly APICredential _apiCredential;
 		private readonly GlobalClass _globalClass;
-		public LeaveMasterAdaptor(HttpClient httpClient, IConfiguration configuration, GlobalClass globalClass)
+		public HolidayMasterAdaptor(HttpClient httpClient, IConfiguration configuration, GlobalClass globalClass)
 		{
 			_httpClient = httpClient;
 			_configuration = configuration;
 			_apiCredential = new APICredential(_configuration);
 			_globalClass = globalClass;
 		}
-		public async Task<List<LeaveMasterDto>> GetAllLeaveMastersAsync()
+		public async Task<List<HolidayMasterDto>> GetAllHolidayMasterAsync()
 		{
-			 var httpClient = _httpClient;
+			var httpClient = _httpClient;
 			_httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);
-			var baseUrl = _apiCredential.url + "LeaveMaster/GetAllLeaveMasters";
+			var baseUrl = _apiCredential.url + "HolidayMaster/GetAllHolidayMasters";
 			var response = await _httpClient.GetAsync(baseUrl);
 			var responseData = await response.Content.ReadAsStringAsync();
 			var responseModel = Newtonsoft.Json.JsonConvert.DeserializeObject<CommanResponseDto>(responseData);
 			if (response.IsSuccessStatusCode)
 			{
 				// Deserialize response data to PatientDto
-				var leaveMaster = Newtonsoft.Json.JsonConvert.DeserializeObject<List<LeaveMasterDto>>(responseModel.Data.ToString());
-				return leaveMaster;
+				var holidayMaster = Newtonsoft.Json.JsonConvert.DeserializeObject<List<HolidayMasterDto>>(responseModel.Data.ToString());
+				return holidayMaster;
 			}
 			return null;
 		}
-		public async Task<LeaveMasterDto> GetLeaveMasterByIdAsync(int Id)
+		public async Task<HolidayMasterDto> GetHolidayMasterByIdAsync(int Id)
 		{
 			var httpclient = new HttpClient();
 			_httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);
-			var baseUrl = _apiCredential.url + "LeaveMaster/GetLeaveMasterById/" + Id;
+			var baseUrl = _apiCredential.url + "HolidayMaster/GetHolidayMasterById/" + Id;
 			var response = await _httpClient.GetAsync(baseUrl);
 			var responseData = await response.Content.ReadAsStringAsync();
 			var responseModel = Newtonsoft.Json.JsonConvert.DeserializeObject<CommanResponseDto>(responseData);
 			if (response.IsSuccessStatusCode)
 			{
 				// Deserialize response data to PatientDto
-				var leaveMaster = Newtonsoft.Json.JsonConvert.DeserializeObject<LeaveMasterDto>(responseModel.Data.ToString());
-				return leaveMaster;
+				var holidayMaster = Newtonsoft.Json.JsonConvert.DeserializeObject<HolidayMasterDto>(responseModel.Data.ToString());
+				return holidayMaster;
 			}
 			return null;
 		}
-		public async Task<string> AddLeaveMasterAsync(LeaveMasterDto leaveMasterdto)
+		public async Task<string> AddHolidayMasterAsync(HolidayMasterDto holidayMasterdto)
 		{
 			var httpclient = new HttpClient();
 			_httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);
-			var baseUrl = _apiCredential.url + "LeaveMaster/AddLeaveMaster";
-			var jsonData = Newtonsoft.Json.JsonConvert.SerializeObject(leaveMasterdto);
-			var contentData = new StringContent(jsonData, Encoding.UTF8, "application/json");
-			var response = await _httpClient.PostAsync(baseUrl, contentData);
+			var baseUrl = _apiCredential.url + "HolidayMaster/AddHolidayMaster";
+			var jsonData = Newtonsoft.Json.JsonConvert.SerializeObject(holidayMasterdto);
+			var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+			var response = await _httpClient.PostAsync(baseUrl, content);
 			var responseData = await response.Content.ReadAsStringAsync();
 			var responseModel = Newtonsoft.Json.JsonConvert.DeserializeObject<CommanResponseDto>(responseData);
 			if (response.IsSuccessStatusCode)
 			{
-				return responseModel.Data.ToString();
-
+				return responseModel.Message;
 			}
 			return null;
 		}
-		public async Task<string> UpdateLeaveMasterAsync(LeaveMasterDto leaveMasterdto, int leavemsterId)
+		public async Task<string> UpdateHolidayMasterAsync(HolidayMasterDto holidayMasterdto, int Id)
 		{
 			var httpclient = new HttpClient();
 			_httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);
-			var baseUrl = _apiCredential.url + "LeaveMaster/UpdateLeaveMaster/" + leavemsterId;
-			var jsonData = Newtonsoft.Json.JsonConvert.SerializeObject(leaveMasterdto);
-			var contentData = new StringContent(jsonData, Encoding.UTF8, "application/json");
-			var response = await _httpClient.PutAsync(baseUrl, contentData);
+			var baseUrl = _apiCredential.url + "HolidayMaster/UpdateHolidayMaster/" + Id;
+			var jsonData = Newtonsoft.Json.JsonConvert.SerializeObject(holidayMasterdto);
+			var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+			var response = await _httpClient.PutAsync(baseUrl, content);
 			var responseData = await response.Content.ReadAsStringAsync();
 			var responseModel = Newtonsoft.Json.JsonConvert.DeserializeObject<CommanResponseDto>(responseData);
 			if (response.IsSuccessStatusCode)
 			{
-				return responseModel.Data.ToString();
-
+				return responseModel.Message;
 			}
 			return null;
 		}
-		public async Task<int> DeleteLeaveMasterAsync(int leavemsterId)
+		public async Task<int> DeleteHolidayMasterAsync(int Id)
 		{
 			var httpclient = new HttpClient();
 			_httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);
-			var baseUrl = _apiCredential.url + "LeaveMaster/DeleteLeaveMaster/" + leavemsterId;
+			var baseUrl = _apiCredential.url + "HolidayMaster/DeleteHolidayMaster/" + Id;
 			var response = await _httpClient.DeleteAsync(baseUrl);
-			
 			if (response.IsSuccessStatusCode)
 			{
-				return leavemsterId;
+				return Id;
 			}
 			return 0;
 		}

@@ -1,7 +1,7 @@
 ﻿using Attendance.Application.Interface;
 using Attendance.Domain.Models;
 using Attendance.Domain.Utility;
-using Attendance.UI.Domain.Helper;
+using Attendance.Domain.Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
@@ -94,7 +94,7 @@ namespace Attendance.Controllers
 				if (_globalClass.Token != null)
 				{
 					var employeedto = new EmployeeDto();
-					var employee = await _employeeService.GetAllEmployee(employeedto);
+					var employee = await _employeeService.GetAllEmployee();
 					if (employee != null)
 					{
 						return Json(new { result = "Success",data = employee });

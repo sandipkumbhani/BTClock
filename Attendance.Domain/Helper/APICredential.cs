@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Attendance.UI.Domain.Helper
+namespace Attendance.Domain.Helper
 {
     public class APICredential
     {

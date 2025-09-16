@@ -9,7 +9,6 @@ namespace Attendance.Application.Extension
 	{
 		public static IServiceCollection AddApplicationServices(this IServiceCollection services)
 		{
-			
 			services.AddScoped<IAttendanceService, AttendanceService>();
 			services.AddScoped<ILoginServices, LoginServices>();
 			services.AddScoped<IEmployeeService, EmployeeService>();
@@ -17,6 +16,7 @@ namespace Attendance.Application.Extension
 			services.AddScoped<IDesignationService, DesignationService>();
 			services.AddScoped<ILeaveMasterService, LeaveMasterService>();
 			services.AddScoped<IModuleMasterService, ModuleMasterService>();
+			services.AddScoped<IHolidayMasterService, HolidayMasterService>();
 			return services;
 		}
 	}

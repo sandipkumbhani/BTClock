@@ -9,7 +9,7 @@ namespace Attendance.Application.Interface
 {
     public interface IModuleMasterService
     {
-        Task<List<ModuleMasterDto>> GetAllModuleMaster(ModuleMasterDto moduleMasterDto);
+        Task<List<ModuleMasterDto>> GetAllModuleMaster();
         Task<ModuleMasterDto> GetModuleMasterById(int moduleId);
 		Task<string> AddModuleMaster(ModuleMasterDto moduleMasterDto);
         Task<string> UpdateModuleMaster(ModuleMasterDto moduleMasterDto,int Id);

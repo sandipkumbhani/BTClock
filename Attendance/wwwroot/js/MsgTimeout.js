@@ -13,19 +13,24 @@
         setTimeout(function () {
             deptmessageDiv.style.display = 'none';
         }, 5000);
-
-        var desigmessageDiv = document.getElementById('desigtemporaryMessage');
-        if (desigmessageDiv) {
-            setTimeout(function () {
-                desigmessageDiv.style.display = 'none';
-            }, 5000);
-
-            var leavemessageDiv = document.getElementById('leavetemporaryMessage');
-            if (leavemessageDiv) {
-                setTimeout(function () {
-                    leavemessageDiv.style.display = 'none';
-                }, 5000);
-            }
-        }
     }
-})();
+    var desigmessageDiv = document.getElementById('desigtemporaryMessage');
+    if (desigmessageDiv) {
+        setTimeout(function () {
+            desigmessageDiv.style.display = 'none';
+        }, 5000);
+    }
+    var leavemessageDiv = document.getElementById('leavetemporaryMessage');
+    if (leavemessageDiv) {
+        setTimeout(function () {
+            leavemessageDiv.style.display = 'none';
+        }, 5000);
+    }
+    var holidaymessageDiv = document.getElementById('holidaytemporaryMessage');
+    if (holidaymessageDiv) {
+        setTimeout(function () {
+            holidaymessageDiv.style.display = 'none';
+        }, 5000);
+    }
+}) ();
+
