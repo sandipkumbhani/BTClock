@@ -1,10 +1,10 @@
+@using Attendance.Domain.Models
 @{
     Layout = "~/Views/Shared/_LayoutTimesheet.cshtml";
-
     ViewData["Title"] = "ClockIn";
-    // int EmployeeId = ViewBag.EmployeeId;
-
+    int EmployeeId = ViewBag.EmployeeId != null ? Convert.ToInt32(ViewBag.EmployeeId) : 0;
 }
+
 <head>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
@@ -13,6 +13,13 @@
     <div class="content-page" style="margin:90px 0 40px 0">
         <div class="content">
             <div class="main-inner container-fluid">
+            @{
+                ViewBag.Breadcrumbs = new List<Attendance.Domain.Models.BreadcrumbItem>
+                        {
+                        new BreadcrumbItem { Title = "Dashboard", Url = Url.Action("Dashboard", "Dashboard"), IsActive = false },
+                        new BreadcrumbItem { Title = "ClockIn", Url = "", IsActive = true }
+                        };
+            }
                 <div class="row">
                     <div class="col-12">
                         <div class="card com-profile-info">
@@ -45,7 +52,8 @@
                                                 <th>Date</th>
                                                 <th>Clock In</th>
                                                 <th>Clock Out</th>
-                                                <th>Total Time</th>
+                                                <th>Over Time</th>  
+                                                <th>Total Time</th> 
                                             </tr>
                                         </thead>
                                         <tbody id="attendanceTableBody">
@@ -61,5 +69,10 @@
         </div>
     </div>
 @section Scripts {
-<script src="~/js/clockin.js"></script>
+    <script>
+        const employeeId = @EmployeeId;
+    </script>
+    <script src="~/js/clockin.js"></script>
 }
+
+

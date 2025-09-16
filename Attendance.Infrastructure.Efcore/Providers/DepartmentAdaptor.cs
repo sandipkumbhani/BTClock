@@ -1,6 +1,6 @@
 ﻿using Attendance.Domain.Interfaces;
 using Attendance.Domain.Models;
-using Attendance.UI.Domain.Helper;
+using Attendance.Domain.Helper;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
@@ -40,7 +40,7 @@ namespace Attendance.Infrastructure.Efcore.Providers
 			}
 			return null;
 		}
-		public async Task<List<DepartmentDto>> GetAllDepartmentsAsync(DepartmentDto departmentDto)
+		public async Task<List<DepartmentDto>> GetAllDepartmentsAsync()
 		{
 			var httpClient = _httpClient;
 			_httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);

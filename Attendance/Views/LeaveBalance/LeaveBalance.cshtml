@@ -1,0 +1,91 @@
+﻿@model IEnumerable<Attendance.Domain.Models.LeaveBalanceDto>
+@using System.Security.Claims
+@using Attendance.Domain.Models
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    var users = ViewBag.users;
+}
+<div class="content-page" style="margin:35px 0 0 0">
+    <div class="content">
+        <div class="main-inner container-fluid">
+
+            <div id="userList">
+                <div class="card com-profile-info">
+                    <div class="row mt-3">
+                    </div>
+                    <!-- Top Header -->
+                    <div class="table-top-header">
+                        <h4>List of LeaveBalance</h4>
+
+                        <div class="d-flex gap-2">
+                            <div class="table-search-box">
+                                <input type="text" id="customcorporateSearch" class="form-control form-control-sm" placeholder="Search...">
+                                <button type="submit"><i class="ri-search-line"></i></button>
+                            </div>
+
+                            <div id="exportcorporateButtons" class="btn-group" role="group" style="display:none;"></div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <div class="col-xl-6" style="margin-left:30px;">
+                            @if (TempData["msg"] != null)
+                            {
+                                <div class="usermsg" id="temporaryMessage">
+                                    <span style="color:#00af00;font-weight:600;">@TempData["msg"]</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="usermsg" id="temporaryMessage">
+                                    <span style="color:#d21313;font-weight:600;"> @ViewBag.errormsg</span>
+                                </div>
+                            }
+                        </div>
+                        <table id="corporateTable" class="table dt-responsive nowrap w-100">
+                            <thead>
+                                <tr>
+                                    <th>Employee</th>
+                                    <th>Leave Type</th>
+                                    <th>Total Allocated</th>
+                                    <th>Used Leave</th>
+                                    <th>Remaining</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                        <div id="dataLoader" class=" justify-content-center" style="display:none; margin-left: 598px;">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Bottom Area -->
+                    <div class="datatable-footer-bottom">
+                        <div class="totle-left">
+                            <span id="totalRemindersCorporate">Total List: </span>
+                        </div>
+                        <div id="customcorporatePagination" class="dataTables_paginate paging_simple_numbers"></div>
+                        <div class="show-page">
+                            <span>Show per page:</span>
+                            <select id="pageLength" class="form-select">
+                                <option value="5">5 </option>
+                                <option value="10" selected>10 </option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="-1">All</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="button-main">
+                        @* <input class=" card-link" type="button" value="Add" style="width:95px;height:38px; border:thick; text-box-edge: cap alphabetic; text-box-trim: trim-start;" onclick="location.href='@Url.Action("MenuMaster", "MenuMaster", new { })'" />*@
+                        <a class="btn btn-primary me-2" href="/MenuMaster/MenuMaster" style=" width: 95px;height: 38px;background-color: #0466c8;">Add</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

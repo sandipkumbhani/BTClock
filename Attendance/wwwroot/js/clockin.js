@@ -19,49 +19,50 @@ function fetchAttendance() {
 			renderAttendanceTable();
 		});
 }
+function getDuration(clockIn, clockOut) {
+    if (!clockIn || !clockOut) return '0h 0m 0s';
+    let diffMs = new Date(clockOut) - new Date(clockIn);
+    let diffHrs = Math.floor(diffMs / 3600000);
+    let diffMins = Math.floor((diffMs % 3600000) / 60000);
+    let diffSecs = Math.floor((diffMs % 60000) / 1000);
+    return `${diffHrs}h ${diffMins}m ${diffSecs}s`;
+}
+
 
 function renderAttendanceTable() {
 	const tbody = document.getElementById('attendanceTableBody');
 	tbody.innerHTML = '';
 
-	// Sort by clockIn in descending order and take the first 5 records
 	const sortedRecords = attendanceRecords
 		.sort((a, b) => new Date(b.clockIn) - new Date(a.clockIn))
 		.slice(0, 5);
 
 	sortedRecords.forEach(r => {
+		const hasClockOut = r.clockOut !== null;
+
 		const tr = document.createElement('tr');
 		tr.innerHTML = `
-            <td>${new Date(r.clockIn).toLocaleDateString()}</td>
-            <td>${new Date(r.clockIn).toLocaleTimeString()}</td>
-            <td>${r.clockOut ? new Date(r.clockOut).toLocaleTimeString() : ''}</td>
-            <td>${r.clockOut ? getDuration(r.clockIn, r.clockOut) : ''}</td>`;
+			<td>${new Date(r.clockIn).toLocaleDateString()}</td>
+			<td>${new Date(r.clockIn).toLocaleTimeString()}</td>
+			<td>${hasClockOut ? new Date(r.clockOut).toLocaleTimeString() : ''}</td>
+			<td>${hasClockOut && r.overtimeHours ? formatTimeSpan(r.overtimeHours) : ''}</td>
+			<td>${hasClockOut && r.workingHour ? formatTimeSpan(r.workingHour) : ''}</td>
+		`;
 		tbody.appendChild(tr);
 	});
 }
 
-// function renderAttendanceTable() {
-// 	const tbody = document.getElementById('attendanceTableBody');
-// 	tbody.innerHTML = '';
-// 	Show only today's records, up to 4 sessions
-// 	let todaysRecords = attendanceRecords.filter(r => new Date(r.clockIn).toLocaleDateString() === todayStr);
-// 	todaysRecords.slice(-5).forEach(r => {
-// 		const tr = document.createElement('tr');
-// 		tr.innerHTML = `<td>${new Date(r.clockIn).toLocaleDateString()}</td><td>${new Date(r.clockIn).toLocaleTimeString()}</td><td>${r.clockOut ? new Date(r.clockOut).toLocaleTimeString() : ''}</td><td>${r.clockOut ? getDuration(r.clockIn, r.clockOut) : ''}</td>`;
-// 		tbody.appendChild(tr);
-// 	});
-// }
-
-function getDuration(clockIn, clockOut) {
-	let diffMs = new Date(clockOut) - new Date(clockIn);
-	let diffHrs = Math.floor(diffMs / 3600000);
-	let diffMins = Math.floor((diffMs % 3600000) / 60000);
-	let diffSecs = Math.floor((diffMs % 60000) / 1000);
-	return `${diffHrs}h ${diffMins}m ${diffSecs}s`;
+function formatTimeSpan(timeSpan) {
+	if (!timeSpan || timeSpan === "00:00:00") {
+		return "0h 0m 0s";
+	}
+	const [hours, minutes, seconds] = timeSpan.split(':');
+	return `${parseInt(hours)}h ${parseInt(minutes)}m ${parseInt(seconds)}s`;
 }
 
-function fetchAttendance(IsLiveInterval) {
-	fetch('/Attendance/Report?employeeId=${employeeId}')
+
+function fetchAttendance(IsLiveInterval = 1) {
+	fetch(`/Attendance/Report?employeeId=${employeeId}`)
 		.then(res => res.json())
 		.then(data => {
 			attendanceRecords = data;
@@ -167,3 +168,6 @@ window.addEventListener('DOMContentLoaded', function () {
 	fetchAttendance(1);
 	updateButtonStates();
 });
+
+
+

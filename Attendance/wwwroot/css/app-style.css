@@ -1219,6 +1219,7 @@ table.dataTable thead th.sorting_desc::after {
 .table-responsive .table.dataTable thead th {
     border-bottom-width: 2px;
     font-weight: 600;
+    text-align: center;
 }
 
     .table-responsive .table.dataTable thead th:first-child {
@@ -1227,16 +1228,17 @@ table.dataTable thead th.sorting_desc::after {
 
     .table-responsive .table.dataTable thead th:last-child {
         padding-right: 1.875rem;
-        text-align: right;
+        text-align: center;
     }
 
 .table-responsive .table.dataTable tbody td:first-child {
     padding-left: 1.875rem;
+    text-align: center;
 }
 
 .table-responsive .table.dataTable tbody td:last-child {
     padding-right: 1.875rem;
-    text-align: right;
+    text-align: center;
 }
 
 .table-search-box {
@@ -1265,7 +1267,7 @@ table.dataTable thead th.sorting_desc::after {
         .table-search-box button i {
             font-size: 1.5rem;
             color: var(--ft-tertiary);
-/*            margin-bottom: 20px;*/
+            /*            margin-bottom: 20px;*/
         }
 
     .table-search-box .form-control {
@@ -1862,7 +1864,7 @@ tr.shown td.details-control::before {
 
 td.details-control::before {
     content: none;
-    display:none;
+    display: none;
     font-family: 'remixicon';
     font-size: 1.5rem;
     color: var(--ft-secondary);
@@ -3430,4 +3432,17 @@ body.overlay-active {
     .theme-form p {
         font-size: .9rem;
     }
+}
+
+.disabled-row {
+    background-color: #f4f4f4 !important;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.disabled-link {
+    pointer-events: none;
+    color: #999 !important;
+    text-decoration: none;
+    cursor: not-allowed;
 }

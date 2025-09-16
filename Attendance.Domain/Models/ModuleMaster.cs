@@ -16,7 +16,7 @@ namespace Attendance.Domain.Models
 	}
 	public class ModuleMasterDto
 	{
-		public int ModuleId { get; set; }
+		public int Id { get; set; }
 		public string ModuleName { get; set; }
 	}
 }

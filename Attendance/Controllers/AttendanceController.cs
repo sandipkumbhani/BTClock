@@ -1,7 +1,7 @@
 using Attendance.Application.Interface;
 using Attendance.Domain.Models;
 using Attendance.Domain.Utility;
-using Attendance.UI.Domain.Helper;
+using Attendance.Domain.Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
@@ -49,7 +49,7 @@ namespace Attendance.Controllers
             return View();
         }
         [HttpGet]
-        public async Task<IActionResult> ClockInAttendance(int employeeId)
+        public async Task<IActionResult> ClockInAttendance()
         {
             try
             {
@@ -70,7 +70,7 @@ namespace Attendance.Controllers
             }
         }
         [HttpGet]
-        public async Task<IActionResult> ClockOutAttendance(int employeeId)
+        public async Task<IActionResult> ClockOutAttendance()
         {
             if (_globalClass.Token != null)
             {
@@ -82,18 +82,54 @@ namespace Attendance.Controllers
             }
             return Json(new { clockOut = (DateTime?)null, clockIn = (DateTime?)null });
         }
+        //[HttpGet]
+        //public async Task<IActionResult> Report(int employeeId)
+        //{
+        //    if (_globalClass.Token != null)
+        //    {
+        //        var report = await _service.GetAttendanceByEmployeeAsync(employeeId);
+        //        var topFive = report.OrderByDescending(x => x.ClockIn).Take(6).ToList();
+        //        ViewBag.appUrl = applicationURL.url;
+        //        return Json(topFive);
+        //    }
+        //    return Json(null);
+        //}
         [HttpGet]
         public async Task<IActionResult> Report(int employeeId)
         {
             if (_globalClass.Token != null)
             {
                 var report = await _service.GetAttendanceByEmployeeAsync(employeeId);
-                var topFive = report.OrderByDescending(x => x.ClockIn).Take(6).ToList();
-                ViewBag.appUrl = applicationURL.url;
-                return Json(topFive);
+
+                var topFive = report.OrderByDescending(x => x.ClockIn).Take(5).ToList();
+
+                var enrichedRecords = topFive.Select(x =>
+                {
+                    TimeSpan? duration = null;
+                    TimeSpan? overtime = null;
+
+                    if (x.ClockIn != null && x.ClockOut != null)
+                    {
+                        duration = x.ClockOut.Value - x.ClockIn;
+                        var standardHours = new TimeSpan(9, 0, 0);
+                        overtime = duration > standardHours ? duration - standardHours : TimeSpan.Zero;
+                    }
+
+                    return new
+                    {
+                        x.ClockIn,
+                        x.ClockOut,
+                        OvertimeHours = overtime?.ToString(@"hh\:mm\:ss"),
+                        WorkingHour = duration?.ToString(@"hh\:mm\:ss")
+                    };
+                });
+
+                return Json(enrichedRecords);
             }
+
             return Json(null);
         }
+
 
     }
 }

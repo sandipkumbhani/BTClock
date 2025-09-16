@@ -11,9 +11,9 @@ namespace Attendance.Application.service
 		{
 			_leaveMasterAdaptor = leaveMasterAdaptor;
 		}
-		public async Task<List<LeaveMasterDto>> GetAllLeaveMasters(LeaveMasterDto leaveMasterDto)
+		public async Task<List<LeaveMasterDto>> GetAllLeaveMasters()
 		{
-			return await _leaveMasterAdaptor.GetAllLeaveMastersAsync(leaveMasterDto);
+			return await _leaveMasterAdaptor.GetAllLeaveMastersAsync();
 		}
 		public async Task<LeaveMasterDto> GetLeaveMasterById(int Id)
 		{

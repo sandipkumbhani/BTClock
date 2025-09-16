@@ -1,7 +1,7 @@
 ﻿using Attendance.Application.Interface;
 using Attendance.Domain.Models;
 using Attendance.Domain.Utility;
-using Attendance.UI.Domain.Helper;
+using Attendance.Domain.Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;

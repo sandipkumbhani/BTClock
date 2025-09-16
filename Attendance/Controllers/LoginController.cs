@@ -1,6 +1,6 @@
 using Attendance.Application.Interface;
 using Attendance.Domain.Models;
-using Attendance.UI.Domain.Helper;
+using Attendance.Domain.Helper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -54,7 +54,7 @@ namespace Attendance.Controllers
                     var claims = new List<Claim>
                     {
                         new Claim(ClaimTypes.Email, email ?? model.Email),
-                        //new Claim("EmployeeId", employeeId ?? "")
+                        new Claim("EmployeeId", employeeId ?? ""),
                         new Claim(ClaimTypes.UserData, employeeId)
                     };
                     var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

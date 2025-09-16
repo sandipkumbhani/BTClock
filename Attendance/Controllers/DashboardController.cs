@@ -1,4 +1,4 @@
-﻿using Attendance.UI.Domain.Helper;
+﻿using Attendance.Domain.Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

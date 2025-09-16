@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 
-namespace Attendance.UI.Domain.Helper
+namespace Attendance.Domain.Helper
 {
     public class ApplicationURL
     {

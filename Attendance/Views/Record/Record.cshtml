@@ -1,6 +1,7 @@
-﻿@{
+﻿@using Attendance.Domain.Models
+@{
     Layout = "_LayoutTimesheet";
-    // int UserID = ViewBag.UserID;
+    int UserID = ViewBag.UserID;
     ViewData["Title"] = "Records";
 }
 <!-- DataTables CSS -->
@@ -11,6 +12,13 @@
 <div class="content-page" style="margin:35px 0 0 0">
     <div class="content">
         <div class="main-inner container-fluid">
+            @{
+                ViewBag.Breadcrumbs = new List<Attendance.Domain.Models.BreadcrumbItem>
+                        {
+                        new BreadcrumbItem { Title = "Dashboard", Url = Url.Action("Dashboard", "Dashboard"), IsActive = false },
+                        new BreadcrumbItem { Title = "ClockInRecords", Url = "", IsActive = true }
+                        };
+            }
             <div class="row">
                 <!-- Month Filter Dropdown (styled exactly like screenshot) -->
                 <div class="col-4 mb-3" style="width:auto;">
@@ -54,7 +62,8 @@
                                         <th class="dt-orderable-asc dt-orderable-desc">Date</th>
                                         <th>Clock In</th>
                                         <th>Clock Out</th>
-                                        <th>Total Time</th>
+                                        <th>Total Hours</th>
+                                        <th>Overtime Hours</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -85,9 +94,9 @@
 @section Scripts
 {
 
-@*     <script type="text/javascript">
+<script type="text/javascript">
         var UserID = Number.parseInt(@UserID);
-    </script> *@
+    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="~/js/record.js"></script>
     <script src="~/js/moment.min.js"></script>

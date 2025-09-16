@@ -1,0 +1,129 @@
+﻿@model Attendance.Domain.Models.LeaveTransactionDto
+
+@using System.Security.Claims
+@using Attendance.Domain.Utility
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<link href="~/css/daterangepicker.css" rel="stylesheet" />
+<link href="~/css/leavetransaction.css" rel="stylesheet" />
+
+<div class="main-inner container-fluid">
+    <div class="col-12">
+        <div class="page-title-box" style="margin-top:20px;">
+            <h1 class="page-title">Update Leave Transaction</h1>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="card com-profile-info">
+            <form class="form" id="updateForm" method="post" enctype="multipart/form-data" asp-action="UpdateLeaveTransaction" asp-controller="LeaveTransaction">
+                <input type="hidden" asp-for="LeaveTransactionId" />
+                <input type="hidden" id="StartDate" name="StartDate" value="@Model.StartDate" />
+                <input type="hidden" id="EndDate" name="EndDate" value="@Model.EndDate" />
+
+                <div class="top-details">
+                    <h2 class="page-form-title">Leave Transaction Update</h2>
+
+                    <div class="item-input">
+                        <label for="LeaveMasterId" class="form-label col-form-label required fw-semibold fs-6">Leave Type</label>
+                        <select class="select2-custom form-control form-select" id="LeaveMasterId" name="LeaveMasterId" style="width:359.46px; height:48px;" required>
+
+                            @foreach (var leave in ViewBag.leaveMasters)
+                            {
+                                if (leave.LeaveMasterId == Model.LeaveMasterId)
+                                {
+                                    <option value="@leave.LeaveMasterId" selected>
+                                        @leave.LeaveType
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="@leave.LeaveMasterId">
+                                        @leave.LeaveType
+                                    </option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="item-input">
+                        <label class="form-label col-form-label fw-semibold fs-6">
+                            <input type="checkbox" class="form-check-input" id="IsPaid" name="IsPaid" value="true" @(Model.IsPaid ? "checked" : "") /> &nbsp;
+                            Is Paid
+                        </label>
+                    </div>
+
+                    <div class="item-input">
+                        <label class="form-label col-form-label required fw-semibold fs-6">Date</label>
+                        <br />
+
+                        <div id="reportrange" class="datepicker"
+                             style="background: #fff; cursor: pointer; padding: 10px 14px; border: 1px solid #ccc;
+                             height: 48px; display: inline-flex; align-items: center; white-space: nowrap;">
+                            <i class="fa fa-calendar"></i>&nbsp;
+                            <span style="margin-left: 10px;">
+                                @(Model.StartDate != null && Model.EndDate != null
+                                                                ? $"{DateTime.Parse(Model.StartDate).ToString("MM/dd/yyyy")} - {DateTime.Parse(Model.EndDate).ToString("MM/dd/yyyy")}"
+                                                                : "Select date range")
+                            </span>
+                            <i class="fa fa-caret-down" style="margin-left: 10px;"></i>
+                        </div>
+                    </div>
+
+                    <div class="item-input">
+                        <label for="TotalDays" class="form-label col-form-label required fw-semibold fs-6">Total Days</label>
+                        <input class="form-control userinput" type="number" id="TotalDays" name="TotalDays" style="width:359.46px; height:48px;" value="@Model.TotalDays" readonly />
+                    </div>
+
+                    <div class="item-input">
+                        <label for="Reason" class="form-label col-form-label required fw-semibold fs-6">Reason</label>
+                        <textarea class="form-control userinput" id="Reason" name="Reason" rows="3" placeholder="Enter reason for leave..." style="width:359.46px;">@Model.Reason</textarea>
+                    </div>
+
+                    <div class="item-input">
+                        <label class="form-label col-form-label fw-semibold fs-6">
+                            <input type="checkbox" class="form-check-input" id="Ishalfday" name="Ishalfday" value="true" @(Model.Ishalfday ? "checked" : "") /> &nbsp;
+                            Is HalfDay
+                        </label>
+                    </div>
+
+                    <div class="item-input">
+                        <label for="AddFile" class="form-label col-form-label fw-semibold fs-6">Add File</label>
+                        <input type="file" accept="*/*" id="AddFile" name="AddFile" class="form-control userinput" style="width:359.46px;" />
+                        @if (!string.IsNullOrEmpty(Model.AddFile))
+                        {
+                            <p>Current File: <a href="@Url.Content(Model.AddFile)" target="_blank">View</a></p>
+                        }
+                    </div>
+                </div>
+
+                <div class="col-xl-6" style="margin-left:30px;">
+                    @if (ViewBag.msg != null)
+                    {
+                        <div class="usermsg" id="temporaryMessage">
+                            <span style="color:#00af00;font-weight:600;">@ViewBag.msg</span>
+                        </div>
+                    }
+                    else if (ViewBag.errormsg != null)
+                    {
+                        <div class="usermsg" id="temporaryMessage">
+                            <span style="color:#d21313;font-weight:600;">@ViewBag.errormsg</span>
+                        </div>
+                    }
+                </div>
+
+                <div class="button-main">
+                    <button type="submit" class="btn btn-primary me-2" style="width:95px;height:38px;background-color: #0466c8;">Update</button>
+                    <a class="btn btn-secondary me-2" href="/LeaveTransaction/LeaveTransactionView" style="width:95px;height:38px;background-color: #0466c8;">Back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="~/js/moment.min.js"></script>
+    <script src="~/js/daterangepicker.js"></script>
+    <script src="~/js/updateleavetransaction.js"></script>
+}

@@ -16,9 +16,9 @@ namespace Attendance.Application.service
 		{
 			_departmentAdaptor = departmentAdaptor;
 		}
-		public async Task<List<DepartmentDto>> GetAllDepartments(DepartmentDto departmentDto)
+		public async Task<List<DepartmentDto>> GetAllDepartments()
 		{
-			return await _departmentAdaptor.GetAllDepartmentsAsync(departmentDto);
+			return await _departmentAdaptor.GetAllDepartmentsAsync();
 		}
 		public async Task<DepartmentDto> GetDepartmentById(int Id)
 		{
