@@ -44,7 +44,7 @@ namespace Attendance.Controllers
                     Response.Cookies.Append("jwtToken", token, new CookieOptions
                     {
                         HttpOnly = true,
-                        Expires = DateTimeOffset.UtcNow.AddHours(1),
+                        Expires = DateTimeOffset.UtcNow.AddHours(12),
                         SameSite = SameSiteMode.Strict,
                         Secure = true
                     });

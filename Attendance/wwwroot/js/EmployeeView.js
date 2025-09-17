@@ -8,7 +8,6 @@
         method: 'GET',
         success: function (result) {
 
-            console.log(result);
 
             var table = $('#corporateTable').DataTable();
             table.clear();
@@ -17,15 +16,19 @@
                 $('#employeelist').show();
                 const newRows = [];
                 $.each(result.data, function (index, detail) {
+                    var designationname = detail.designation ? detail.designation.designationName : '';
+                    var departmentname = detail.department ? detail.department.name : '';
+                    var managerlist = ((result.data).find(x => x.employeeId == detail.managerId));
+                    var managername = managerlist?.name || '';
 
                     newRows.push([
                         
                         detail.name,
                         detail.email,
                         detail.mobileNo,
-                        detail.designationId,
-                        detail.departmentId,
-                        detail.managerId,
+                        designationname,
+                        departmentname,
+                        managername,
                         `<a href="${url + detail.employeeId}" style="margin-right: 10px;"><i class="ri-edit-2-line" style="font-size:x-large;"></i></a><a href="${deleteurl + detail.employeeId}" onclick = "return confirm('Are you sure you want to delete this record?');" })><i class="ri-delete-bin-3-line" style="font-size:x-large;color:red;"></i></a>`,
 
                     ]);
