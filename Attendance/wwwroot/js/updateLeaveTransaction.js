@@ -10,17 +10,17 @@
         updateTotalDays(start, end);
     }
 
-    function updateTotalDays(start, end) {
-        var diff = end.diff(start, 'days') + 1;
+    //function updateTotalDays(start, end) {
+    //    var diff = end.diff(start, 'days') + 1;
 
-        if ($('#Ishalfday').is(':checked')) {
-            diff -= 0.5;
-        }
+    //    if ($('#Ishalfday').is(':checked')) {
+    //        diff -= 0.5;
+    //    }
 
-        if (diff < 0) diff = 0;
+    //    if (diff < 0) diff = 0;
 
-        $('#TotalDays').val(diff);
-    }
+    //    $('#TotalDays').val(diff);
+    //}
 
     $('#reportrange').daterangepicker({
         startDate: start,
