@@ -1,5 +1,6 @@
 ﻿@model Attendance.Domain.Models.EmployeeDto
 @using System.Security.Claims
+@using Attendance.Domain.Models
 @{
 	Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
@@ -60,46 +61,55 @@
 							<div class="item-input">
 								<label for="Department" class="form-label col-form-label required fw-semibold fs-6; form-label">Department</label>
 								<select class="select2-custom form-control select2-hidden-accessible; form-select" style="width: 100%;" data-placeholder="Select Department" id="DepartmentId" name="DepartmentId">
-									@* <select class="form-select" aria-label="Default select example" id="RoleId" name="RoleId"> *@
-									@* <option selected disabled>Select Department</option> *@
-									<option selected accesskey="#0" value="@Model.DepartmentId">@Model.DepartmentId</option>
-									<option value="1">IT</option>
-									<option value="2">HR</option>
-									<option value="3">Finance</option>
-									<option value="4">Admin</option>
+									<option selected accesskey="#0" value="@Model.DepartmentId">@Model.Department!.Name</option>
+									@foreach (var department in ViewBag.Department)
+									{
+										<option value="@department.Id">@department.Name</option>
+									}
 								</select>
 							</div>
 							<div class="item-input">
 								<label for="DesignationId" class="form-label col-form-label required fw-semibold fs-6; form-label">Designation</label>
 								<select class="select2-custom form-control select2-hidden-accessible; form-select" style="width: 100%;" data-placeholder="Select Designation" id="DesignationId" name="DesignationId">
-									@* <select class="form-select" aria-label="Default select example" id="RoleId" name="RoleId"> *@
-									@* <option selected disabled>Select Designation</option> *@
-									<option selected accesskey="#0" value="@Model.DesignationId">@Model.DesignationId</option>
-									<option value="1">Software Engineer</option>
-									<option value="2">Senior Software Engineer</option>
-									<option value="3">Lead</option>
-									<option value="4">Manager</option>
+
+									<option selected accesskey="#0" value="@Model.DesignationId">@Model.Designation!.DesignationName</option>
+									@foreach (var designation in ViewBag.Designation)
+									{
+										<option value="@designation.DesignationId">@designation.DesignationName</option>
+									}
+
 								</select>
 							</div>
 							<div class="item-input">
 								<label for="ManagerId" class="form-label col-form-label required fw-semibold fs-6; form-label">Manager</label>
 								<select class="select2-custom form-control select2-hidden-accessible; form-select" style="width: 100%;" data-placeholder="Select Manager" id="ManagerId" name="ManagerId">
-									@* <select class="form-select" aria-label="Default select example" id="RoleId" name="RoleId"> *@
-									@* <option selected disabled>Select Manager</option> *@
-									<option selected accesskey="#0" value="@Model.ManagerId">@Model.ManagerId</option>
-									<option value="1">John Doe</option>
-									<option value="2">Jane Smith</option>
-									<option value="3">Michael Johnson</option>
-									<option value="4">Emily Davis</option>
+									@if (Model.ManagerId != null && Model.ManagerId != 0)
+									{
+										<option selected  value="@Model.ManagerId">
+											@foreach (var manager in ViewBag.Manager)
+											{
+												ViewBag.ManagerName = ((List<EmployeeDto>)ViewBag.Manager).Find(m => m.EmployeeId == Model.ManagerId)?.Name;
+											}
+											@ViewBag.ManagerName
+										</option>
+									}
+									else
+									{
+										<option value="0" disabled selected>Select Manager</option>
+									}
+									@foreach (var manager in ViewBag.Manager)
+									{
+										<option value="@manager.EmployeeId">@manager.Name</option>
+									}
 								</select>
 							</div>
 							<div class="item-input">
 								<label for="DateOfJoining" class="form-label col-form-label required fw-semibold fs-6; form-label">Date Of Joining</label><br />
-								<input type="text" data-provide="datepicker" class="form-control userinput" id="datepicker" name="DateOfJoining" value="@Model.DateOfJoining" placeholder="Select a Date" style="width:370px;	">
+								<input type="text" data-provide="datepicker" class="form-control userinput date" id="datepicker" name="DateOfJoining" value="@Model.DateOfJoining" placeholder="Select a Date" style="width:370px;	">
 							</div>
 							<div class="item-input">
 								<label for="DateofLeaving" class="form-label col-form-label required fw-semibold fs-6; form-label">Date Of Leaveing</label><br />
-								<input type="text" data-provide="datepicker" class="form-control userinput" id="datepicker" value="@Model.DateofLeaving" name="DateofLeaving" placeholder="Select a Date" style="width:370px;	">
+								<input type="text" data-provide="datepicker" class="form-control userinput date" id="datepicker" value="@Model.DateofLeaving" name="DateofLeaving" placeholder="Select a Date" style="width:370px;	">
 
 							</div>
 							 <div class="col-xl-6">
@@ -128,13 +138,8 @@
 			</div>
 		</div>
 	</div>
-	<script src="~/js/calender.js"></script>
-	<script>
-		flatpickr("#datepicker", {
-		  dateFormat: "Y-m-d",
-		  minDate: "today",   // prevents past dates
-		  disableMobile: false // true = always desktop calendar, false = native mobile picker
-		});
-	</script>
-	<script src="~/js/msgtimeout.js"></script>
 </body>
+@section Scripts {
+	<script src="~/js/calender.js"></script>
+	<script src="~/js/msgtimeout.js"></script>
+} 
