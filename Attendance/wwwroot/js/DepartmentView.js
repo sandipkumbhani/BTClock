@@ -12,6 +12,10 @@
 
             var table = $('#DepartmentTable').DataTable();
             table.clear();
+            table.on('draw', function () {
+                var visibleRows = table.rows({ filter: 'applied' }).count();
+                $('#totalRemindersDepartment').text(`Total List: ${visibleRows}`);
+            });
 
             if (result && result.length > 0) {
                 $('#departmentlist').show();

@@ -46,16 +46,19 @@
                         <table id="corporateTable" class="table dt-responsive nowrap w-100">
                             <thead>
                                 <tr>
-                                    <th><input type="checkbox" id="checkAll" class="selectCheckboxs" onclick="selectcheckAllboxs(this)" checked>Select&nbsp;&nbsp;All</th>
+                                    <th><input type="checkbox" id="checkAll" class="selectCheckboxs" onclick="selectcheckAllboxs(this)">Select&nbsp;&nbsp;All</th>
                                     <th>Status</th>
-                                    <th>Employee Name</th>
+                                    <th>Employee</th>
                                     <th>Leave Type</th>
-                                    <th>Is Paid</th>
-                                    <th>Is HalfDay</th>
+                                    <th>Paid</th>
+                                    <th>Half Day</th>
+                                    <th>AppliedOn</th>
                                     <th>Start Date</th>
                                     <th>End Date</th>
                                     <th>Total Days</th>
                                     <th>Reason</th>
+
+
 
                                 </tr>
                             </thead>
@@ -85,9 +88,11 @@
                             </select>
                         </div>
                     </div>
-                    <div class="button-main">
-                        <a class="btn btn-primary me-2" href="/LeaveTransaction/LeaveTransaction" style=" width: 95px;height: 38px;background-color: #0466c8;">Add</a>
+                    <div class="button-main mb-3">
+                        <button id="approveSelectedBtn" class="btn btn-success me-2" style="width: 95px; height: 38px;">Approve </button>
+                        <button id="rejectSelectedBtn" class="btn btn-danger me-2" style="width: 95px; height: 38px;">Reject </button>
                     </div>
+
                 </div>
             </div>
         </div>

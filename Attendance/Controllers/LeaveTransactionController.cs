@@ -64,8 +64,8 @@ namespace Attendance.Controllers
                             TotalDays = leaveTransaction.TotalDays,
                             Reason = leaveTransaction.Reason,
                             Ishalfday = leaveTransaction.Ishalfday,
-                            AppliedBy = userid,
                             AppliedOn = DateTime.Now,
+                            AppliedBy = userid,
                             LeaveStatus = LeaveStatus.Pending,
                             EmployeeId = userid
                         });
@@ -128,38 +128,47 @@ namespace Attendance.Controllers
                 try
                 {
                     var existingLeaves = await _leaveTransactionService.GetAllLeaveTransactions();
-                    var leaveExists = existingLeaves.Any(l => l.LeaveMasterId == leaveTransaction.LeaveMasterId && l.StartDate == leaveTransaction.StartDate && l.EndDate == leaveTransaction.EndDate && l.LeaveTransactionId != leaveTransaction.LeaveTransactionId);
-                    if (leaveExists)
-                    {
-                        ViewBag.errormsg = "Leave Transaction Already Exists";
-                        return View(leaveTransaction);
-                    }
-                    var existingLeaveTransaction = await _leaveTransactionService.GetLeaveTransactionById(leaveTransaction.LeaveTransactionId);
+                    var leaveExists = existingLeaves.Any(l =>
+                        l.LeaveMasterId == leaveTransaction.LeaveMasterId &&
+                        l.StartDate == leaveTransaction.StartDate &&
+                        l.EndDate == leaveTransaction.EndDate &&
+                        l.LeaveTransactionId != leaveTransaction.LeaveTransactionId);
 
+
+                    var existingLeaveTransaction = await _leaveTransactionService.GetLeaveTransactionById(leaveTransaction.LeaveTransactionId);
                     if (existingLeaveTransaction == null)
                     {
                         ViewBag.errormsg = "Leave Transaction not found.";
                         return View(leaveTransaction);
                     }
-                    else
-                    {
-                        var userid = UserUtility.GetUserId(HttpContext);
-                        var leavemodel = new LeaveTransactionDto
-                        {
-                            LeaveMasterId = leaveTransaction.LeaveMasterId,
-                            IsPaid = leaveTransaction.IsPaid,
-                            StartDate = leaveTransaction.StartDate,
-                            EndDate = leaveTransaction.EndDate,
-                            TotalDays = leaveTransaction.TotalDays,
-                            Reason = leaveTransaction.Reason,
-                            Ishalfday = leaveTransaction.Ishalfday,
-                            LeaveStatus = existingLeaveTransaction.LeaveStatus,
-                            EmployeeId = existingLeaveTransaction.EmployeeId
-                        };
-                        await _leaveTransactionService.UpdateLeaveTransaction(leavemodel, leaveTransaction.LeaveTransactionId);
 
-                    }
-                    TempData["msg"] = "Leave updated successfully!";
+                    var newStatus = existingLeaveTransaction.LeaveStatus == LeaveStatus.Rejected
+                        ? LeaveStatus.Pending
+                        : existingLeaveTransaction.LeaveStatus;
+                    var currentUserId = UserUtility.GetUserId(HttpContext);
+
+                    var updatedLeaveTransaction = new LeaveTransactionDto
+                    {
+                        LeaveMasterId = leaveTransaction.LeaveMasterId,
+                        IsPaid = leaveTransaction.IsPaid,
+                        StartDate = leaveTransaction.StartDate,
+                        EndDate = leaveTransaction.EndDate,
+                        TotalDays = leaveTransaction.TotalDays,
+                        Reason = leaveTransaction.Reason,
+                        Ishalfday = leaveTransaction.Ishalfday,
+                        Updatedat = DateTime.Now,
+                        Updatedby = Convert.ToInt32(currentUserId),
+                        EmployeeId = existingLeaveTransaction.EmployeeId,
+                        LeaveStatus = newStatus
+                    };
+
+                    await _leaveTransactionService.UpdateLeaveTransaction(updatedLeaveTransaction, leaveTransaction.LeaveTransactionId);
+
+                    TempData["msg"] = newStatus == LeaveStatus.Pending
+                        ? "Leave updated and status reset to pending."
+                        : "Leave updated successfully!";
+
+                    // Redirect to view page
                     return RedirectToAction("LeaveTransactionView", "LeaveTransaction");
                 }
                 catch (Exception ex)
@@ -172,54 +181,100 @@ namespace Attendance.Controllers
             {
                 ViewBag.errormsg = "Fill The Form.";
             }
-            var leavetransactionDto = await _leaveTransactionService.GetLeaveTransactionById(leaveTransaction.LeaveTransactionId);
+
             var leaveMasters = await _leaveMasterService.GetAllLeaveMasters();
             ViewBag.leaveMasters = leaveMasters;
             var leaves = await _leaveTransactionService.GetAllLeaveTransactions();
             ViewBag.leaves = leaves;
-            return View(leavetransactionDto);
-
+            return View(leaveTransaction);
         }
+
+        [HttpPost]
         public async Task<IActionResult> DeleteLeaveTransaction(int id)
         {
             try
             {
                 await _leaveTransactionService.DeleteLeaveTransaction(id);
+
+                TempData["msg"] = "Leave Transaction deleted successfully.";
                 return RedirectToAction("LeaveTransactionView", "LeaveTransaction");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error deleting Leave Transaction");
-                return Json(new { success = false, message = "Error occurred while deleting Leave Transaction." });
+                TempData["ErrorMsg"] = "Error occurred while deleting Leave Transaction.";
+                return RedirectToAction("LeaveTransactionView", "LeaveTransaction");
             }
         }
+
         public IActionResult LeaveApproval()
         {
             return View();
         }
-        public async Task<IActionResult> UpdateLeaveTransactionStatus(int id, string status)
+        public async Task<IActionResult> LeaveApprovalDetails()
         {
-            try
+            var leavesList = await _leaveTransactionService.GetAllLeaveTransactions();
+            var leaveMasters = await _leaveMasterService.GetAllLeaveMasters();
+            var employees = await _userMenuMappingService.GetAllEmployees();
+            var masters = leaveMasters.Select(e => new
             {
-                var leaveTransaction = await _leaveTransactionService.GetLeaveTransactionById(id);
-                if (leaveTransaction == null)
-                {
-                    return Json(new { success = false, message = "Leave Transaction not found." });
-                }
-                if (status != "Approved" && status != "Rejected")
-                {
-                    return Json(new { success = false, message = "Invalid status value." });
-                }
-                leaveTransaction.LeaveStatus = status == "Approved" ? LeaveStatus.Approved : LeaveStatus.Rejected;
-                await _leaveTransactionService.UpdateLeaveTransaction(leaveTransaction, id);
-                return Json(new { success = true, message = "Leave status updated successfully." });
-            }
-            catch (Exception ex)
+                id = e.LeaveMasterId,
+                name = e.LeaveType
+            }).ToList();
+            var users = employees.Select(e => new
             {
-                _logger.LogError(ex, "Error updating Leave Transaction status");
-                return Json(new { success = false, message = "Error occurred while updating Leave status." });
-            }
+                id = e.EmployeeId,
+                name = e.Name
+            }).ToList();
+            return Json(new { result = "success", data = leavesList, users, masters });
         }
+        [HttpPost]
+        public async Task<IActionResult> UpdateLeaveTransactionStatus(List<int?> leaveTransactionIds, string status)
+        {
+            if (leaveTransactionIds == null || !leaveTransactionIds.Any())
+            {
+                return BadRequest(new { success = false, message = "No leave IDs provided." });
+            }
+
+            if (status != "Approved" && status != "Rejected")
+            {
+                return BadRequest(new { success = false, message = "Invalid status value." });
+            }
+
+            var approve = await _leaveTransactionService.GetLeaveTransactionById(leaveTransactionIds.First().Value);
+            if (approve == null)
+            {
+                return BadRequest(new { success = false, message = "First leave transaction not found." });
+            }
+
+            var currentUserId = UserUtility.GetUserId(HttpContext);
+
+            var updatedLeaveStatus = new LeaveTransactionDto
+            {
+                ApprovedAt = DateTime.Now,
+                ApprovedBy = Convert.ToInt32(currentUserId)
+            };
+
+            foreach (var id in leaveTransactionIds)
+            {
+                var leave = await _leaveTransactionService.GetLeaveTransactionById(id.Value);
+                if (leave != null)
+                {
+                    leave.LeaveStatus = status == "Approved" ? LeaveStatus.Approved : LeaveStatus.Rejected;
+
+                    if (status == "Approved")
+                    {
+                        leave.ApprovedAt = updatedLeaveStatus.ApprovedAt;
+                        leave.ApprovedBy = updatedLeaveStatus.ApprovedBy;
+                    }
+
+                    await _leaveTransactionService.UpdateLeaveTransaction(leave, id.Value);
+                }
+            }
+
+            return Json(new { success = true, message = $"Status updated to '{status}' for selected leaves." });
+        }
+
 
     }
 }

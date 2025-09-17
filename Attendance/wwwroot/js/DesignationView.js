@@ -15,7 +15,10 @@ function loadDesignations() {
 
             var table = $('#DesignationTable').DataTable();
             table.clear();
-
+            table.on('draw', function () {
+                var visibleRows = table.rows({ filter: 'applied' }).count();
+                $('#totalRemindersDesignation').text(`Total List: ${visibleRows}`);
+            });
             if (result && result.length > 0) {
                 $('#designationlist').show();
                 const newRows = [];

@@ -11,7 +11,10 @@
 
             var table = $('#holidaymasterTable').DataTable();
             table.clear();
-
+            table.on('draw', function () {
+                var visibleRows = table.rows({ filter: 'applied' }).count();
+                $('#totalRemindersholidaymaster').text(`Total List: ${visibleRows}`);
+            });
             if (result && result.length > 0) {
                 $('#holidaymasterlist').show();
                 const newRows = [];

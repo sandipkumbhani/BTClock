@@ -11,7 +11,10 @@
 
             var table = $('#LeavemasterTable').DataTable();
             table.clear();
-
+            table.on('draw', function () {
+                var visibleRows = table.rows({ filter: 'applied' }).count();
+                $('#totalRemindersleavemaster').text(`Total List: ${visibleRows}`);
+            });
             if (result && result.length > 0) {
                 $('#leavemasterlist').show();
                 const newRows = [];
