@@ -7,7 +7,6 @@
         datatype: 'json',
         method: 'GET',
         success: function (result) {
-            console.log(result);
 
             var table = $('#LeavemasterTable').DataTable();
             table.clear();

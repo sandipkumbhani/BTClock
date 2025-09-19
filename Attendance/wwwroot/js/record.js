@@ -198,7 +198,6 @@ function renderPagination() {
         }
     }
 
-    // Next button
     ul.appendChild(createPageItem("next", currentPage + 1, currentPage === totalPages, true));
 
     wrapper.appendChild(ul);
@@ -240,7 +239,7 @@ function populatePageSizeOptions() {
     const select = document.getElementById("pageLength");
     if (!select) return;
 
-    const options = [5, 10, 20, 25];
+    const options = [5, 10, 20, 25, 50 ];
     select.innerHTML = "";
 
     options.forEach(v => {

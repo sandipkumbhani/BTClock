@@ -11,7 +11,6 @@ function loadDesignations() {
         type: 'GET',
         dataType: 'json',
         success: function (result) {
-            console.log(result);
 
             var table = $('#DesignationTable').DataTable();
             table.clear();

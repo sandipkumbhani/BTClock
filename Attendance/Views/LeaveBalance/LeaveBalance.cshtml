@@ -3,13 +3,13 @@
 @using Attendance.Domain.Models
 @{
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
-    var users = ViewBag.users;
+    // var users = ViewBag.users;
 }
 <div class="content-page" style="margin:35px 0 0 0">
     <div class="content">
         <div class="main-inner container-fluid">
 
-            <div id="userList">
+            <div id="leavelist">
                 <div class="card com-profile-info">
                     <div class="row mt-3">
                     </div>
@@ -49,6 +49,8 @@
                                     <th>Total Allocated</th>
                                     <th>Used Leave</th>
                                     <th>Remaining</th>
+                                    <th>ExtraLeaves</th>
+
                                 </tr>
                             </thead>
                             <tbody>
@@ -77,15 +79,12 @@
                             </select>
                         </div>
                     </div>
-                    <div class="button-main">
-                        @* <input class=" card-link" type="button" value="Add" style="width:95px;height:38px; border:thick; text-box-edge: cap alphabetic; text-box-trim: trim-start;" onclick="location.href='@Url.Action("MenuMaster", "MenuMaster", new { })'" />*@
-                        <a class="btn btn-primary me-2" href="/MenuMaster/MenuMaster" style=" width: 95px;height: 38px;background-color: #0466c8;">Add</a>
-                    </div>
+                   
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-
-
+@section Scripts {
+<script src="~/js/leavebalance.js"></script>
+}

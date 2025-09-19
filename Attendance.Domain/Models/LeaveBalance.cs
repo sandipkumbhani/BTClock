@@ -23,12 +23,13 @@ namespace Attendance.Domain.Models
         [ForeignKey("EmployeeId")]
 
         public int EmployeeId { get; set; }
-        public Employee? Employee { get; set; }
+        public EmployeeDto? Employee { get; set; }
         [ForeignKey("LeaveMasterId")]
-        public int LeaveMasterId { get; set; }
-        public LeaveMaster? LeaveMaster { get; set; }
+        public int? LeaveMasterId { get; set; }
+        public LeaveMasterDto? LeaveMaster { get; set; }
         public int AssignedLeaves { get; set; }
         public int UsedLeaves { get; set; }
         public int RemainingLeaves { get; set; }
-    }
+        public int? ExtraLeaves { get; set; }
+	}
 }
