@@ -1,4 +1,9 @@
-﻿$(function () {
+﻿function updateTotalDays(start, end) {
+    var days = end.diff(start, 'days') + 1;
+    $('#TotalDays').val(days);
+}
+
+$(function () {
     var start = $('#StartDate').val() ? moment($('#StartDate').val()) : moment();
     var end = $('#EndDate').val() ? moment($('#EndDate').val()) : moment();
 
@@ -7,29 +12,21 @@
         $('#StartDate').val(start.format('YYYY-MM-DD'));
         $('#EndDate').val(end.format('YYYY-MM-DD'));
 
-        updateTotalDays(start, end);
+        updateTotalDays(start, end); 
     }
-
-    //function updateTotalDays(start, end) {
-    //    var diff = end.diff(start, 'days') + 1;
-
-    //    if ($('#Ishalfday').is(':checked')) {
-    //        diff -= 0.5;
-    //    }
-
-    //    if (diff < 0) diff = 0;
-
-    //    $('#TotalDays').val(diff);
-    //}
 
     $('#reportrange').daterangepicker({
         startDate: start,
         endDate: end,
         opens: 'right',
+        autoUpdateInput: false,
         locale: {
-            format: 'MM/DD/YYYY'
+            format: 'MM/DD/YYYY',
+            cancelLabel: 'Clear'
         }
-    }, updateDisplay);
+    }, function (start, end) {
+        updateDisplay(start, end);
+    });
 
     updateDisplay(start, end);
 

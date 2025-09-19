@@ -7,7 +7,6 @@
         datatype: 'json',
         method: 'GET',
         success: function (result) {
-            console.log(result);
 
             var table = $('#holidaymasterTable').DataTable();
             table.clear();

@@ -93,25 +93,32 @@ namespace Attendance.Controllers
         {
             return View();
         }
-        public async Task<IActionResult> LeaveTransactionViewDetails()
-        {
-            var leavesList = await _leaveTransactionService.GetAllLeaveTransactions();
-            var leaveMasters = await _leaveMasterService.GetAllLeaveMasters();
-            var employees = await _userMenuMappingService.GetAllEmployees();
-            var masters = leaveMasters.Select(e => new
-            {
-                id = e.LeaveMasterId,
-                name = e.LeaveType
-            }).ToList();
-            var users = employees.Select(e => new
-            {
-                id = e.EmployeeId,
-                name = e.Name
-            }).ToList();
+		public async Task<IActionResult> LeaveTransactionViewDetails()
+		{
+			var currentUserId = UserUtility.GetUserId(HttpContext); // logged in employeeId
 
-            return Json(new { result = "success", data = leavesList, users, masters });
-        }
-        public async Task<IActionResult> UpdateLeaveTransaction(int id)
+			var leavesList = await _leaveTransactionService.GetAllLeaveTransactions();
+			var employeeLeaves = leavesList.Where(l => l.EmployeeId == currentUserId).ToList();
+
+			var leaveMasters = await _leaveMasterService.GetAllLeaveMasters();
+			var employees = await _userMenuMappingService.GetAllEmployees();
+
+			var masters = leaveMasters.Select(e => new
+			{
+				id = e.LeaveMasterId,
+				name = e.LeaveType
+			}).ToList();
+
+			var users = employees.Select(e => new
+			{
+				id = e.EmployeeId,
+				name = e.Name
+			}).ToList();
+
+			return Json(new { result = "success", data = employeeLeaves, users, masters });
+		}
+
+		public async Task<IActionResult> UpdateLeaveTransaction(int id)
         {
             var leaveTransaction = await _leaveTransactionService.GetLeaveTransactionById(id);
             var leaveMasters = await _leaveMasterService.GetAllLeaveMasters();
@@ -155,6 +162,7 @@ namespace Attendance.Controllers
                         EndDate = leaveTransaction.EndDate,
                         TotalDays = leaveTransaction.TotalDays,
                         Reason = leaveTransaction.Reason,
+                        AppliedOn=existingLeaveTransaction.AppliedOn,
                         Ishalfday = leaveTransaction.Ishalfday,
                         Updatedat = DateTime.Now,
                         Updatedby = Convert.ToInt32(currentUserId),
