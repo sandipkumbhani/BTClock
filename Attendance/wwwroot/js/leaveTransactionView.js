@@ -3,7 +3,6 @@
     $("#corporateTable tbody").empty();
 
     let table = $('#corporateTable').DataTable();
-
     table.clear().draw();
 
     $.ajax({
@@ -19,19 +18,17 @@
                 $('#userList').show();
 
                 $.each(response.data, function (index, detail) {
-                    var username = response.users.find(x => x.id === detail.updatedby);
-                    var Updatebyuser = username?.name || '';
-                    var appliedon = detail.appliedOn || "";
-                    var splitApproveon = appliedon.split('T')[0]
-                    //const employee = response.users.find(user => user.id === detail.employeeId);
                     const leaveMaster = response.masters.find(m => m.id === detail.leaveMasterId);
-                    var Updatedate = detail.updatedat || "";
-                    var splitdate = Updatedate.split('T')[0];
+                    const updatedByUser = response.users.find(x => x.id === detail.updatedby)?.name || '';
+                    const approvedByUser = response.users.find(x => x.id === detail.approvedBy)?.name || '';
 
-                    var username = response.users.find(x => x.id === detail.approvedBy);
-                    var approvebyuser = username?.name || '';
-                    var approveddate = detail.approvedAt || "";
-                    var splitApprovedate = approveddate.split('T')[0]
+                    const appliedOn = detail.appliedOn || "";
+                    const startDate = detail.startDate ? new Date(detail.startDate).toLocaleDateString() : '';
+                    const endDate = detail.endDate ? new Date(detail.endDate).toLocaleDateString() : '';
+                    const updatedAt = detail.updatedat ? detail.updatedat.split('T')[0] : '';
+                    const approvedAt = detail.approvedAt ? detail.approvedAt.split('T')[0] : '';
+                    const splitAppliedOn = appliedOn.split('T')[0];
+
                     const statusMap = {
                         0: "Pending",
                         1: "Approved",
@@ -40,8 +37,12 @@
 
                     const statusText = statusMap[detail.leaveStatus];
 
-                    let actionButtons = '';
+                    const fileCell = detail.addFile
+                        ? `<a href="/leave_pdf/${detail.addFile}" target="_blank" title="View PDF">
+        <i class="ri-file-pdf-2-line" style="font-size: 24px; color: red;"></i></a>`
+                        : '';
 
+                    let actionButtons = '';
                     if (detail.leaveStatus === 0 || detail.leaveStatus === 2) {
                         actionButtons += `<a href="${url + detail.leaveTransactionId}" style="margin-right: 10px;">
                             <i class="ri-edit-2-line" style="font-size:x-large;"></i>
@@ -50,33 +51,43 @@
                         actionButtons += `<a onclick="deleteLeaveTransaction(${detail.leaveTransactionId})" style="color:red;">
                             <i class="ri-delete-bin-3-line" style="font-size:x-large;"></i>
                         </a>`;
-                    } 
+                    }
 
-                    const row = [
+                    newRows.push([
                         leaveMaster ? leaveMaster.name : '',
                         detail.isPaid ? 'Yes' : 'No',
                         detail.ishalfday ? 'Yes' : 'No',
-                        splitApproveon,
-                        detail.startDate ? new Date(detail.startDate).toLocaleDateString() : '',
-                        detail.endDate ? new Date(detail.endDate).toLocaleDateString() : '',
-                        detail.totalDays,
+                        splitAppliedOn,
+                        startDate,
+                        endDate,
+                        detail.ishalfday ? 0.5 : detail.totalDays,
                         detail.reason,
-                        splitdate,
-                        Updatebyuser,
-                        splitApprovedate,
-                        approvebyuser,
+                        updatedAt,
+                        updatedByUser,
+                        approvedAt,
+                        approvedByUser,
                         statusText,
-                        actionButtons,
-                    ];
-
-                    newRows.push(row);
+                        fileCell,
+                        actionButtons
+                    ]);
                 });
 
+                newRows.sort(function (a, b) {
+                    const statusA = a[12];
+                    const statusB = b[12];
+
+                    if (statusA === "Pending" && statusB !== "Pending") return -1;
+                    if (statusA === "Approved" && statusB === "Rejected") return -1;
+                    if (statusA === "Rejected" && statusB !== "Rejected") return 1;
+                    if (statusB === "Pending" && statusA !== "Pending") return 1;
+
+                    return 0;
+                });
                 table.rows.add(newRows).draw();
 
                 table.rows().every(function () {
                     const rowData = this.data();
-                    const status = rowData[8];
+                    const status = rowData[12];
 
                     if (status === 'Approved') {
                         $(this.node()).addClass('disabled-row');
@@ -90,7 +101,7 @@
             } else {
                 table.row.add([
                     `<span class="text-center" style="display:block;" colspan="12">No Data Found</span>`,
-                    '', '', '', '', '', '', '', '', ''
+                    '', '', '', '', '', '', '', '', '', '', '', '', '', ''
                 ]).draw();
 
                 $('#totalRemindersCorporate').text(`Total List: 0`);

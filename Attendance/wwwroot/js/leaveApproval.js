@@ -9,6 +9,7 @@ $(document).ready(function () {
         method: 'GET',
         dataType: 'json',
         success: function (response) {
+            console.log(response);
             var table = $('#corporateTable').DataTable();
 
             table.clear();
@@ -32,8 +33,8 @@ $(document).ready(function () {
                 $.each(response.data, function (index, detail) {
                     const employee = response.users.find(user => user.id === detail.employeeId);
                     const leaveMaster = response.masters.find(m => m.id === detail.leaveMasterId);
-                    var appliedon = detail.approvedAt || "";
-                    var splitAppliedon = appliedon.split('T')[0]
+                    var appliedon = detail.appliedOn || "";
+                    var splitAppliedon = appliedon.split('T')[0];
                     const statusMap = {
                         0: "Pending",
                         1: "Approved",
@@ -41,6 +42,10 @@ $(document).ready(function () {
                     };
 
                     const statusText = statusMap[detail.leaveStatus];
+                    const fileColumn = detail.addFile && detail.addFile !== ''
+                        ? `<a href="/leave_pdf/${detail.addFile}" target="_blank" title="View PDF">
+                        <i class="ri-file-pdf-line" style="font-size: 20px; color: red;"></i></a>`
+                        : '';
                     let checkbox = "";
 
                     if (statusText === "Pending") {
@@ -64,10 +69,22 @@ $(document).ready(function () {
                         detail.startDate ? new Date(detail.startDate).toLocaleDateString() : '',
                         detail.endDate ? new Date(detail.endDate).toLocaleDateString() : '',
                         detail.totalDays,
-                        detail.reason
+                        detail.reason,
+                        fileColumn
                     ];
 
                     newRows.push(row);
+                });
+                newRows.sort(function (a, b) {
+                    const statusA = a[1];
+                    const statusB = b[1];
+
+                    if (statusA === "Pending" && statusB !== "Pending") return -1;
+                    if (statusA === "Approved" && statusB === "Rejected") return -1;
+                    if (statusA === "Rejected" && statusB !== "Rejected") return 1;
+                    if (statusB === "Pending" && statusA !== "Pending") return 1;
+
+                    return 0;
                 });
 
                 table.rows.add(newRows).draw();

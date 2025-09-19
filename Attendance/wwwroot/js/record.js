@@ -158,6 +158,10 @@ function updateSortIcons(headers) {
 function renderPagination() {
     const wrapper = document.getElementById("customFranchisePagination");
     if (!wrapper) return;
+    if (recordsPerPage === Infinity) {
+        wrapper.innerHTML = "";
+        return;
+    }
     wrapper.innerHTML = "";
 
     const totalPages = Math.ceil(filteredRecords.length / recordsPerPage);
@@ -239,23 +243,28 @@ function populatePageSizeOptions() {
     const select = document.getElementById("pageLength");
     if (!select) return;
 
-    const options = [5, 10, 20, 25, 50 ];
+    const options = [5, 10, 20, 25, 'All'];
     select.innerHTML = "";
 
     options.forEach(v => {
         const o = document.createElement("option");
         o.value = v;
-        o.textContent = v;
+        o.textContent = v === 'All' ? 'All' : v;
         if (v === recordsPerPage) o.selected = true;
         select.appendChild(o);
     });
 
     select.addEventListener("change", () => {
-        recordsPerPage = parseInt(select.value, 10);
+        if (select.value === 'All') {
+            recordsPerPage = filteredRecords.length;
+        } else {
+            recordsPerPage = parseInt(select.value, 10);
+        }
         currentPage = 1;
         renderTable();
         renderPagination();
     });
+
 }
 
 function addExportButton() {
