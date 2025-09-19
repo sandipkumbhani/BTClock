@@ -19,12 +19,11 @@
         <div class="card com-profile-info">
             <form class="form" id="updateForm" method="post" enctype="multipart/form-data" asp-action="UpdateLeaveTransaction" asp-controller="LeaveTransaction">
                 <input type="hidden" asp-for="LeaveTransactionId" />
+                <input type="hidden" name="ExistingFile" value="@Model.AddFile" />
                 <input type="hidden" id="StartDate" name="StartDate" value="@Model.StartDate" />
                 <input type="hidden" id="EndDate" name="EndDate" value="@Model.EndDate" />
-
                 <div class="top-details">
                     <h2 class="page-form-title">Leave Transaction Update</h2>
-
                     <div class="item-input">
                         <label for="LeaveMasterId" class="form-label col-form-label required fw-semibold fs-6">Leave Type</label>
                         <select class="select2-custom form-control form-select" id="LeaveMasterId" name="LeaveMasterId" style="width:359.46px; height:48px;" required>
@@ -90,11 +89,22 @@
 
                     <div class="item-input">
                         <label for="AddFile" class="form-label col-form-label fw-semibold fs-6">Add File</label>
-                        <input type="file" accept="*/*" id="AddFile" name="AddFile" class="form-control userinput" style="width:359.46px;" />
-                        @if (!string.IsNullOrEmpty(Model.AddFile))
-                        {
-                            <p>Current File: <a href="@Url.Content(Model.AddFile)" target="_blank">View</a></p>
-                        }
+                        <input type="file" accept=".pdf" id="AddFile" name="AddFile" style="display:none" />
+                        <div class="form-control userinput" style="width:359.46px; padding:inherit">
+                            <button type="button" class="btn btn-secondary" onclick="document.getElementById('AddFile').click();" style="color:black;background:#f8f8f8;border:none">
+                                Choose File
+                            </button>
+                            <span id="pdfFileName" style="margin-left:10px;">
+                                @if (!string.IsNullOrEmpty(Model.AddFile))
+                                {
+                                    <span>@System.IO.Path.GetFileName(Model.AddFile)</span>
+                                }
+                                else
+                                {
+                                    <text>No file chosen</text>
+                                }
+                            </span>
+                        </div>
                     </div>
                 </div>
 

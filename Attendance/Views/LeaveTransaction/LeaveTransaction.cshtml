@@ -16,7 +16,7 @@
     </div>
     <div class="col-12">
         <div class="card com-profile-info">
-            <form class="form" id="userForm" method="post" asp-action="LeaveTransaction" asp-controller="LeaveTransaction">
+            <form class="form" id="userForm" method="post" asp-action="LeaveTransaction" asp-controller="LeaveTransaction" enctype="multipart/form-data">
                 <input type="hidden" id="StartDate" name="StartDate" />
                 <input type="hidden" id="EndDate" name="EndDate" />
                 <div class="top-details">
@@ -78,7 +78,8 @@
                     <div class="">
                         <div class="item-input">
                             <label for="AddFile" class="form-label col-form-label required fw-semibold fs-6">Add File</label>
-                            <input type="file" accept="AddFile/*" id="AddFile" name="AddFile" class="form-control userinput" onchange="document.getElementById('AddFile').src = window.URL.createObjectURL(this.files[0])" placeholder="Upload file" style="width:359.46px; ">
+                            <input type="file" accept=".pdf" id="AddFile" name="AddFile" class="form-control userinput" onchange="document.getElementById('AddFile').src = window.URL.createObjectURL(this.files[0])" placeholder="Upload file" style="width:359.46px;">
+
                         </div>
                     </div>
                 </div>
