@@ -11,5 +11,7 @@ namespace Attendance.Application.Interface
     {
         Task<List<LeaveBalanceDto>> GetAllLeaveBalances();
         Task<IEnumerable<LeaveBalanceDto>> GetLeaveBalanceByEmployeeId(int employeeId);
-    }
+		Task<LeaveBalanceDto> UpsertLeaveBalance(LeaveBalanceDto leaveBalance);
+
+	}
 }

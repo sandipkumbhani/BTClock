@@ -420,26 +420,33 @@
 								</div>
 							</div>
 						</div>
-						
+						<!-- Holiday Tab -->
 						<div class="tab-pane fade @(openPanel=="Holiday" ? "show active" : "")" id="tab-Holiday" role="tabpanel">
 							<form method="post" action="@Url.Action("Holiday","Master")">
 								<div class="mb-3" style="margin-left:15px;">
 									<input type="hidden" id="HolidayMasterId" name="Id" />
-									
-									<label for="HolidayDate" class="form-label">Holiday Date</label>
-									<input type="text" data-provide="datepicker" class="form-control userinput date" id="datepicker" name="HolidayDate" placeholder="Select a Date" style="width:370px;	">
-									
-									<label for="HolidayDescription" class="form-label">Holiday Description</label>
-									<input id="HolidayDescription" name="HolidayDescription" class="form-control" required placeholder="Enter Holiday Description" style="width:370px;">
-									
-									<label for="Year" class="form-label">Year</label>
-									<input type="text" id="visitYear" name="Year" class="form-control yearpicker" placeholder="Select Year" style="width:370px;">
+									<div class="item-input">
 
-									<label for="SaveWeekend" class="form-label col-form-label required fw-semibold fs-6" style="width: 159px;">
-										<input type="checkbox" value="true" class="form-check-input" id="SaveWeekend" name="SaveWeekend" style="padding:8px;">  &nbsp;
-										Save As Weekend
-									</label>
+										<label for="HolidayDate" class="form-label">Holiday Date</label>
+										<input type="text" data-provide="datepicker" class="form-control userinput date" id="datepicker" name="HolidayDate" placeholder="Select a Date" style="width:370px;	">
+									</div>
+									<div class="item-input">
 
+										<label for="HolidayDescription" class="form-label">Holiday Description</label>
+										<input id="HolidayDescription" name="HolidayDescription" class="form-control" required placeholder="Enter Holiday Description" style="width:370px;">
+									</div>
+									<div class="item-input">
+
+										<label for="Year" class="form-label">Year</label>
+										<input type="text" id="visitYear" name="Year" class="form-control yearpicker" placeholder="Select Year" style="width:370px;">
+									</div>
+									<div class="item-input">
+
+										<label for="SaveWeekend" class="form-label col-form-label required fw-semibold fs-6" style="width: 159px;">
+											<input type="checkbox" value="true" class="form-check-input" id="SaveWeekend" name="SaveWeekend" style="padding:8px;">  &nbsp;
+											Save As Weekend
+										</label>
+									</div>
 								</div>
 								<div class="col-xl-6" style="margin-left:30px;">
 									<div class="col-xl-6">
@@ -555,12 +562,11 @@
 		var deleteholidaymasterUrl='@Url.Action("DeleteHoliday", "Master")' + '?id=';
 	</script>
 	<script src="~/js/calender.js"></script>
-	<script src="~/js/mastertable.js"></script>
 	<script src="~/js/msgtimeout.js"></script>
 	<script src="~/js/moduleview.js"></script>
 	<script src="~/js/departmentview.js"></script>
 	<script src="~/js/designationview.js"></script>
 	<script src="~/js/leavemaster.js"></script>
-    <script src="~/js/holidaymaster.js"></script>
+	<script src="~/js/holidaymaster.js"></script>
 
 }

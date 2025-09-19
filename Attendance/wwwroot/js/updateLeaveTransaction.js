@@ -1,4 +1,4 @@
-﻿function updateTotalDays(start, end) {
+function updateTotalDays(start, end) {
     let days = end.diff(start, 'days') + 1;
     if (days < 1) days = 1; // prevent zero or negative days
 
@@ -7,11 +7,11 @@
 
     document.getElementById("TotalDays").value = totalDays;
 
-    // Optional: if you display total days somewhere in the view, update it here
     const totalDaysDisplay = document.getElementById("TotalDaysDisplay");
     if (totalDaysDisplay) {
         totalDaysDisplay.textContent = totalDays;
     }
+
 }
 
 $(function () {
@@ -22,17 +22,21 @@ $(function () {
         $('#reportrange span').text(start.format('MM/DD/YYYY') + ' - ' + end.format('MM/DD/YYYY'));
         $('#StartDate').val(start.format('YYYY-MM-DD'));
         $('#EndDate').val(end.format('YYYY-MM-DD'));
-        updateTotalDays(start, end);
+        updateTotalDays(start, end); 
     }
 
     $('#reportrange').daterangepicker({
         startDate: start,
         endDate: end,
         opens: 'right',
+        autoUpdateInput: false,
         locale: {
-            format: 'MM/DD/YYYY'
+            format: 'MM/DD/YYYY',
+            cancelLabel: 'Clear'
         }
-    }, updateDisplay);
+    }, function (start, end) {
+        updateDisplay(start, end);
+    });
 
     updateDisplay(start, end);
 
@@ -41,7 +45,6 @@ $(function () {
         const endDate = moment($('#EndDate').val());
         updateTotalDays(startDate, endDate);
     });
-
     document.getElementById('AddFile').addEventListener('change', function () {
         var fileName = this.files.length > 0 ? this.files[0].name : "No file chosen";
         document.getElementById('pdfFileName').textContent = fileName;

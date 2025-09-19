@@ -25,5 +25,9 @@ namespace Attendance.Application.service
         {
             return await _leaveBalanceAdaptor.GetLeaveBalanceByEmployeeId(employeeId);
         }
-    }
+        public async Task<LeaveBalanceDto> UpsertLeaveBalance(LeaveBalanceDto leaveBalance)
+		{
+			return await _leaveBalanceAdaptor.UpsertLeaveBalance(leaveBalance);
+		}
+	}
 }

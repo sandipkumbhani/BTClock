@@ -17,9 +17,11 @@ namespace Attendance.Domain.Models
         public string MobileNo { get; set; }
         [ForeignKey("DesignationId")]
         public int DesignationId { get; set; }
-        [ForeignKey("DepartmentId")]
+        public DesignationDto? Designation { get; set; }
+		[ForeignKey("DepartmentId")]
         public int DepartmentId { get; set; }
-        public int? ManagerId { get; set; }
+		public DepartmentDto? Department { get; set; }
+		public int? ManagerId { get; set; }
         public DateTime DateOfJoining { get; set; }
         public DateTime? DateofLeaving { get; set; }
         public DateTime CreatedAt { get; set; }

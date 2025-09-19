@@ -52,5 +52,20 @@ namespace Attendance.Infrastructure.Efcore.Providers
             }
             return null;
         }
-    }
+        public async Task<LeaveBalanceDto> UpsertLeaveBalance(LeaveBalanceDto leaveBalance)
+		{
+			var _httpClient = new HttpClient();
+			_httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);
+			var content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(leaveBalance), Encoding.UTF8, "application/json");
+			var response = await _httpClient.PostAsync(apiCredential.url + "LeaveBalance/UpsertLeaveBalance", content);
+			var responseData = await response.Content.ReadAsStringAsync();
+			var responseModel = Newtonsoft.Json.JsonConvert.DeserializeObject<CommanResponseDto>(responseData);
+			if (responseModel != null)
+			{
+				var details = Newtonsoft.Json.JsonConvert.DeserializeObject<LeaveBalanceDto>(Convert.ToString(responseModel.Data!));
+				return details;
+			}
+			return null;
+		}
+	}
 }

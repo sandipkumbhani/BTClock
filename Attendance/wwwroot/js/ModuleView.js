@@ -7,9 +7,6 @@
         datatype: 'json',
         method: 'GET',
         success: function (result) {
-
-            console.log(result);
-
             var table = $('#corporateTable').DataTable();
             table.clear();
             table.on('draw', function () {

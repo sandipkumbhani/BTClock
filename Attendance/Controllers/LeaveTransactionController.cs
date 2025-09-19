@@ -94,57 +94,61 @@ namespace Attendance.Controllers
         }
         public async Task<IActionResult> LeaveTransactionViewDetails()
         {
-            var leavesList = await _leaveTransactionService.GetAllLeaveTransactions();
-            var leaveMasters = await _leaveMasterService.GetAllLeaveMasters();
-            var employees = await _userMenuMappingService.GetAllEmployees();
-            var masters = leaveMasters.Select(e => new
-            {
-                id = e.LeaveMasterId,
-                name = e.LeaveType
-            }).ToList();
-            var users = employees.Select(e => new
-            {
-                id = e.EmployeeId,
-                name = e.Name
-            }).ToList();
+          var currentUserId = UserUtility.GetUserId(HttpContext); // logged in employeeId
+          var leavesList = await _leaveTransactionService.GetAllLeaveTransactions();
+          var employeeLeaves = leavesList.Where(l => l.EmployeeId == currentUserId).ToList();
 
-            return Json(new { result = "success", data = leavesList, users, masters });
+          var leaveMasters = await _leaveMasterService.GetAllLeaveMasters();
+          var employees = await _userMenuMappingService.GetAllEmployees();
+
+          var masters = leaveMasters.Select(e => new
+          {
+            id = e.LeaveMasterId,
+            name = e.LeaveType
+          }).ToList();
+
+          var users = employees.Select(e => new
+          {
+            id = e.EmployeeId,
+            name = e.Name
+          }).ToList();
+
+          return Json(new { result = "success", data = employeeLeaves, users, masters });
         }
         public string UploadFile(IFormFile file)
-        {
-            string fileName = null;
-
-            if (file != null)
             {
-                if (file.Length > 0)
-                {
-                    string file_path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\leave_pdf\\");
-                    fileName = Path.GetFileName(file.FileName);
-                    var fileExtention = Path.GetExtension(fileName);
-                    if (!Directory.Exists(file_path))
-                    {
-                        Directory.CreateDirectory(file_path);
-                    }
-                    using (FileStream fileStream = System.IO.File.Create(file_path + fileName))
-                    {
-                        file.CopyTo(fileStream);
-                        fileStream.Flush();
-                    }
-                    return fileName;
-                }
-            }
-            return fileName;
-        }
+                string fileName = null;
 
+                if (file != null)
+                {
+                    if (file.Length > 0)
+                    {
+                        string file_path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\leave_pdf\\");
+                        fileName = Path.GetFileName(file.FileName);
+                        var fileExtention = Path.GetExtension(fileName);
+                        if (!Directory.Exists(file_path))
+                        {
+                            Directory.CreateDirectory(file_path);
+                        }
+                        using (FileStream fileStream = System.IO.File.Create(file_path + fileName))
+                        {
+                            file.CopyTo(fileStream);
+                            fileStream.Flush();
+                        }
+                        return fileName;
+                    }
+                }
+                return fileName;
+            }
         public async Task<IActionResult> UpdateLeaveTransaction(int id)
-        {
-            var leaveTransaction = await _leaveTransactionService.GetLeaveTransactionById(id);
-            var leaveMasters = await _leaveMasterService.GetAllLeaveMasters();
-            ViewBag.leaveMasters = leaveMasters;
-            var leaves = await _leaveTransactionService.GetAllLeaveTransactions();
-            ViewBag.leaves = leaves;
-            return View(leaveTransaction);
-        }
+            {
+                var leaveTransaction = await _leaveTransactionService.GetLeaveTransactionById(id);
+                var leaveMasters = await _leaveMasterService.GetAllLeaveMasters();
+                ViewBag.leaveMasters = leaveMasters;
+                var leaves = await _leaveTransactionService.GetAllLeaveTransactions();
+                ViewBag.leaves = leaves;
+                return View(leaveTransaction);
+            }
         [HttpPost]
         public async Task<IActionResult> UpdateLeaveTransaction(LeaveTransactionDto leaveTransaction, IFormFile AddFile, string ExistingFile)
         {
@@ -178,7 +182,6 @@ namespace Attendance.Controllers
 
                 var updatedLeaveTransaction = new LeaveTransactionDto
                 {
-                    LeaveTransactionId = leaveTransaction.LeaveTransactionId,
                     LeaveMasterId = leaveTransaction.LeaveMasterId,
                     IsPaid = leaveTransaction.IsPaid,
                     StartDate = leaveTransaction.StartDate,
@@ -193,6 +196,7 @@ namespace Attendance.Controllers
                     LeaveStatus = newStatus,
                     AddFile = fileName
                 };
+
 
                 await _leaveTransactionService.UpdateLeaveTransaction(updatedLeaveTransaction, leaveTransaction.LeaveTransactionId);
 

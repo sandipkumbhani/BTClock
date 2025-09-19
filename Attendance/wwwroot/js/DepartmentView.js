@@ -8,7 +8,6 @@
         method: 'GET',
         success: function (result) {
 
-            console.log(result);
 
             var table = $('#DepartmentTable').DataTable();
             table.clear();

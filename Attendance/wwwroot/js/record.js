@@ -202,7 +202,6 @@ function renderPagination() {
         }
     }
 
-    // Next button
     ul.appendChild(createPageItem("next", currentPage + 1, currentPage === totalPages, true));
 
     wrapper.appendChild(ul);
