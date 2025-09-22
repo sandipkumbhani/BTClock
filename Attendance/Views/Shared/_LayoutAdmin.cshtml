@@ -40,9 +40,8 @@
             <div class="d-flex align-items-center gap-lg-2 gap-1">
                 <div class="logo-topbar">
                     <a href="#">
-                        <span class="logo-sm" style="font-size:xx-large;color:#0466C8;">
-                            <i class="fa-solid fa-clock" style="font-size:35px"></i>
-
+                        <span class="logo-sm" style="font-size:xx-large; color:#0466C8;">
+                            <img src="~/images/BT.png" alt="BTClock Logo" style="height:35px;">
                         </span>
                     </a>
                 </div>
@@ -55,14 +54,12 @@
         <div class="leftside-menu">
             <div class="left-toplogo">
                 <a href="#" class="logo logo-light">
-                    <span class="logo-lg" style="font-size:xx-large;color:#0466C8;">
-                        <i class="fa-regular fa-clock" style="font-size:35px"></i>
-
-                        <b>BTClock</b>
+                    <span class="logo-lg" style="font-size:xx-large; color:#0466C8;">
+                        <img src="~/images/BTClock.png" alt="BTClock Logo" style="height:60px;width:200px; vertical-align:middle; margin-right:8px;">
                     </span>
-                    <span class="logo-sm" style="font-size:xx-large;color:#0466C8;">
-                        <i class="fa-solid fa-clock" style="font-size:35px"></i>
 
+                    <span class="logo-sm" style="font-size:xx-large; color:#0466C8;">
+                        <img src="~/images/BT.png" alt="BTClock Logo" style="height:35px;">
                     </span>
                 </a>
                 <button type="button" class="sidebar-toggle">
@@ -77,70 +74,52 @@
                     <div class="sidebar-menu-area">
                         <!--- Sidemenu -->
                         <ul id="leftside-menu-container" class="side-nav" style="padding:initial;">
+                            @if (ViewBag.MainMenu != null)
+                            {
+                                @foreach (var item in ViewBag.MainMenu as List<menuMasterDto>)
+                                {
+                                    @if (item.Children.Count() == 0)
+                                    {
+                                        <li class="side-nav-item">
+                                            <a class="side-nav-link" href="@ViewBag.appUrl@item.MenuPath">
+                                                <i class="@item.Icon-line"></i>
+                                                <i class="@item.Icon-fill"></i>
+                                                <span>@item.Menuname</span>
+                                            </a>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li class="side-nav-item dropdown">
+                                            <a class="side-nav-link" href="javascript:void(0)">
+                                                <i class="@item.Icon-line"></i>
+                                                <i class="@item.Icon-fill"></i>
+                                                <span>@item.Menuname</span>
+                                            </a>
+                                            @if (item.Children != null && item.Children.Any())
+                                            {
+                                                <ul class="sidebar-submenu">
+                                                    @foreach (var subItem in item.Children)
+                                                    {
+                                                        <li>
+                                                            <a href="@ViewBag.appUrl@subItem.MenuPath">
+                                                                <span>@subItem.Menuname</span>
+                                                            </a>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            }
+                                        </li>
+                                    }
+                                }
+                            }
                             <li class="side-nav-item">
-                                <a href="@ViewBag.appUrl/Employee/Employee" class="side-nav-link">
-                                    <i class="ri-user-add-line"></i>
-                                    <i class="ri-user-add-fill"></i>
-                                    <span> Add Employee </span>
+                                <a href="@ViewBag.appUrl/Login/Login" class="side-nav-link">
+                                    <i class="ri-logout-circle-line"></i>
+                                    <i class="ri-logout-circle-fill"></i>
+                                    <span> Log out </span>
                                 </a>
-                            </li>
-                            <li class="side-nav-item">
-                                <a href="@ViewBag.appUrl/Master/MasterTable" class="side-nav-link">
-                                    <i class="ri-brain-line"></i>
-                                    <i class="ri-brain-fill"></i>
-                                    <span> Master </span>
-                                </a>
-                            </li>
-
-                            <li class="side-nav-item">
-                                <a href="@ViewBag.appUrl/MenuMaster/MenuMaster" class="side-nav-link">
-                                    <i class="ri-menu-line"></i>
-                                    <i class="ri-menu-fill"></i>
-                                    <span> Menu Master </span>
-                                </a>
-                            </li>
-                            <li class="side-nav-item">
-                                <a href="@ViewBag.appUrl/UserMenuMapping/UserMenuMapping" class="side-nav-link">
-                                    <i class="ri-mastercard-line"></i>
-                                    <i class="ri-mastercard-fill"></i>
-                                    <span> UserMenuMapping </span>
-                                </a>
-                            </li>
-                            <li class="side-nav-item">
-                                <a href="@ViewBag.appUrl/LeaveTransaction/LeaveTransaction" class="side-nav-link">
-                                    <i class="ri-calendar-2-line"></i>
-                                    <i class="ri-calendar-2-fill"></i>
-                                    <span> Leave Transaction </span>
-                                </a>
-                            </li>
-                            <li class="side-nav-item">
-                                <a href="@ViewBag.appUrl/LeaveBalance/LeaveBalance" class="side-nav-link">
-                                    <i class="ri-calendar-event-line"></i>
-                                    <i class="ri-calendar-event-fill"></i>
-                                    <span> Leave Balance </span>
-                                </a>
-                            </li>
-                            <li class="side-nav-item">
-                                <a href="@ViewBag.appUrl/LeaveAssignment/LeaveAssignment" class="side-nav-link">
-                                    <i class="ri-calendar-todo-line"></i>
-                                    <i class="ri-calendar-todo-fill"></i>
-                                    <span> Leave Assignment </span>
-                                </a>
-                            </li>
-                            <li class="side-nav-item">
-                                <a href="@ViewBag.appUrl/LeaveTransaction/LeaveApproval" class="side-nav-link">
-                                    <i class="ri-calendar-check-line"></i>
-                                    <i class="ri-calendar-check-fill"></i>
-                                    <span> Leave Approval </span>
-                                </a>
-                            </li>
-                            <li class="side-nav-item">
-                                <a href="@ViewBag.appUrl/Permission/Permission" class="side-nav-link">
-                                    <i class="ri-git-repository-private-line"></i>
-                                    <i class="ri-git-repository-private-fill"></i>
-                                    <span> Permission </span>
-                                </a>
-                            </li>
+                            </li>   
                         </ul>
                         <!--- End Sidemenu -->
                         <div class="clearfix"></div>
@@ -150,9 +129,9 @@
             <div class="left-footer">
                 <ul class="side-nav">
                     <li class="side-nav-item">
-                        <a href="@ViewBag.appUrl/Login/Login" class="side-nav-link">
-                            <i class="ri-logout-circle-line"></i>
-                            <span> Log out </span>
+                        <a href="@ViewBag.appUrl/Dashboard/Dashboard" class="side-nav-link">
+                            <i class="ri-home-4-fill"></i>
+                            <span> Back To Home </span>
                         </a>
                     </li>
                 </ul>

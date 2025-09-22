@@ -1,18 +1,16 @@
 ﻿using Attendance.Application.Interface;
 using Attendance.Domain.Utility;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Attendance.Controllers
 {
-    [Authorize]
-    public class BaseAdminController : Controller
+    public class BaseClockInController : Controller
     {
         private readonly IMenuMasterService _menuService;
         private readonly IUserMenuMappingService _userMenuMappingService;
 
-        public BaseAdminController(IMenuMasterService menuService, IUserMenuMappingService userMenuMappingService)
+        public BaseClockInController(IMenuMasterService menuService, IUserMenuMappingService userMenuMappingService)
         {
             _menuService = menuService;
             _userMenuMappingService = userMenuMappingService;
@@ -24,7 +22,7 @@ namespace Attendance.Controllers
             if (designation == "Admin")
             {
                 var menulist = await _menuService.GetAllMenuMasters();
-                var btclockMenuList = menulist.Where(x => x.ModuleMasterId == 8).ToList();
+                var btclockMenuList = menulist.Where(x => x.ModuleMasterId == 1).ToList();
                 var topLevelItems = btclockMenuList.Where(m => m.ParentId == 0 || m.ParentId == null).ToList();
                 foreach (var item in topLevelItems)
                 {
@@ -38,7 +36,7 @@ namespace Attendance.Controllers
 
                 var employeeID = UserUtility.GetUserId(HttpContext);
                 var userMenus = await _userMenuMappingService.GetUserMenuById(Convert.ToInt32(employeeID));
-                var userMenuList = userMenus.Where(x => x.MenuMaster?.ModuleMasterId == 8).Select(x => x.MenuMasterMenuid);
+                var userMenuList = userMenus.Where(x => x.MenuMaster?.ModuleMasterId == 1).Select(x => x.MenuMasterMenuid);
                 var menulist = await _menuService.GetAllMenuMasters();
                 var UserMenuAccesslist = menulist.Where(x => userMenuList.Contains(x.Menuid)).ToList();
 
@@ -51,6 +49,7 @@ namespace Attendance.Controllers
                 ViewBag.MainMenu = topLevelItems;
                 await next();
             }
+
         }
     }
 }

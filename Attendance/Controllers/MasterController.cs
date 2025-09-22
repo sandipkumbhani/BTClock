@@ -8,7 +8,7 @@ namespace Attendance.Controllers
 {
 	[Authorize]
 
-	public class MasterController : Controller
+	public class MasterController : BaseAdminController
 	{
 		private readonly IConfiguration _configuration;
 		private ApplicationURL applicationURL;
@@ -18,18 +18,22 @@ namespace Attendance.Controllers
 		private readonly ILeaveMasterService _leaveMasterService;
 		private readonly IModuleMasterService _moduleMasterService;
 		private readonly IHolidayMasterService _holidayMasterService;
-		public MasterController(IConfiguration configuration, GlobalClass globalClass, IDepartmentService departmentService, IDesignationService designationService, ILeaveMasterService leaveMasterService, IModuleMasterService moduleMasterService, IHolidayMasterService holidayMasterService)
-		{
-			_configuration = configuration;
-			applicationURL = new ApplicationURL(configuration);
-			_globalClass = globalClass;
-			_departmentService = departmentService;
-			_designationService = designationService;
-			_leaveMasterService = leaveMasterService;
-			_moduleMasterService = moduleMasterService;
-			_holidayMasterService = holidayMasterService;
-		}
-		public IActionResult MasterTable()
+        private readonly IMenuMasterService _menuService;
+        private readonly IUserMenuMappingService _userMenuMappingService;
+        public MasterController(IConfiguration configuration, GlobalClass globalClass, IDepartmentService departmentService, IDesignationService designationService, ILeaveMasterService leaveMasterService, IModuleMasterService moduleMasterService, IHolidayMasterService holidayMasterService, IMenuMasterService menuService, IUserMenuMappingService userMenuMappingService) : base(menuService, userMenuMappingService)
+        {
+            _configuration = configuration;
+            applicationURL = new ApplicationURL(configuration);
+            _globalClass = globalClass;
+            _departmentService = departmentService;
+            _designationService = designationService;
+            _leaveMasterService = leaveMasterService;
+            _moduleMasterService = moduleMasterService;
+            _holidayMasterService = holidayMasterService;
+            _menuService = menuService;
+            _userMenuMappingService = userMenuMappingService;
+        }
+        public IActionResult MasterTable()
 		{
 			if (_globalClass.Token != null)
 			{

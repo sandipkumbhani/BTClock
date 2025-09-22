@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Attendance.Controllers
 {
+
     public class UserMenuMappingController : BaseAdminController
     {
         private readonly ILogger<UserMenuMappingController> _logger;

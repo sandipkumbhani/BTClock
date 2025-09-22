@@ -2,13 +2,15 @@
 using Attendance.Domain.Helper;
 using Attendance.Domain.Models;
 using Attendance.Domain.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
 
 namespace Attendance.Controllers
 {
-	public class LeaveBalanceController : Controller
-	{
+	[Authorize]
+	public class LeaveBalanceController : BaseLeaveController
+    {
 		private readonly ILogger<LeaveBalanceController> _logger;
 		private readonly IConfiguration _configuration;
 		private readonly GlobalClass _globalClass;
@@ -18,29 +20,36 @@ namespace Attendance.Controllers
 		private readonly ILeaveMasterService _leaveMasterService;
 		private readonly ILeaveAssignmentService _leaveAssignmentService;
 		private readonly ILeaveTransactionService _leaveTransactionService;
+        private readonly IMenuMasterService _menuService;
+        private readonly IUserMenuMappingService _userMenuMappingService;
 
-		public LeaveBalanceController(
-		ILogger<LeaveBalanceController> logger,
-		IConfiguration configuration,
-		GlobalClass globalClass,
-		ILeaveBalanceService leaveBalanceService,
-		IEmployeeService employeeService,	
-		ILeaveMasterService leaveMaster,
-		ILeaveAssignmentService leaveAssignment,
-		ILeaveTransactionService leaveTransaction)
-		{
-			_logger = logger;
-			_configuration = configuration;
-			_globalClass = globalClass;
-			applicationURL = new ApplicationURL(configuration);
-			_leaveBalanceService = leaveBalanceService;
-			_employeeService = employeeService;
-			_leaveMasterService = leaveMaster;
-			_leaveAssignmentService = leaveAssignment;
-			_leaveTransactionService = leaveTransaction;
-		}
+        public LeaveBalanceController(
+        ILogger<LeaveBalanceController> logger,
+        IConfiguration configuration,
+        GlobalClass globalClass,
+        ILeaveBalanceService leaveBalanceService,
+        IEmployeeService employeeService,
+        ILeaveMasterService leaveMaster,
+        ILeaveAssignmentService leaveAssignment,
+        ILeaveTransactionService leaveTransaction,
+        IMenuMasterService menuService,
+        IUserMenuMappingService userMenuMappingService) : base(menuService, userMenuMappingService)
+        {
+            _logger = logger;
+            _configuration = configuration;
+            _globalClass = globalClass;
+            applicationURL = new ApplicationURL(configuration);
+            _leaveBalanceService = leaveBalanceService;
+            _employeeService = employeeService;
+            _leaveMasterService = leaveMaster;
+            _leaveAssignmentService = leaveAssignment;
+            _leaveTransactionService = leaveTransaction;
+            _menuService = menuService;
+            _userMenuMappingService = userMenuMappingService;
+        }
 
-		public async Task<IActionResult> LeaveBalance()
+
+        public async Task<IActionResult> LeaveBalance()
 		{
 			var employees = await _employeeService.GetAllEmployee();
 			var leaveMasters = await _leaveMasterService.GetAllLeaveMasters();

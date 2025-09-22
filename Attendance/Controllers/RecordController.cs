@@ -1,24 +1,27 @@
 ﻿using Attendance.Application.Interface;
+using Attendance.Controllers;
+using Attendance.Domain.Helper;
 using Attendance.Domain.Models;
 using Attendance.Domain.Utility;
-using Attendance.Domain.Helper;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 
-public class RecordController : Controller
+public class RecordController : BaseClockInController
 {
     private readonly IConfiguration _configuration;
     private ApplicationURL applicationURL;
     private readonly GlobalClass _globalClass;
     private readonly IAttendanceService _service;
-
-    public RecordController(IConfiguration configuration, GlobalClass globalClass, IAttendanceService service)
+    private readonly IMenuMasterService _menuService;
+    private readonly IUserMenuMappingService _userMenuMappingService;
+    public RecordController(IConfiguration configuration, GlobalClass globalClass, IAttendanceService service, IMenuMasterService menuService, IUserMenuMappingService userMenuMappingService) : base(menuService, userMenuMappingService)
     {
         _configuration = configuration;
         applicationURL = new ApplicationURL(configuration);
         _globalClass = globalClass;
         _service = service;
-
+        _menuService = menuService;
+        _userMenuMappingService = userMenuMappingService;
     }
     public IActionResult Record()
     {
