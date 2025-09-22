@@ -46,7 +46,7 @@ app.Use(async (context, next) =>
     var token = context.Request.Cookies["jwtToken"];
     globalClass.Token = token;
         await next.Invoke();
-});
+  });
 
 
 app.UseHttpsRedirection();
