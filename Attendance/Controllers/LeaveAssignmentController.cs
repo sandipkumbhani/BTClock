@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Attendance.Controllers
 {
-    public class LeaveAssignmentController : Controller
+    public class LeaveAssignmentController : BaseAdminController
     {
         private readonly ILogger<LeaveAssignmentController> _logger;
         private readonly IConfiguration _configuration;
@@ -15,8 +15,11 @@ namespace Attendance.Controllers
         private readonly ILeaveAssignmentService _leaveAssignmentService;
         private readonly IDepartmentService _departmentService;
         private readonly ILeaveMasterService _leaveMasterService;
+        private readonly IMenuMasterService _menuService;
+        private readonly IUserMenuMappingService _userMenuMappingService;
 
-        public LeaveAssignmentController(ILogger<LeaveAssignmentController> logger, IConfiguration configuration, GlobalClass globalClass, IDepartmentService departmentService, ILeaveAssignmentService leaveAssignmentService, ILeaveMasterService leaveMasterService)
+
+        public LeaveAssignmentController(ILogger<LeaveAssignmentController> logger, IConfiguration configuration, GlobalClass globalClass, IDepartmentService departmentService, ILeaveAssignmentService leaveAssignmentService, ILeaveMasterService leaveMasterService, IMenuMasterService menuService, IUserMenuMappingService userMenuMappingService) : base(menuService, userMenuMappingService)
         {
             _logger = logger;
             _configuration = configuration;
@@ -25,6 +28,8 @@ namespace Attendance.Controllers
             _departmentService = departmentService;
             _leaveAssignmentService = leaveAssignmentService;
             _leaveMasterService = leaveMasterService;
+            _menuService = menuService;
+            _userMenuMappingService = userMenuMappingService;
         }
 
         public async Task<IActionResult> LeaveAssignment()

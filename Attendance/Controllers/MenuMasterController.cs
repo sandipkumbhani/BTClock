@@ -19,7 +19,7 @@ namespace Attendance.Controllers
         private readonly IModuleMasterService _moduleMasterService;
         private readonly IUserMenuMappingService _userMenuMappingService;
 
-        public MenuMasterController(ILogger<MenuMasterController> logger, IConfiguration configuration, IMenuMasterService menuService, IModuleMasterService moduleMasterService, IUserMenuMappingService userMenuMappingService) : base(menuService,userMenuMappingService)
+        public MenuMasterController(ILogger<MenuMasterController> logger, IConfiguration configuration, IMenuMasterService menuService, IModuleMasterService moduleMasterService, IUserMenuMappingService userMenuMappingService) : base(menuService, userMenuMappingService)
         {
             _logger = logger;
             _configuration = configuration;
@@ -100,9 +100,10 @@ namespace Attendance.Controllers
             var menuList = await _menuService.GetAllMenuMasters();
             var employees = await _userMenuMappingService.GetAllEmployees();
 
-            var users = employees.Select(e => new {
-                id = e.EmployeeId,   
-                name = e.Name 
+            var users = employees.Select(e => new
+            {
+                id = e.EmployeeId,
+                name = e.Name
             }).ToList();
 
             return Json(new { result = "success", data = menuList, users });
@@ -133,32 +134,36 @@ namespace Attendance.Controllers
                     ViewBag.errormsg = "Menu Already Exist";
                     return View(menu);
                 }
-                var existingMenu = await _menuService.GetById(menu.Menuid);
-                if (existingMenu == null)
-                {
-                    return NotFound();
-                }
                 else
                 {
-                    var currentUserId = UserUtility.GetUserId(HttpContext);
-                    var menumodel = new menuMasterDto
+                    var existingMenu = await _menuService.GetById(menu.Menuid);
+                    if (existingMenu == null)
                     {
-                        Menuname = menu.Menuname,
-                        MenuPath = menu.MenuPath,
-                        Icon = menu.Icon,
-                        isDefault = menu.isDefault,
-                        IsActive = existingMenu.IsActive,
-                        CreatedAt = existingMenu.CreatedAt,
-                        CreatedBy = existingMenu.CreatedBy,
-                        UpdatedBy = Convert.ToInt32(currentUserId),
-                        UpdatedAt = DateTime.Now,
-                        ModuleMasterId = menu.ModuleMasterId,
-                        ParentId = menu.ParentId
-                    };
-                    await _menuService.UpdateMenuMaster(menumodel, menu.Menuid);
+                        return NotFound();
+                    }
+                    else
+                    {
+                        var currentUserId = UserUtility.GetUserId(HttpContext);
+                        var menumodel = new menuMasterDto
+                        {
+                            Menuname = menu.Menuname,
+                            MenuPath = menu.MenuPath,
+                            Icon = menu.Icon,
+                            isDefault = menu.isDefault,
+                            IsActive = existingMenu.IsActive,
+                            CreatedAt = existingMenu.CreatedAt,
+                            CreatedBy = existingMenu.CreatedBy,
+                            UpdatedBy = Convert.ToInt32(currentUserId),
+                            UpdatedAt = DateTime.Now,
+                            ModuleMasterId = menu.ModuleMasterId,
+                            ParentId = menu.ParentId
+                        };
+                        await _menuService.UpdateMenuMaster(menumodel, menu.Menuid);
+                    }
+                    TempData["msg"] = "Data updated successfully!";
+                    return RedirectToAction("MasterView", "MenuMaster");
                 }
-                TempData["msg"] = "Data updated successfully!";
-                return RedirectToAction("MasterView", "MenuMaster");
+
             }
             else
             {

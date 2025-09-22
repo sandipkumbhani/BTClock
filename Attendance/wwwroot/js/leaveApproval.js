@@ -5,7 +5,7 @@ $(document).ready(function () {
     $("#corporateTable tbody").empty();
 
     $.ajax({
-        url: '/LeaveTransaction/LeaveApprovalDetails',
+        url: '/LeaveApproval/LeaveApprovalDetails',
         method: 'GET',
         dataType: 'json',
         success: function (response) {

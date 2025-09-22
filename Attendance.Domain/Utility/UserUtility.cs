@@ -13,23 +13,23 @@ namespace Attendance.Domain.Utility
             context.User = claimsPrincipal;
             return claimsPrincipal;
         }
-        //public static bool CanAccessMenu(HttpContext context, string actionName)
-        //{
-        //    var menulist = context.Request.Cookies["MenuAccess"];
-        //    if (menulist != null)
-        //    {
-        //        var menu = JsonSerializer.Deserialize<List<string>>(menulist);
-        //        if (menu != null)
-        //        {
-        //            if (menu.Contains(actionName))
-        //            {
-        //                return true;
-        //            }
-        //        }
+        public static bool CanAccessMenu(HttpContext context, string actionName)
+        {
+            var menulist = context.Request.Cookies["MenuAccess"];
+            if (menulist != null)
+            {
+                var menu = JsonSerializer.Deserialize<List<string>>(menulist);
+                if (menu != null)
+                {
+                    if (menu.Contains(actionName))
+                    {
+                        return true;
+                    }
+                }
 
-        //    }
-        //    return false;
-        //}
+            }
+            return false;
+        }
         public static int GetUserId(HttpContext context)
         {
 

@@ -6,22 +6,27 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 
-namespace Attendance.Controllers 
+namespace Attendance.Controllers
 {
     [Authorize]
-    public class AttendanceController : Controller
+    public class AttendanceController : BaseClockInController
     {
         private readonly IConfiguration _configuration;
         private ApplicationURL applicationURL;
         private readonly GlobalClass _globalClass;
         private readonly IAttendanceService _service;
+        private readonly IMenuMasterService _menuService;
+        private readonly IUserMenuMappingService _userMenuMappingService;
 
-        public AttendanceController(IConfiguration configuration, GlobalClass globalClass, IAttendanceService service)
+
+        public AttendanceController(IConfiguration configuration, GlobalClass globalClass, IAttendanceService service, IMenuMasterService menuService, IUserMenuMappingService userMenuMappingService) : base(menuService, userMenuMappingService)
         {
             _configuration = configuration;
             _globalClass = globalClass;
             _service = service;
             applicationURL = new ApplicationURL(configuration);
+            _menuService = menuService;
+            _userMenuMappingService = userMenuMappingService;
         }
         public IActionResult ClockIn()
         {
@@ -29,21 +34,20 @@ namespace Attendance.Controllers
             {
                 var jwt = new JwtSecurityTokenHandler().ReadJwtToken(_globalClass.Token);
                 var claims = UserUtility.addClaimstoUser(HttpContext, jwt.Claims);
-                string currentPage = "Clock-In";
-                ViewBag.appUrl = applicationURL.url;
-                //var canAccess = UserUtility.CanAccessMenu(HttpContext, currentPage);
-                //if (canAccess == true)
-                //{
-                //    var employee = claims.Claims.FirstOrDefault(x => x.Type == "EmployeeId");
-                //    int EmployeeId = employee != null ? (!string.IsNullOrEmpty(employee.Value) ? Convert.ToInt32(employee.Value) : 0) : 0;
-                //    ViewBag.EmployeeId = EmployeeId;
-                //    ViewBag.appUrl = applicationURL.url;
-                //    return View();
-                //}
-                //else
-                //{
-                //    return RedirectToAction("AccessDenied", "Home");
-                //}
+                string currentPage = "Clockin";
+                var canAccess = UserUtility.CanAccessMenu(HttpContext, currentPage);
+                if (canAccess == true)
+                {
+                    var employee = claims.Claims.FirstOrDefault(x => x.Type == "EmployeeId");
+                    int EmployeeId = employee != null ? (!string.IsNullOrEmpty(employee.Value) ? Convert.ToInt32(employee.Value) : 0) : 0;
+                    ViewBag.EmployeeId = EmployeeId;
+                    ViewBag.appUrl = applicationURL.url;
+                    return View();
+                }
+                else
+                {
+                    return RedirectToAction("AccessDenied", "Home");
+                }
 
             }
             return View();
