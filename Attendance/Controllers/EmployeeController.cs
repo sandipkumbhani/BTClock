@@ -21,7 +21,7 @@ namespace Attendance.Controllers
 		public EmployeeController(IConfiguration configuration, GlobalClass globalClass, IEmployeeService employeeService, IDesignationService designationService, IDepartmentService departmentService)
 		{
 			_configuration = configuration;
-			applicationURL = new ApplicationURL(configuration);
+				applicationURL = new ApplicationURL(configuration);
 			_globalClass = globalClass;
 			_employeeService = employeeService;
 			_designationService = designationService;

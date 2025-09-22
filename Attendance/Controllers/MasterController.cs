@@ -194,7 +194,7 @@ namespace Attendance.Controllers
 		public async Task<IActionResult> DeleteDept(int id)
 		{
 			var result = await _departmentService.DeleteDepartment(id);
-			if (result != null)
+			if (result != 0)
 			{
 				TempData["DeptSuccessMsg"] = "Department deleted successfully";
 
@@ -255,13 +255,13 @@ namespace Attendance.Controllers
 		}
 		[HttpPost]
 		public async Task<IActionResult> UpdateDesignation(int id, DesignationDto designationDto)
-		 {
+		{
 			//designationDto.DesignationId = id;
 			var result = await _designationService.UpdateDesignation(designationDto, id);
 			if (result != null)
 			{
 				TempData["DesigSuccessMsg"] = "Designation updated successfully";
-			TempData["OpenView"] = "desig";
+				TempData["OpenView"] = "desig";
 				TempData["OpenPanel"] = "desig";
 			}
 			else
@@ -275,20 +275,17 @@ namespace Attendance.Controllers
 		public async Task<IActionResult> DeleteDesig(int id)
 		{
 			var result = await _designationService.DeleteDesignation(id);
-			if (result != null)
+			if (result != 0)
 			{
 				TempData["DesigSuccessMsg"] = "Designation deleted successfully";
 				TempData["OpenView"] = "desig";
 				TempData["OpenPanel"] = "desig";
-
-
 			}
 			else
 			{
 				TempData["DesigErrorMsg"] = "Delete failed";
 				TempData["OpenView"] = "desig";
 				TempData["OpenPanel"] = "desig";
-
 
 			}
 			TempData["OpenPanel"] = "desig";
@@ -355,7 +352,7 @@ namespace Attendance.Controllers
 		public async Task<IActionResult> DeleteLeave(int id)
 		{
 			var result = await _leaveMasterService.DeleteLeaveMaster(id);
-			if (result != null)
+			if (result != 0)
 			{
 				TempData["LeaveSuccessMsg"] = "Leave type deleted successfully";
 				TempData["OpenView"] = "leave";
@@ -439,7 +436,7 @@ namespace Attendance.Controllers
 		public async Task<IActionResult> DeleteHoliday(int id)
 		{
 			var result = await _holidayMasterService.DeleteHolidayMaster(id);
-			if (result != null)
+			if (result != 0)
 			{
 				TempData["HolidaySuccessMsg"] = "Holiday deleted successfully";
 				TempData["OpenView"] = "Holiday";

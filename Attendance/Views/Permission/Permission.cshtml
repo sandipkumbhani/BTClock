@@ -1,0 +1,82 @@
+﻿@model Attendance.Domain.Models.PermissionDto
+
+@using System.Security.Claims
+@{
+	Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+<head>
+</head>
+<body>
+	<div class="main-inner container-fluid">
+		<div class="col-12">
+			<div class="page-title-box" style="margin-top:20px;">
+				<h1 class="page-title">Add Employee</h1>
+			</div>
+		</div>
+		<div class="col-12">
+			<div class="card com-profile-info">
+				<form class="form" id="userForm" method="post" action="@Url.Action("Permission", "Permission")">
+					<div class="top-details">
+						<h2 class="page-form-title">Add Permission</h2>
+						<div class="file-input">
+						</div>
+						<div class="col-xl-4 col-lg-6">
+							
+							<div class="item-input">
+								<label for="DesignationId" class="form-label col-form-label required fw-semibold fs-6; form-label">Designation</label>
+								<select class="select2-custom form-control select2-hidden-accessible; form-select" style="width: 422px;" data-placeholder="Select Designation" id="DesignationId" name="DesignationId" required>
+									@* <select class="form-select" aria-label="Default select example" id="RoleId" name="RoleId"> *@
+									<option selected disabled>Select Designation</option>
+									@foreach (var designation in ViewBag.Designations)
+									{
+										<option value="@designation.DesignationId">@designation.DesignationName</option>
+									}
+								</select>
+							</div>
+							<div class="item-input">
+								<label for="ModuleMasterId" class="form-label col-form-label required fw-semibold fs-6; form-label">Module</label>
+								<select class="select2-custom form-control select2-hidden-accessible; form-select" style="width: 422px;" data-placeholder="Select Module" id="ModuleMasterId" name="ModuleMasterId" required>
+									@* <select class="form-select" aria-label="Default select example" id="RoleId" name="RoleId"> *@
+									<option selected disabled>Select Module</option>
+									@foreach (var Module in ViewBag.Modules)
+									{
+										<option value="@Module.Id">@Module.ModuleName</option>
+									}
+								</select>
+							</div>
+							<div class="item-input">
+								<label for="CanAccess" class="form-label col-form-label required fw-semibold fs-6" style="width: 159px;">
+									<input type="checkbox" value="true" class="form-check-input" id="CanAccess" name="CanAccess" style="padding:8px;">  &nbsp;
+									Can Access
+								</label>
+							</div>
+							<div class="col-xl-6">
+								@if (ViewData["Message"] != null)
+								{
+									<div class="usermsg" id="temporaryMessage">
+										<span style="color:#00af00;font-weight:600;">@ViewData["Message"]</span>
+									</div>
+								}
+								else
+								{
+									<div class="usermsg" id="temporaryMessage">
+										<span style="color:#d21313;font-weight:600;"> @ViewData["ErrorMessage"]</span>
+									</div>
+								}
+							</div>
+						</div>
+					</div>
+					<div class="button-main">
+						<button type="submit" class="btn btn-primary me-2" style="width:95px;height:38px;background-color: #0466c8;">Add</button>
+						@*<button type="submit" formaction="@Url.Action("MasterView", "MenuMaster")" class="btn btn-primary me-2" style="width:95px;height:38px;background-color: #0466c8;">View</button>*@
+						<a class="btn btn-primary me-2" href="/Permission/ViewPermission" style=" width: 95px;height: 38px;background-color: #0466c8;">View</a>
+					</div>
+
+				</form>
+			</div>
+		</div>
+	</div>
+</body>
+@section Scripts {
+	<script src="~/js/msgtimeout.js"></script>
+}
