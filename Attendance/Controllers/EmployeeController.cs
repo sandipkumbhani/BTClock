@@ -19,20 +19,20 @@ namespace Attendance.Controllers
 		private readonly IEmployeeService _employeeService;
 		private readonly IDesignationService _designationService;
 		private readonly IDepartmentService _departmentService;
-        private readonly IMenuMasterService _menuService;
-        private readonly IUserMenuMappingService _userMenuMappingService;
-        public EmployeeController(IConfiguration configuration, GlobalClass globalClass, IEmployeeService employeeService, IDesignationService designationService, IDepartmentService departmentService, IMenuMasterService menuService, IUserMenuMappingService userMenuMappingService) : base(menuService, userMenuMappingService)
-        {
-            _configuration = configuration;
-            applicationURL = new ApplicationURL(configuration);
-            _globalClass = globalClass;
-            _employeeService = employeeService;
-            _designationService = designationService;
-            _departmentService = departmentService;
-            _menuService = menuService;
-            _userMenuMappingService = userMenuMappingService;
-        }
-        public IActionResult Employee()
+    private readonly IMenuMasterService _menuService;
+    private readonly IUserMenuMappingService _userMenuMappingService;
+    public EmployeeController(IConfiguration configuration, GlobalClass globalClass, IEmployeeService employeeService, IDesignationService designationService, IDepartmentService departmentService, IMenuMasterService menuService, IUserMenuMappingService userMenuMappingService) : base(menuService, userMenuMappingService)
+    {
+        _configuration = configuration;
+        applicationURL = new ApplicationURL(configuration);
+        _globalClass = globalClass;
+        _employeeService = employeeService;
+        _designationService = designationService;
+        _departmentService = departmentService;
+        _menuService = menuService;
+        _userMenuMappingService = userMenuMappingService;
+    }
+    public IActionResult Employee()
 		{
 			if (_globalClass.Token != null)
 			{
