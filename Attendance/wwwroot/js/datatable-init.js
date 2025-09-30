@@ -1,4 +1,4 @@
- $(document).ready(function () {
+$(document).ready(function () {
     const table = $('#remindersTable').DataTable({
         responsive: true,
         dom: 'Bfrtip',
@@ -17,8 +17,8 @@
         ],
         language: {
             paginate: {
-            previous: '<i class="ri-arrow-left-s-line"></i>',
-            next: '<i class="ri-arrow-right-s-line"></i>'
+                previous: '<i class="ri-arrow-left-s-line"></i>',
+                next: '<i class="ri-arrow-right-s-line"></i>'
             }
         }
     });
@@ -75,8 +75,8 @@ $(document).ready(function () {
         ],
         language: {
             paginate: {
-            previous: '<i class="ri-arrow-left-s-line"></i>',
-            next: '<i class="ri-arrow-right-s-line"></i>'
+                previous: '<i class="ri-arrow-left-s-line"></i>',
+                next: '<i class="ri-arrow-right-s-line"></i>'
             }
         }
     });
@@ -116,7 +116,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
     $.fn.DataTable.ext.pager.numbers_length = 3;
-    
+
     const table = $('#vehicleTypesTable').DataTable({
         responsive: true,
         dom: 'Bfrtip',
@@ -135,8 +135,8 @@ $(document).ready(function () {
         ],
         language: {
             paginate: {
-            previous: '<i class="ri-arrow-left-s-line"></i>',
-            next: '<i class="ri-arrow-right-s-line"></i>'
+                previous: '<i class="ri-arrow-left-s-line"></i>',
+                next: '<i class="ri-arrow-right-s-line"></i>'
             }
         }
     });
@@ -196,8 +196,8 @@ $(document).ready(function () {
         ],
         language: {
             paginate: {
-            previous: '<i class="ri-arrow-left-s-line"></i>',
-            next: '<i class="ri-arrow-right-s-line"></i>'
+                previous: '<i class="ri-arrow-left-s-line"></i>',
+                next: '<i class="ri-arrow-right-s-line"></i>'
             }
         }
     });

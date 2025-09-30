@@ -30,16 +30,16 @@ public class RecordController : BaseClockInController
             var jwt = new JwtSecurityTokenHandler().ReadJwtToken(_globalClass.Token);
             var claims = UserUtility.addClaimstoUser(HttpContext, jwt.Claims);
             var employee = claims.Claims.FirstOrDefault(x => x.Type == "EmployeeId");
-            int UserID = employee != null ? (!string.IsNullOrEmpty(employee.Value) ? Convert.ToInt32(employee.Value) : 0) : 0;
-            ViewBag.UserID = UserID;
+            int EmployeeID = employee != null ? (!string.IsNullOrEmpty(employee.Value) ? Convert.ToInt32(employee.Value) : 0) : 0;
+            ViewBag.EmployeeID = EmployeeID;
             ViewBag.appUrl = applicationURL.url;
         }
         return View();
     }
     [HttpGet]
-    public async Task<IActionResult> GetAttendanceTableData(int UserID)
+    public async Task<IActionResult> GetAttendanceTableData(int EmployeeID)
     {
-        var records = await _service.GetAttendanceByEmployeeAsync(UserID);
+        var records = await _service.GetAttendanceByEmployeeAsync(EmployeeID);
         var filter = records.Where(r => r.ClockOut.HasValue);
         var result = filter.Select(r => new
         {
@@ -57,14 +57,14 @@ public class RecordController : BaseClockInController
         return Json(result);
     }
     [HttpGet]
-    public async Task<IActionResult> GetAttendanceByMonth(int userId, string month)
+    public async Task<IActionResult> GetAttendanceByMonth(int employeeId, string month)
     {
         if (string.IsNullOrWhiteSpace(month))
             return BadRequest("Month is required.");
         if (!DateTime.TryParseExact(month + "-01", "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None, out DateTime startDate))
             return BadRequest("Invalid month format.");
         var endDate = startDate.AddMonths(1).AddDays(-1);
-        var records = await _service.GetAttendanceByEmployeeAsync(userId);
+        var records = await _service.GetAttendanceByEmployeeAsync(employeeId);
         var filteredRecords = records
                 .Where(r => r.Date >= startDate && r.Date <= endDate && r.ClockOut.HasValue)
                 .Select(r => new
@@ -85,9 +85,9 @@ public class RecordController : BaseClockInController
     {
         var jwt = new JwtSecurityTokenHandler().ReadJwtToken(_globalClass.Token);
         var claims = UserUtility.addClaimstoUser(HttpContext, jwt.Claims);
-        var user = claims.Claims.FirstOrDefault(x => x.Type == "UserId");
-        int userId = user != null ? (!string.IsNullOrEmpty(user.Value) ? Convert.ToInt32(user.Value) : 0) : 0;
-        var records = await _service.GetAttendanceByEmployeeAsync(userId);
+        var employee = claims.Claims.FirstOrDefault(x => x.Type == "EmployeeId");
+        int employeeId = employee != null ? (!string.IsNullOrEmpty(employee.Value) ? Convert.ToInt32(employee.Value) : 0) : 0;
+        var records = await _service.GetAttendanceByEmployeeAsync(employeeId);
         var months = records
             .Select(r => r.Date.ToString("MMMM yyyy")) 
             .Distinct()

@@ -11,6 +11,10 @@
 
             var table = $('#corporateTable').DataTable();
             table.clear();
+            table.on('draw', function () {
+                var visibleRows = table.rows({ filter: 'applied' }).count();
+                $('#totalRemindersCorporate').text(`Total List: ${visibleRows}`);
+            });
 
             if (result.data && result.data.length > 0) {
                 $('#employeelist').show();
@@ -22,7 +26,7 @@
                     var managername = managerlist?.name || '';
 
                     newRows.push([
-                        
+
                         detail.name,
                         detail.email,
                         detail.mobileNo,

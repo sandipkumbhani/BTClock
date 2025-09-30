@@ -1,5 +1,4 @@
 using Attendance.Application.Interface;
-using Attendance.Application.service;
 using Attendance.Domain.Helper;
 using Attendance.Domain.Models;
 using Microsoft.AspNetCore.Authentication;
@@ -14,6 +13,7 @@ using System.Text.Json;
 
 namespace Attendance.Controllers
 {
+    [Authorize]
     public class LoginController : Controller
     {
         private readonly ILogger<LoginController> _logger;
@@ -51,7 +51,7 @@ namespace Attendance.Controllers
                     Response.Cookies.Append("jwtToken", token, new CookieOptions
                     {
                         HttpOnly = true,
-                        Expires = DateTimeOffset.UtcNow.AddHours(12),
+                        //Expires = DateTimeOffset.UtcNow.AddHours(12),
                         SameSite = SameSiteMode.Strict,
                         Secure = true
                     });
@@ -103,7 +103,7 @@ namespace Attendance.Controllers
                         HttpOnly = true,
                         Secure = true,
                         SameSite = SameSiteMode.Strict,
-                        Expires = DateTime.UtcNow.AddHours(24)
+                        //Expires = DateTime.UtcNow.AddHours(24)
                     });
                     if (!string.IsNullOrEmpty(returnUrl))
                     {
@@ -120,10 +120,10 @@ namespace Attendance.Controllers
             return View();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Logout()
+        public IActionResult Logout()
         {
-            await HttpContext.SignOutAsync();
+            Response.Cookies.Delete("jwtToken");
+            HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login", "Login");
         }
     }
