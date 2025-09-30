@@ -3,6 +3,7 @@ using Attendance.Domain.Models;
 using Attendance.Domain.Helper;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using System.Text;
 
 namespace Attendance.Infrastructure.Efcore.Providers
 {
@@ -101,5 +102,63 @@ namespace Attendance.Infrastructure.Efcore.Providers
             }
             return false;
         }
-    }
+        public async Task<List<AttendanceRecordDto>> GetAllAttendanceAsync()
+		{
+			var _httpClient = new HttpClient();
+			_httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);
+			var response = await _httpClient.GetAsync(apiCredential.url + "Attendance/GetAllAttendance");
+			var responseData = await response.Content.ReadAsStringAsync();
+			var responseModel = JsonConvert.DeserializeObject<CommanResponseDto>(responseData);
+			if (responseModel != null)
+			{
+				var details = JsonConvert.DeserializeObject<List<AttendanceRecordDto>>(Convert.ToString(responseModel.Data!));
+				return details;
+			}
+			return null;
+		}
+		public async Task<string> UpdateAttendanceRecordAsync(AttendanceRecordDto record, int id)
+		{
+			var _httpClient = new HttpClient();
+			_httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);
+			var content = new StringContent(JsonConvert.SerializeObject(record), Encoding.UTF8, "application/json");
+			var response = await _httpClient.PutAsync(apiCredential.url + "Attendance/UpdateAttendanceRecord/" + id, content);
+			var responseData = await response.Content.ReadAsStringAsync();
+			var responseModel = JsonConvert.DeserializeObject<CommanResponseDto>(responseData);
+			if (responseModel != null)
+			{
+				var result = responseModel.StatusCode;
+				if (result == 200)
+				{
+					return "update menu succesfully";
+				}
+				else
+				{
+					return "menu not updated";
+				}
+			}
+
+			return null;
+		}
+		public async Task<AttendanceRecordDto> GetAttendanceByIdAsync(int id)
+		{
+			try
+			{
+				var _httpClient = new HttpClient();
+				_httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);
+				var response = await _httpClient.GetAsync(apiCredential.url + "Attendance/GetAttendanceById/" + id);
+				var responseData = await response.Content.ReadAsStringAsync();
+				var responseModel = JsonConvert.DeserializeObject<CommanResponseDto>(responseData);
+				if (responseModel != null)
+				{
+					var details = JsonConvert.DeserializeObject<AttendanceRecordDto>(Convert.ToString(responseModel.Data!)!);
+					return details;
+				}
+				return null;
+			}
+			catch (Exception)
+			{
+				throw;
+			}
+		}
+	}
 }

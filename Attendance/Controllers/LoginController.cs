@@ -51,7 +51,7 @@ namespace Attendance.Controllers
                     Response.Cookies.Append("jwtToken", token, new CookieOptions
                     {
                         HttpOnly = true,
-                        Expires = DateTimeOffset.UtcNow.AddHours(12),
+                        //Expires = DateTimeOffset.UtcNow.AddHours(12),
                         SameSite = SameSiteMode.Strict,
                         Secure = true
                     });
@@ -120,11 +120,11 @@ namespace Attendance.Controllers
             return View();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Logout()
-        {
-            await HttpContext.SignOutAsync();
-            return RedirectToAction("Login", "Login");
-        }
-    }
+		public IActionResult Logout()
+		{
+			Response.Cookies.Delete("jwtToken");
+			HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+			return RedirectToAction("Login", "Login");
+		}
+	}
 }

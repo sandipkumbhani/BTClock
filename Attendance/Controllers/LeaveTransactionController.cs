@@ -65,7 +65,7 @@ namespace Attendance.Controllers
         [HttpPost]
         public async Task<IActionResult> LeaveTransaction(LeaveTransactionDto leaveTransaction, IFormFile AddFile)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid || leaveTransaction.AddFile==null)
             {
                 try
                 {
@@ -91,7 +91,7 @@ namespace Attendance.Controllers
                             AppliedOn = DateTime.Now,
                             AppliedBy = userid,
                             LeaveStatus = LeaveStatus.Pending,
-                            AddFile = filename,
+                            AddFile = leaveTransaction.AddFile,
                             EmployeeId = userid,
                         });
                         ViewBag.appUrl = applicationURL.url;
@@ -100,7 +100,7 @@ namespace Attendance.Controllers
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error in LeaveTransaction POST");
+                    _logger.LogError(ex, "Error in LeaveTransaction ");
                     ViewBag.errormsg = "An error occurred while processing your request.";
                 }
             }

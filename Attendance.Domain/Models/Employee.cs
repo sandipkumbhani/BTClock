@@ -6,8 +6,9 @@ namespace Attendance.Domain.Models
     {
         public string Email { get; set; }
         public string Password { get; set; }
+		public string? Name { get; set; }
 
-    }
+	}
     public class EmployeeDto
     {
         public int EmployeeId { get; set; }
