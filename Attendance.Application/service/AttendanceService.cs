@@ -39,7 +39,19 @@ namespace Attendance.Application.Provider
             return await _adaptor.GetLastFiveAttendanceRecordsAsync(employeeId);
 
         }
+        public async Task<List<AttendanceRecordDto>> GetAllAttendanceAsync()
+		{
+			return await _adaptor.GetAllAttendanceAsync();
+		}
+		public async Task<AttendanceRecordDto> GetAttendanceById(int id)
+		{
+			return await _adaptor.GetAttendanceByIdAsync(id);
+		}
 
+		public async Task<string> UpdateAttendance(AttendanceRecordDto record, int id)
+		{
+			return await _adaptor.UpdateAttendanceRecordAsync(record, id);
+		}
 
-    }
+	}
 }
