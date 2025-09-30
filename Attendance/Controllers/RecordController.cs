@@ -93,7 +93,6 @@ public class RecordController : BaseClockInController
             .Distinct()
             .OrderByDescending(m => m)
             .ToList();
-
-        return Json(months);
-    }
+		return Json(months);
+	}
 }

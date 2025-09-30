@@ -1,0 +1,96 @@
+﻿@model Attendance.Domain.Models.AttendanceRecordDto
+@using System.Security.Claims
+@{
+    Layout = "_LayoutTimesheet";
+}
+
+<div class="main-inner container-fluid">
+ 
+    <div class="col-12">
+        <div class="page-title-box" style="margin-top:20px;">
+            <h1 class="page-title">Update AttendanceRecord</h1>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="card com-profile-info">
+            <form class="form" id="userForm" method="post" asp-action="UpdateAttendanceRecord" asp-controller="AllRecords">
+                <div class="top-details">
+                    <h2 class="page-form-title">Update AttendanceRecord</h2>
+                    <div class="">
+                        <div class="item-input" style="display:none;">
+                            <label for="Id" class="form-label col-form-label required fw-semibold fs-6"></label>
+                            <input type="text" class="form-control userinput" id="Id" name="Id" value="@Model.Id" style="width:659.46px; height:48px;" required>
+                        </div>
+                    </div>
+                    <div class="">
+                        <div class="item-input" style="display:none;">
+                            <label for="EmployeeId" class="form-label col-form-label required fw-semibold fs-6"></label>
+                            <input type="text" class="form-control userinput" id="EmployeeId" name="EmployeeId" value="@Model.EmployeeId" style="width:659.46px; height:48px;" required>
+                        </div>
+                    </div>
+                    <div class="">
+                        <div class="item-input">
+                            <label for="Name" class="form-label col-form-label required fw-semibold fs-6">EmployeeName</label>
+                            <input type="text" class="form-control userinput" id="Name" name="Name" value="@Model.employee?.Name" style="width:659.46px; height:48px;" required>
+                            <span asp-validation-for="EmployeeId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="">
+                        <div class="item-input">
+                            <label for="Date" class="form-label col-form-label required fw-semibold fs-6">Date</label>
+                            <input type="text" class="form-control userinput" id="Date" name="Date" value="@Model.Date" style="width:659.46px; height:48px;" required>
+                            <span asp-validation-for="Date" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="">
+                        <div class="item-input">
+                            <label for="ClockIn" class="form-label col-form-label required fw-semibold fs-6">ClockIn Time</label>
+                            <input type="text" class="form-control userinput" id="ClockIn" name="ClockIn" value="@Model.ClockIn" style="width:659.46px; height:48px;" required>
+                            <span asp-validation-for="ClockIn" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="">
+                        <div class="item-input">
+                            <label for="ClockOut" class="form-label col-form-label required fw-semibold fs-6">ClockOut Time</label>
+                            <input type="text" class="form-control userinput" id="ClockOut" name="ClockOut" value="@Model.ClockOut" style="width:659.46px; height:48px;" required>
+                            <span asp-validation-for="ClockOut" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="">
+                        <div class="item-input">
+                            <label for="WorkingHour" class="form-label col-form-label required fw-semibold fs-6">WorkingHour</label>
+                            <input type="text" class="form-control userinput" id="WorkingHour" name="WorkingHour" value="@Model.WorkingHour" style="width:659.46px; height:48px;" readonly>
+                            <span asp-validation-for="WorkingHour" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="">
+                        <div class="item-input">
+                            <label for="OvertimeHours" class="form-label col-form-label required fw-semibold fs-6">OvertimeHours</label>
+                            <input type="text" class="form-control userinput" id="OvertimeHours" name="OvertimeHours" value="@Model.OvertimeHours" style="width:659.46px; height:48px;" readonly>
+                            <span asp-validation-for="OvertimeHours" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6" style="margin-left:30px;">
+                    @if (ViewBag.msg != null)
+                    {
+                        <div class="usermsg" id="temporaryMessage">
+                            <span style="color:#00af00;font-weight:600;">@ViewBag.msg</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="usermsg" id="temporaryMessage">
+                            <span style="color:#d21313;font-weight:600;"> @ViewBag.errormsg</span>
+                        </div>
+                    }
+                </div>
+                <div class="button-main">
+                    <button type="submit" class="btn btn-primary me-2" style="width:95px;height:38px;background-color: #0466c8;">Update</button>
+                    @*<button type="submit" formaction="@Url.Action("MasterView", "MenuMaster")" class="btn btn-primary me-2" style="width:95px;height:38px;background-color: #0466c8;">View</button>*@
+                    <a class="btn btn-primary me-2" href="/AllRecords/AllRecords" style=" width: 95px;height: 38px;background-color: #0466c8;">Back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

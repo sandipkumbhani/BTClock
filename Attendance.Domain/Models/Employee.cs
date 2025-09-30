@@ -8,8 +8,7 @@ namespace Attendance.Domain.Models
         public string Password { get; set; }
         public string? Name { get; set; }
 
-
-    }
+	}
     public class EmployeeDto
     {
         public int EmployeeId { get; set; }
@@ -20,10 +19,10 @@ namespace Attendance.Domain.Models
         [ForeignKey("DesignationId")]
         public int DesignationId { get; set; }
         public DesignationDto? Designation { get; set; }
-		[ForeignKey("DepartmentId")]
+		    [ForeignKey("DepartmentId")]
         public int DepartmentId { get; set; }
-		public DepartmentDto? Department { get; set; }
-		public int? ManagerId { get; set; }
+		    public DepartmentDto? Department { get; set; }
+		    public int? ManagerId { get; set; }
         public DateTime DateOfJoining { get; set; }
         public DateTime? DateofLeaving { get; set; }
         public DateTime CreatedAt { get; set; }

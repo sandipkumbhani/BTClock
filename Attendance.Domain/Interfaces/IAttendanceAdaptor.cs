@@ -9,8 +9,13 @@ namespace Attendance.Domain.Interfaces
         Task<List<AttendanceRecordDto>> GetAttendanceByEmployeeAsync(int employeeId);
         Task<List<AttendanceRecordDto>> GetLastFiveAttendanceRecordsAsync(int employeeId);
         Task<bool> IsUserClockedIn();
-        //Task<List<AttendanceRecord>> GetAllOpenAttendancesAsync();
-        //Task<AttendanceRecord?> GetClockInRecord(int EmployeeId);
+		Task<List<AttendanceRecordDto>> GetAllAttendanceAsync();
+		Task<string> UpdateAttendanceRecordAsync(AttendanceRecordDto record, int id);
+        Task<AttendanceRecordDto?> GetAttendanceByIdAsync(int id);  
+
+
+		//Task<List<AttendanceRecord>> GetAllOpenAttendancesAsync();
+		//Task<AttendanceRecord?> GetClockInRecord(int EmployeeId);
 
 	}
 }

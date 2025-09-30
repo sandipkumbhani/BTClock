@@ -1,15 +1,15 @@
 ﻿@model IEnumerable<Attendance.Domain.Models.LeaveTransactionDto>
 @using System.Security.Claims
 @{
-    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
-    var users = ViewBag.users;
+	Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+	var users = ViewBag.users;
 }
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet" />
 
 
 <div class="content-page" style="margin:35px 0 0 0">
-    <div class="content">
-        <div class="main-inner container-fluid">
+	<div class="content">
+		<div class="main-inner container-fluid">
 
             <div id="userList">
                 <div class="card com-profile-info">
@@ -18,13 +18,11 @@
                     <!-- Top Header -->
                     <div class="table-top-header">
                         <h4>List of Leaves</h4>
-
-                        <div class="d-flex gap-2">
+                          <div class="d-flex gap-2">
                             <div class="table-search-box">
-                                <input type="text" id="customcorporateSearch" class="form-control form-control-sm" placeholder="Search...">
-                                <button type="submit"><i class="ri-search-line"></i></button>
+                              <input type="text" id="customcorporateSearch" class="form-control form-control-sm" placeholder="Search...">
+                              <button type="submit"><i class="ri-search-line"></i></button>
                             </div>
-
                             <div id="exportcorporateButtons" class="btn-group" role="group" style="display:none;"></div>
                         </div>
                     </div>
@@ -90,14 +88,13 @@
                         <button id="approveSelectedBtn" class="btn btn-success me-2" style="width: 95px; height: 38px;">Approve </button>
                         <button id="rejectSelectedBtn" class="btn btn-danger me-2" style="width: 95px; height: 38px;">Reject </button>
                     </div>
-
-                </div>
-            </div>
-        </div>
-    </div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 @section Scripts {
-    <script src="~/js/leaveapproval.js"></script>
-    <script src="~/js/msgtimeout.js"></script>
+	<script src="~/js/leaveapproval.js"></script>
+	<script src="~/js/msgtimeout.js"></script>
 }
