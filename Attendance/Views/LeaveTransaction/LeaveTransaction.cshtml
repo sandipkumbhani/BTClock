@@ -63,7 +63,7 @@
                     <div class="">
                         <div class="item-input">
                             <label for="reason" class="form-label col-form-label required fw-semibold fs-6">Reason</label>
-                            <textarea class="form-control userinput" id="reason" name="Reason" rows="3" placeholder="Enter reason for leave..." style="width:359.46px;" required ></textarea>
+                            <textarea class="form-control userinput" id="reason" name="Reason" rows="3" placeholder="Enter reason for leave..." style="width:359.46px;" required></textarea>
                         </div>
                     </div>
                     <div class="col-xl-12 col-lg-6">
@@ -77,7 +77,8 @@
                     <div class="">
                         <div class="item-input">
                             <label for="AddFile" class="form-label col-form-label fw-semibold fs-6">Add File</label>
-                            <input type="file" accept=".pdf" id="AddFile" name="AddFile" class="form-control userinput" placeholder="Upload file" style="width:359.46px;">
+                            <input type="file" accept=".pdf" id="AddFile" name="AddFile" class="form-control userinput" onchange="document.getElementById('AddFile').src = window.URL.createObjectURL(this.files[0])" placeholder="Upload file" style="width:359.46px;">
+
                         </div>
                     </div>
                 </div>

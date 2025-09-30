@@ -1,11 +1,12 @@
 ﻿using Attendance.Application.Interface;
 using Attendance.Domain.Helper;
 using Attendance.Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Attendance.Controllers
 {
-
+    [Authorize]
     public class UserMenuMappingController : BaseAdminController
     {
         private readonly ILogger<UserMenuMappingController> _logger;
@@ -29,7 +30,7 @@ namespace Attendance.Controllers
         public async Task<IActionResult> UserMenuMapping()
         {
             var employees = await _userMenuMappingService.GetAllEmployees();
-            //var userlist = users.Where(x => x.DesignationId != 1).ToList();
+            //var userlist = employees.Where(x => x.DesignationId != 17).ToList();
             var menus = await _menuService.GetAllMenuMasters();
             ViewBag.employees = employees;
             ViewBag.Menus = menus;

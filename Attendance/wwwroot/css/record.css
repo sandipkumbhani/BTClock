@@ -90,7 +90,7 @@
 .table-search-box button i {
     font-size: 1.5rem;
     color: var(--ft-tertiary);
-    /*    margin-bottom: 20px;*/
+        margin-bottom: 20px;
 }
 
 .ri-arrow-down-s-fill:before {

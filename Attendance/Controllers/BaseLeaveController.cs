@@ -1,12 +1,10 @@
 ﻿using Attendance.Application.Interface;
 using Attendance.Domain.Utility;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Attendance.Controllers
 {
-    [Authorize]
     public class BaseLeaveController : Controller
     {
         private readonly IMenuMasterService _menuService;

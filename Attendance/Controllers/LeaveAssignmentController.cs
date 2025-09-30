@@ -2,10 +2,12 @@
 using Attendance.Domain.Helper;
 using Attendance.Domain.Models;
 using Attendance.Domain.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Attendance.Controllers
 {
+    [Authorize]
     public class LeaveAssignmentController : BaseAdminController
     {
         private readonly ILogger<LeaveAssignmentController> _logger;

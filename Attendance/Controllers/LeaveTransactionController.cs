@@ -65,13 +65,23 @@ namespace Attendance.Controllers
         [HttpPost]
         public async Task<IActionResult> LeaveTransaction(LeaveTransactionDto leaveTransaction, IFormFile AddFile)
         {
-            if (ModelState.IsValid || leaveTransaction.AddFile==null)
+            if (ModelState.IsValid || leaveTransaction.AddFile == null)
             {
                 try
                 {
-                    var filename = UploadFile(AddFile);
+                    string filename = null;
+
+                    if (AddFile != null && AddFile.Length > 0)
+                    {
+                        filename = UploadFile(AddFile);
+                    }
+
                     var existingLeaves = await _leaveTransactionService.GetAllLeaveTransactions();
-                    var leaveExists = existingLeaves.Any(l => l.EmployeeId == leaveTransaction.EmployeeId && l.LeaveMasterId == leaveTransaction.LeaveMasterId && l.StartDate == leaveTransaction.StartDate && l.EndDate == leaveTransaction.EndDate);
+                    var leaveExists = existingLeaves.Any(l => l.EmployeeId == leaveTransaction.EmployeeId &&
+                                                             l.LeaveMasterId == leaveTransaction.LeaveMasterId &&
+                                                             l.StartDate == leaveTransaction.StartDate &&
+                                                             l.EndDate == leaveTransaction.EndDate);
+
                     if (leaveExists)
                     {
                         ViewBag.errormsg = "Leave Transaction Already Exists";
@@ -144,7 +154,6 @@ namespace Attendance.Controllers
         public string UploadFile(IFormFile file)
         {
             string fileName = null;
-
             if (file != null)
             {
                 if (file.Length > 0)

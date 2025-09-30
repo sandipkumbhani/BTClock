@@ -119,7 +119,7 @@ namespace Attendance.Controllers
                         overtime = duration > standardHours ? duration - standardHours : TimeSpan.Zero;
                     }
 
-                    return new
+                    return new  
                     {
                         x.ClockIn,
                         x.ClockOut,

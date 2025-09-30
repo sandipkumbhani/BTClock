@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Attendance.Controllers
 {
-    [Authorize]
     public class BaseAdminController : Controller
     {
         private readonly IMenuMasterService _menuService;

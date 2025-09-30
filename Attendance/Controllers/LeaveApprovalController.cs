@@ -1,10 +1,10 @@
 ﻿using Attendance.Application.Interface;
-using Attendance.Domain.Models;
-using Attendance.Domain.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Attendance.Controllers
 {
+    [Authorize]
     public class LeaveApprovalController : BaseAdminController
     {
 
@@ -30,18 +30,40 @@ namespace Attendance.Controllers
             var leavesList = await _leaveTransactionService.GetAllLeaveTransactions();
             var leaveMasters = await _leaveMasterService.GetAllLeaveMasters();
             var employees = await _userMenuMappingService.GetAllEmployees();
+
             var masters = leaveMasters.Select(e => new
             {
                 id = e.LeaveMasterId,
                 name = e.LeaveType
             }).ToList();
+
             var users = employees.Select(e => new
             {
                 id = e.EmployeeId,
                 name = e.Name
             }).ToList();
-            return Json(new { result = "success", data = leavesList, users, masters });
+
+            var mappedLeaves = leavesList.Select(leave => new
+            {
+                leave.LeaveTransactionId,
+                leave.EmployeeId,
+                leave.LeaveMasterId,
+                leave.StartDate,
+                leave.EndDate,
+                TotalDays = leave.Ishalfday ? 0.5 : leave.TotalDays, 
+                leave.Reason,
+                leave.Ishalfday,
+                leave.AppliedOn,
+                leave.Updatedat,
+                leave.Updatedby,
+                leave.ApprovedAt,
+                leave.ApprovedBy,
+                leave.LeaveStatus,
+                leave.AddFile
+            }).ToList();
+
+            return Json(new { result = "success", data = mappedLeaves, users, masters });
         }
-        
+
     }
 }

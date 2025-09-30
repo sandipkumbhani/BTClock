@@ -1,7 +1,7 @@
 ﻿@using Attendance.Domain.Models
 @{
     Layout = "_LayoutTimesheet";
-    int UserID = ViewBag.UserID;
+    int EmployeeID = ViewBag.EmployeeID;
     ViewData["Title"] = "Records";
 }
 <!-- DataTables CSS -->
@@ -47,7 +47,7 @@
                                     <input type="text" id="customFranchiseSearch" class="form-control form-control-sm" placeholder="Search...">
                                     <button type="submit"><i class="ri-search-line"></i></button>
                                 </div>
-                                <div id="exportFranchiseButtons" style="display:none">
+                                <div id="exportFranchiseButtons">
                                     <button id="exportExcel" class="btn-btn-outline-secondary">
                                         <i class="bi bi-file-earmark-excel"></i> Export
                                     </button>
@@ -73,7 +73,6 @@
                                     <span class="visually-hidden">Loading...</span>
                                 </div>
                             </div>
-                            <!-- Bottom Area -->
                             <div class="datatable-footer-bottom">
                                 <div class="totle-left">
                                     <span id="totalList">Total List: <span id="recordCount">0</span></span>
@@ -94,8 +93,8 @@
 @section Scripts
 {
 
-<script type="text/javascript">
-        var UserID = Number.parseInt(@UserID);
+    <script type="text/javascript">
+        var UserID = Number.parseInt(@EmployeeID);
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="~/js/record.js"></script>
