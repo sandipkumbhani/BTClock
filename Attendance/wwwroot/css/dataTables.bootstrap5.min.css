@@ -246,7 +246,8 @@ table.dataTable {
     }
 
         table.dataTable td.dataTables_empty, table.dataTable th.dataTables_empty {
-            text-align: center
+            text-align: center;
+            display: none
         }
 
     table.dataTable.nowrap th, table.dataTable.nowrap td {
