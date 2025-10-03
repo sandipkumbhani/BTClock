@@ -24,8 +24,9 @@ namespace Attendance.Application.Extension
             services.AddScoped<ILeaveAssignmentService, LeaveAssignmentService>();
 			services.AddScoped<IHolidayMasterService, HolidayMasterService>();
 			services.AddScoped<IPermissionService, PermissionService>();
+            services.AddScoped<IRoleService, RoleService>();
 
-			return services;
+            return services;
         }
     }
 }

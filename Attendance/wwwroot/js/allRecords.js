@@ -4,17 +4,28 @@ let recordsPerPage = 20;
 let filteredRecords = [];
 let monthFilteredRecords = [];
 let data = [];
-let currentSort = { column: null, dir: 'asc' };
+let currentSort = { column: 1, dir: 'desc' };
 
 $(document).ready(async function () {
     $("#dataLoader").show();
 
     await fetchAttendanceData();
+
     populatePageSizeOptions();
     setupSearch();
     attachHeaderSortHandlers();
     addExportButton();
     setupMonthPicker();
+    syncEmployeeDropdownWidth();
+
+    const datepickerElement = document.getElementById('reportrange');
+    if (datepickerElement) {
+        const resizeObserver = new ResizeObserver(() => {
+            syncEmployeeDropdownWidth();
+        });
+
+        resizeObserver.observe(datepickerElement);
+    };
 
     $("#EmployeeId").on("change", function () {
         applyEmployeeAndDateFilter();
@@ -24,7 +35,6 @@ $(document).ready(async function () {
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const currentMonth = `${year}-${month}`;
-
     await fetchAndApplyMonth(currentMonth);
     $("#dataLoader").hide();
 
@@ -37,7 +47,10 @@ async function fetchAttendanceData() {
         const response = await fetch('/AllRecords/GetAllAttendanceTableData');
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         data = await response.json();
-        allRecords = (data || []).filter(r => r.clockOut !== null && r.clockOut !== "-");
+        allRecords = (data || []).filter(r => r.clockOut !== null && r.clockOut !== "-").map(r => ({
+            ...r,
+            overtimeHours: r.overtimeHours || "00:00:00"
+        }));
         console.log(allRecords)
         monthFilteredRecords = [...allRecords];
         filteredRecords = [...allRecords];
@@ -49,29 +62,35 @@ async function fetchAttendanceData() {
 }
 
 function timeToSeconds(t) {
-    if (!t) return 0;
-    const [h = 0, m = 0, s = 0] = t.split(':').map(Number);
+    if (!t || t === '-' || typeof t !== 'string') return 0;
+    const parts = t.split(':').map(Number);
+    if (parts.length !== 3 || parts.some(isNaN)) return 0;
+    const [h, m, s] = parts;
     return (h * 3600) + (m * 60) + s;
 }
 
+
 function sortFilteredRecords() {
     if (currentSort.column === null) return;
+
     const col = currentSort.column;
     const dir = currentSort.dir === 'asc' ? 1 : -1;
 
     filteredRecords.sort((a, b) => {
         let aVal, bVal;
         switch (col) {
-            case 0: aVal = new Date(a.date); bVal = new Date(b.date); break;
-            case 1: aVal = timeToSeconds(a.clockIn); bVal = timeToSeconds(b.clockIn); break;
-            case 2: aVal = timeToSeconds(a.clockOut); bVal = timeToSeconds(b.clockOut); break;
-            case 3: aVal = timeToSeconds(a.totalTime); bVal = timeToSeconds(b.totalTime); break;
-            case 4: aVal = timeToSeconds(a.overtimeHours); bVal = timeToSeconds(b.overtimeHours); break;
+            case 0: aVal = a.employeeName?.toLowerCase(); bVal = b.employeeName?.toLowerCase(); break;
+            case 1: aVal = new Date(a.date); bVal = new Date(b.date); break;
+            case 2: aVal = timeToSeconds(a.clockIn); bVal = timeToSeconds(b.clockIn); break;
+            case 3: aVal = timeToSeconds(a.clockOut); bVal = timeToSeconds(b.clockOut); break;
+            case 4: aVal = timeToSeconds(a.totalTime); bVal = timeToSeconds(b.totalTime); break;
+            case 5: aVal = timeToSeconds(a.overtimeHours); bVal = timeToSeconds(b.overtimeHours); break;
             default: aVal = bVal = 0;
         }
         return (aVal < bVal ? -1 : aVal > bVal ? 1 : 0) * dir;
     });
 }
+
 
 function renderTable() {
     $("#dataLoader").show();
@@ -84,7 +103,7 @@ function renderTable() {
     const paginatedData = filteredRecords.slice(start, start + recordsPerPage);
 
     if (paginatedData.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">No records found.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;">No records found.</td></tr>`;
     } else {
 
         paginatedData.forEach(rec => {
@@ -94,7 +113,7 @@ function renderTable() {
                 <td>${rec.date}</td>
                 <td>${rec.clockIn}</td>
                 <td>${rec.clockOut}</td>
-                <td>${rec.totalTime }</td>
+                <td>${rec.totalTime}</td>
                 <td>${rec.overtimeHours ?? '-'}</td>
                 <td>
         <a href="/AllRecords/UpdateAttendanceRecord/${rec.id}" style="margin-right: 10px;">
@@ -124,7 +143,7 @@ function updateSortIcons(headers) {
 function renderPagination() {
     const wrapper = document.getElementById("customFranchisePagination");
     if (!wrapper) return;
-    if (recordsPerPage === Infinity) {
+    if (recordsPerPage === filteredRecords.length) {
         wrapper.innerHTML = "";
         return;
     }
@@ -145,18 +164,19 @@ function renderPagination() {
     if (totalPages <= 7) {
         for (let i = 1; i <= totalPages; i++) addPage(i);
     } else {
-        if (currentPage <= 5) {
-            for (let i = 1; i <= 5; i++) addPage(i);
+        if (currentPage <= 3) {
+            for (let i = 1; i <= 3; i++) addPage(i);
             ul.appendChild(createEllipsis());
             addPage(totalPages);
-        } else if (currentPage >= totalPages - 3) {
+        } else if (currentPage >= totalPages - 2) {
             addPage(1);
             ul.appendChild(createEllipsis());
-            for (let i = totalPages - 4; i <= totalPages; i++) addPage(i);
+            for (let i = totalPages - 2; i <= totalPages; i++) addPage(i);
         } else {
             addPage(1);
             ul.appendChild(createEllipsis());
-            for (let i = currentPage - 1; i <= currentPage + 1; i++) addPage(i);
+            //for (let i = currentPage - 1; i <= currentPage + 1; i++) addPage(i);
+            addPage(currentPage);
             ul.appendChild(createEllipsis());
             addPage(totalPages);
         }
@@ -226,41 +246,51 @@ function addExportButton() {
     if (!btn) return;
 
     btn.addEventListener("click", () => {
-        const exportData = [...monthFilteredRecords];
+        const exportData = [...filteredRecords];
         if (!exportData || exportData.length === 0) {
-            alert("No records found for the selected month or range.");
+            alert("No records to export.");
             return;
         }
 
-        const header = ["Date", "Clock In", "Clock Out", "Total Time", "Overtime Hours"];
-        const rows = exportData.map(r => [r.date, r.clockIn, r.clockOut, r.totalTime, r.overtimeHours ?? '-']);
+        // Generate CSV content
+        const header = ["Employee Name", "Date", "Clock In", "Clock Out", "Total Time", "Overtime Hours"];
+        const rows = exportData.map(r => [
+            r.employeeName,
+            r.date,
+            r.clockIn,
+            r.clockOut,
+            r.totalTime,
+            r.overtimeHours ?? "-"
+        ]);
 
-        const ws = XLSX.utils.aoa_to_sheet([header, ...rows]);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Attendance");
+        let csvContent = header.join(",") + "\n";
+        csvContent += rows.map(r => r.join(",")).join("\n");
 
-        let fileLabel = "All_Months";
+        // Get employee name
+        const employeeSelect = document.getElementById("EmployeeId");
+        const employeeText = employeeSelect?.options[employeeSelect.selectedIndex]?.text || "All_Employees";
+
+        // Get date range
         const rangeSpan = document.querySelector("#reportrange span");
-        const monthLabel = document.getElementById("selectedMonthLabel");
+        let dateRangeText = rangeSpan?.textContent.trim() || "All_Dates";
 
-        if (rangeSpan && rangeSpan.textContent.trim()) fileLabel = rangeSpan.textContent.trim();
-        else if (monthLabel && monthLabel.textContent.trim()) fileLabel = monthLabel.textContent.trim();
+        // Clean filename parts
+        const cleanText = (text) => text.replace(/[,]/g, '').replace(/\s*-\s*/g, '_to_').replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_-]/g, '');
+        const filename = `Attendance_${cleanText(employeeText)}_${cleanText(dateRangeText)}.csv`;
 
-        fileLabel = fileLabel.replace(/[,]/g, '').replace(/\s*-\s*/g, '_to_').replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_-]/g, '');
-        const fileName = `Attendance_${fileLabel}.xlsx`;
-
-        const binary = XLSX.write(wb, { bookType: "xlsx", type: "array" });
-        const blob = new Blob([binary], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-
+        // Create and download CSV file
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
         const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = fileName;
+        const url = URL.createObjectURL(blob);
+        link.href = url;
+        link.setAttribute("download", filename);
         document.body.appendChild(link);
         link.click();
-        URL.revokeObjectURL(link.href);
         document.body.removeChild(link);
+        URL.revokeObjectURL(url);
     });
 }
+
 
 function setupSearch() {
     const searchInput = document.getElementById("customFranchiseSearch");
@@ -286,14 +316,16 @@ function setupSearch() {
 function attachHeaderSortHandlers() {
     const headers = document.querySelectorAll('#franchiseTable thead th');
     headers.forEach((th, idx) => {
-        if (idx > 4) return;
+        if (idx > 6) return; // Skip non-sortable columns
         th.style.cursor = 'pointer';
         th.addEventListener('click', () => {
-            if (currentSort.column !== idx) {
+            if (currentSort.column === idx) {
+                // Toggle direction
+                currentSort.dir = currentSort.dir === 'asc' ? 'desc' : 'asc';
+            } else {
+                // New column, start with ASC
                 currentSort.column = idx;
                 currentSort.dir = 'asc';
-            } else {
-                currentSort.dir = currentSort.dir === 'asc' ? 'desc' : 'asc';
             }
             currentPage = 1;
             renderTable();
@@ -368,13 +400,22 @@ function applyEmployeeAndDateFilter() {
     renderTable();
     renderPagination();
 }
+function syncEmployeeDropdownWidth() {
+    const datepicker = document.getElementById('reportrange');
+    const employeeDropdown = document.getElementById('EmployeeId');
+
+    if (!datepicker || !employeeDropdown) return;
+
+    const width = datepicker.offsetWidth;
+    employeeDropdown.style.width = width + 'px';
+}
 
 
 function initializeDateRangePicker() {
     const defaultStart = moment().startOf('month');
     const defaultEnd = moment().endOf('month');
 
-    function cb(start, end) {
+    function cb(start, end, picker) {
         $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
         filterByDateRange(start, end);
     }
@@ -386,8 +427,13 @@ function initializeDateRangePicker() {
             'This Month': [moment().startOf('month'), moment().endOf('month')],
             'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
         },
-        locale: { format: 'MMMM D, YYYY' }
+        locale: { format: 'MMMM D, YYYY' },
     }, cb);
 
-    cb(defaultStart, defaultEnd);
+    $('#reportrange').on('apply.daterangepicker', function (ev, picker) {
+        picker.hide();
+    });
+
+    $('#reportrange').data('daterangepicker').callback = cb;
+    cb(defaultStart, defaultEnd, $('#reportrange').data('daterangepicker'));
 }

@@ -5,7 +5,7 @@
 }
 
 <div class="main-inner container-fluid">
- 
+
     <div class="col-12">
         <div class="page-title-box" style="margin-top:20px;">
             <h1 class="page-title">Update AttendanceRecord</h1>
@@ -25,13 +25,13 @@
                     <div class="">
                         <div class="item-input" style="display:none;">
                             <label for="EmployeeId" class="form-label col-form-label required fw-semibold fs-6"></label>
-                            <input type="text" class="form-control userinput" id="EmployeeId" name="EmployeeId" value="@Model.EmployeeId" style="width:659.46px; height:48px;" required>
+                            <input type="text" class="form-control userinput" id="EmployeeId" name="EmployeeId" value="@Model.EmployeeId" style="width:659.46px; height:48px;" readonly>
                         </div>
                     </div>
                     <div class="">
                         <div class="item-input">
                             <label for="Name" class="form-label col-form-label required fw-semibold fs-6">EmployeeName</label>
-                            <input type="text" class="form-control userinput" id="Name" name="Name" value="@Model.employee?.Name" style="width:659.46px; height:48px;" required>
+                            <input type="text" class="form-control userinput" id="Name" name="Name" value="@Model.employee?.Name" style="width:659.46px; height:48px;" readonly>
                             <span asp-validation-for="EmployeeId" class="text-danger"></span>
                         </div>
                     </div>

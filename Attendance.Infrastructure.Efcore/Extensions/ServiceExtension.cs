@@ -24,7 +24,8 @@ namespace Attendance.Infrastructure.Efcore.Extensions
 			services.AddScoped<ILeaveAssignmentAdaptor, LeaveAssignmentAdaptor>();
 			services.AddScoped<IHolidayMasterAdaptor, HolidayMasterAdaptor>();
 			services.AddScoped<IPermissionAdaptor, PermissionAdaptor>();
-			return services;
+			services.AddScoped<IRoleAdaptor, RoleAdaptor>();
+            return services;
 		}
 	}
 }

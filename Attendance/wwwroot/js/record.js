@@ -182,21 +182,22 @@ function renderPagination() {
             addPage(i);
         }
     } else {
-        if (currentPage <= 5) {
+        if (currentPage <= 3) {
             // Show first 5 + ... + last
-            for (let i = 1; i <= 5; i++) addPage(i);
+            for (let i = 1; i <= 3; i++) addPage(i);
             ul.appendChild(createEllipsis());
             addPage(totalPages);
-        } else if (currentPage >= totalPages - 3) {
+        } else if (currentPage >= totalPages - 2) {
             // Show 1 + ... + last 5
             addPage(1);
             ul.appendChild(createEllipsis());
-            for (let i = totalPages - 4; i <= totalPages; i++) addPage(i);
+            for (let i = totalPages - 2; i <= totalPages; i++) addPage(i);
         } else {
             // Show 1 + ... + current-1, current, current+1 + ... + last
             addPage(1);
             ul.appendChild(createEllipsis());
-            for (let i = currentPage - 1; i <= currentPage + 1; i++) addPage(i);
+            //for (let i = currentPage - 1; i <= currentPage + 1; i++) addPage(i);
+            addPage(currentPage);
             ul.appendChild(createEllipsis());
             addPage(totalPages);
         }
