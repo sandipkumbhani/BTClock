@@ -1,0 +1,100 @@
+﻿@model Attendance.Domain.Models.UserDto
+
+@using System.Security.Claims
+@{
+	Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+<head>
+	<link href="~/css/calender.css" rel="stylesheet" />
+</head>
+<body>
+	<div class="main-inner container-fluid">
+		<div class="col-12">
+			<div class="page-title-box" style="margin-top:20px;">
+				<h1 class="page-title">Add User</h1>
+			</div>
+		</div>
+		<div class="col-12">
+			<div class="card com-profile-info">
+				<form class="form" id="userForm" method="post" action="@Url.Action("User", "User")">
+					<div class="top-details">
+						<h2 class="page-form-title">Add User</h2>
+						<div class="file-input">
+						</div>
+
+						<div class="">
+							<div class="item-input">
+								<label for="Name" class="form-label col-form-label required fw-semibold fs-6; form-label">Name</label>
+								<input type="text" class="form-control userinput" id="Name" name="Name" required placeholder="Enter Name" style="width:422px; height:48px;">
+								@* <span asp-validation-for="Name" class="text-danger"></span> *@
+							</div>
+						</div>
+						<div class="">
+							<div class="item-input">
+								<label for="email" class="form-label col-form-label required fw-semibold fs-6; form-label">Email</label>
+								<input type="email" class="form-control userinput" id="Email" name="Email" required placeholder="Enter Email" style="width:422px; height:48px;">
+								@* <span asp-validation-for="Email" class="text-danger"></span> *@
+							</div>
+						</div>
+						<div class="">
+							<div class="item-input">
+								<label for="Password" class="form-label col-form-label required fw-semibold fs-6;form-label">Password</label>
+								<input type="password" class="form-control userinput" id="Password" name="Password" placeholder="Enter Password" required style="width:422px; height:48px;">
+								@* <span asp-validation-for="Password" class="text-danger"></span> *@
+							</div>
+						</div>
+						<div class="col-xl-4 col-lg-6">
+							<div class="item-input">
+								<label for="Role" class="form-label col-form-label required fw-semibold fs-6; form-label">Role</label>
+								<select class="select2-custom form-control select2-hidden-accessible; form-select" style="width: 422px;" data-placeholder="Select Role" id="RoleId" name="RoleId">
+									@* <select class="form-select" aria-label="Default select example" id="RoleId" name="RoleId"> *@
+									<option selected disabled>Select Role</option>
+									@foreach (var Role in ViewBag.Roles)
+									{
+										<option value="@Role.RoleId">@Role.RoleName</option>
+									}
+								</select>
+							</div>
+							<div class="item-input">
+								<label for="Perent" class="form-label col-form-label required fw-semibold fs-6; form-label">Perent</label>
+								<select class="select2-custom form-control select2-hidden-accessible; form-select" style="width: 422px;" data-placeholder="Select Perenet" id="PerentId" name="PerentId">
+									@* <select class="form-select" aria-label="Default select example" id="RoleId" name="RoleId"> *@
+									<option selected disabled>Select Perenet</option>
+									@foreach (var Perent in ViewBag.Users)
+									{
+										<option value="@Perent.UserId">@Perent.Name</option>
+									}
+								</select>
+							</div>
+						
+							<div class="col-xl-6">
+								@if (ViewData["Message"] != null)
+								{
+									<div class="usermsg" id="temporaryMessage">
+										<span style="color:#00af00;font-weight:600;">@ViewData["Message"]</span>
+									</div>
+								}
+								else
+								{
+									<div class="usermsg" id="temporaryMessage">
+										<span style="color:#d21313;font-weight:600;"> @ViewData["errMessage"]</span>
+									</div>
+								}
+							</div>
+						</div>
+					</div>
+					<div class="button-main">
+						<button type="submit" class="btn btn-primary me-2" style="width:95px;height:38px;background-color: #0466c8;">Add</button>
+						@*<button type="submit" formaction="@Url.Action("MasterView", "MenuMaster")" class="btn btn-primary me-2" style="width:95px;height:38px;background-color: #0466c8;">View</button>*@
+						<a class="btn btn-primary me-2" href="/User/Userview" style=" width: 95px;height: 38px;background-color: #0466c8;">View</a>
+					</div>
+
+				</form>
+			</div>
+		</div>
+	</div>
+</body>
+@section Scripts {
+	<script src="~/js/calender.js"></script>
+	<script src="~/js/msgtimeout.js"></script>
+}
