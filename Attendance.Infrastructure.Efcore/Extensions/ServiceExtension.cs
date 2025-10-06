@@ -26,8 +26,8 @@ namespace Attendance.Infrastructure.Efcore.Extensions
 			services.AddScoped<IPermissionAdaptor, PermissionAdaptor>();
 			services.AddScoped<IRoleAdaptor, RoleAdaptor>();
 			services.AddScoped<IMenuItemAdaptor, MenuItemAdaptor>();
-			
-            return services;
+			services.AddScoped<IUserAdaptor, UserAdaptor>();
+			return services;
 		}
 	}
 }

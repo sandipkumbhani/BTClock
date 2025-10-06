@@ -15,6 +15,7 @@ namespace Attendance.Controllers
         {
             _menuService = menuService;
             _userMenuMappingService = userMenuMappingService;
+
         }
 
         public override async Task OnActionExecutionAsync(ActionExecutingContext filterContext, ActionExecutionDelegate next)

@@ -22,12 +22,12 @@ namespace Attendance.Application.Extension
             services.AddScoped<ILeaveTransactionService, LeaveTransactionService>();
             services.AddScoped<ILeaveBalanceService, LeaveBalanceService>();
             services.AddScoped<ILeaveAssignmentService, LeaveAssignmentService>();
-			services.AddScoped<IHolidayMasterService, HolidayMasterService>();
-			services.AddScoped<IPermissionService, PermissionService>();
+			      services.AddScoped<IHolidayMasterService, HolidayMasterService>();
+		      	services.AddScoped<IPermissionService, PermissionService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IMenuItemService, MenuItemService>();
-
-            return services;
+            services.AddScoped<IUserService, UserService>();
+			      return services;
         }
     }
 }

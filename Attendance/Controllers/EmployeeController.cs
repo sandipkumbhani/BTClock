@@ -129,7 +129,6 @@ namespace Attendance.Controllers
                                 await _userMenuMappingService.AddUserMenuMapping(mappingDto);
                             }
                         }
-
                         ViewData["Message"] = "Employee added successfully.";
                         ModelState.Clear();
                     }
@@ -269,13 +268,13 @@ namespace Attendance.Controllers
 			var employee = await _employeeService.GetEmployeeById(employeedto.EmployeeId);
 			return View(employee);
 		}
-		public async Task<IActionResult> DeleteEmployee(int id)
+		public async Task<IActionResult> DeleteEmployee(int id)	
 		{
 			try
 			{
 				if (_globalClass.Token != null)
 				{
-					var result = await _employeeService.DeleteEmployee(id);
+					var result = await _employeeService.DeleteEmployee(id);		
 					if (result > 0)
 					{
 						TempData["Message"] = "Employee Deleted successfully.";
