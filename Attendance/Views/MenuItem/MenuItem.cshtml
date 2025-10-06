@@ -1,0 +1,83 @@
+﻿@model Attendance.Domain.Models.MenuItemDto
+
+@using System.Security.Claims
+@using Attendance.Domain.Models
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+
+<div class="main-inner container-fluid">
+    @{
+        ViewBag.Breadcrumbs = new List<Attendance.Domain.Models.BreadcrumbItem>
+        {
+        new BreadcrumbItem { Title = "Dashboard", Url = Url.Action("Dashboard", "Dashboard"), IsActive = false },
+        new BreadcrumbItem { Title = "MenuMaster", Url = "", IsActive = true }
+        };
+    }
+    <div class="col-12">
+        <div class="page-title-box" style="margin-top:20px;">
+            <h1 class="page-title">Menu Item</h1>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="card com-profile-info">
+            <form class="form" id="userForm" method="post" asp-action="MenuItem" asp-controller="MenuItem">
+                <div class="top-details">
+                    <h2 class="page-form-title">Menu Item</h2>
+                    <div class="">
+                        <div class="item-input">
+                            <label for="MenuName" class="form-label col-form-label required fw-semibold fs-6; form-label">MenuName</label>
+                            <select class="select2-custom form-control select2-hidden-accessible; form-select" id="MenuName" name="MenuName" style="width:359.46px; height:48px;">
+                                <option value="0" disabled selected>Select Menu</option>
+                                @foreach (var item in ViewBag.Menus)
+                                {
+                                    <option value="@item.Menuid">@item.MenuName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="">
+                        <div class="item-input">
+                            <label for="ParentId" class="form-label col-form-label required fw-semibold fs-6; form-label">ParentMenuName</label>
+                            <select class="select2-custom form-control select2-hidden-accessible; form-select" id="ParentId" name="ParentId" style="width:359.46px; height:48px;">
+                                <option value="0" disabled selected>Select Parent</option>
+                                @foreach (var item in ViewBag.Menus)
+                                {
+                                    <option value="@item.Menuid">@item.MenuName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="">
+                        <div class="item-input">
+                            <label for="SortingOrder" class="form-label col-form-label required fw-semibold fs-6">SortingOrder</label>
+                            <input type="text" class="form-control userinput" id="SortingOrder" name="SortingOrder" placeholder="Enter SortingOrder" style="width:359.46px; height:48px;" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6" style="margin-left:30px;">
+                    @if (ViewBag.msg != null)
+                    {
+                        <div class="usermsg" id="temporaryMessage">
+                            <span style="color:#00af00;font-weight:600;">@ViewBag.msg</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="usermsg" id="temporaryMessage">
+                            <span style="color:#d21313;font-weight:600;"> @ViewBag.errormsg</span>
+                        </div>
+                    }
+                </div>
+                <div class="button-main">
+                    <button type="submit" class="btn btn-primary me-2" style="width:95px;height:38px;background-color: #0466c8;">Save</button>
+                    @*<button type="submit" formaction="@Url.Action("MasterView", "MenuMaster")" class="btn btn-primary me-2" style="width:95px;height:38px;background-color: #0466c8;">View</button>*@
+                    <a class="btn btn-primary me-2" href="/MenuMaster/MasterView" style=" width: 95px;height: 38px;background-color: #0466c8;">View</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
