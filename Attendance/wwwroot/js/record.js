@@ -158,7 +158,7 @@ function updateSortIcons(headers) {
 function renderPagination() {
     const wrapper = document.getElementById("customFranchisePagination");
     if (!wrapper) return;
-    if (recordsPerPage === Infinity) {
+    if (recordsPerPage === filteredRecords.length) {
         wrapper.innerHTML = "";
         return;
     }
