@@ -26,7 +26,7 @@ namespace Attendance.Infrastructure.Provider
                 var _httpClient = new HttpClient();
                 _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);
                 var response = await _httpClient.GetAsync(apiCredential.url + "UserMenuMapping/GetUserMenuMappingById/" + id);
-                var responseData = await response.Content.ReadAsStringAsync();
+                    var responseData = await response.Content.ReadAsStringAsync();
                 var responseModel = JsonConvert.DeserializeObject<CommanResponseDto>(responseData);
                 if (responseModel != null)
                 {
