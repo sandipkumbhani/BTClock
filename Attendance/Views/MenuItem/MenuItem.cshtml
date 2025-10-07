@@ -8,13 +8,7 @@
 
 
 <div class="main-inner container-fluid">
-    @{
-        ViewBag.Breadcrumbs = new List<Attendance.Domain.Models.BreadcrumbItem>
-        {
-        new BreadcrumbItem { Title = "Dashboard", Url = Url.Action("Dashboard", "Dashboard"), IsActive = false },
-        new BreadcrumbItem { Title = "MenuMaster", Url = "", IsActive = true }
-        };
-    }
+
     <div class="col-12">
         <div class="page-title-box" style="margin-top:20px;">
             <h1 class="page-title">Menu Item</h1>
@@ -40,28 +34,30 @@
                                 }
                             </select>
 
-                    </div>
-                    <div class="">
-                        <div class="item-input">
-                            <label for="ParentId" class="form-label required">Parent Menu</label>
-                            <select id="ParentId" name="ParentId" class="select2-custom form-control select2-hidden-accessible form-select" style="width:359.46px; height:48px;">
-                                <option value="" disabled selected>Select Parent</option>
-                                @foreach (var item in ViewBag.Menus)
-                                {
-                                    <option value="@item.Menuid">@item.Menuname</option>
-                                }
-                            </select>
-
                         </div>
-                    </div>
-                    <div class="">
-                        <div class="item-input">
-                            <label for="SortingOrder" class="form-label col-form-label required fw-semibold fs-6">SortingOrder</label>
-                            <input type="text" class="form-control userinput" id="SortingOrder" name="SortingOrder" placeholder="Enter SortingOrder" style="width:359.46px; height:48px;" required step="1"
-                                   oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        <div class="">
+                            <div class="item-input">
+                                <label for="ParentId" class="form-label required">Parent Menu</label>
+                                <select id="ParentId" name="ParentId" class="select2-custom form-control select2-hidden-accessible; form-select" style="width:359.46px; height:48px;">
+                                    <option value="" disabled selected>Select Parent</option>
+                                    @foreach (var item in ViewBag.Menus)
+                                    {
+                                        <option value="@item.Menuid">@item.Menuname</option>
+                                    }
+                                </select>
+
+                            </div>
+                        </div>
+                        <div class="">
+                            <div class="item-input">
+                                <label for="SortingOrder" class="form-label col-form-label required fw-semibold fs-6">SortingOrder</label>
+                                <input type="text" class="form-control userinput" id="SortingOrder" name="SortingOrder" placeholder="Enter SortingOrder" style="width:359.46px; height:48px;" required step="1"
+                                       oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                            </div>
                         </div>
                     </div>
                 </div>
+
                 <div class="col-xl-6" style="margin-left:30px;">
                     @if (ViewBag.msg != null)
                     {

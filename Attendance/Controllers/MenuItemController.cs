@@ -97,7 +97,7 @@ namespace Attendance.Controllers
         public async Task<IActionResult> MenuItemViewDetails()
         {
             var menuItems = await _menuItemService.GetAll();
-            var users = await _userMenuMappingService.GetAllUser();
+            //var users = await _userMenuMappingService.GetAllUser();
             var parents = await _menuMasterService.GetAllMenuMasters();
 
             var menuListWithParents = menuItems.Select(menu => new
@@ -118,9 +118,81 @@ namespace Attendance.Controllers
                 result = "success",
                 data = menuListWithParents,
                 parents = parents,
-                users = users
+                //users = users
             });
-        }
 
+        }
+        public async Task<IActionResult> UpdateMenuItem(int id)
+        {
+            var menuItem = await _menuItemService.GetById(id);
+            if (menuItem == null)
+            {
+                return NotFound();
+            }
+            var menus = await _menuMasterService.GetAllMenuMasters();
+            ViewBag.Menus = menus;
+            var menuItems = await _menuItemService.GetAll();
+            ViewBag.MenuItems = menuItems;
+            return View(menuItem);
+        }
+        [HttpPost]
+        public async Task<IActionResult> UpdateMenuItem(MenuItemDto menuItem)
+        {
+            if (ModelState.IsValid)
+            {
+
+                var existingMenuItems = await _menuItemService.GetAll();
+                var menuItemExists = existingMenuItems.Any(m => m.MenuName.Equals(menuItem.MenuName, StringComparison.OrdinalIgnoreCase) && m.MenuItemId != menuItem.MenuItemId);
+                if (menuItemExists)
+                {
+                    ViewBag.errormsg = "Menu Item Already Exists";
+                }
+                else
+                {
+                    var allMenus = await _menuMasterService.GetAllMenuMasters();
+                    var selectedMenu = allMenus.FirstOrDefault(x => x.Menuid == menuItem.Menuid);
+                    if (selectedMenu == null)
+                    {
+                        ViewBag.errormsg = "Selected Menu not found.";
+                    }
+                    else
+                    {
+                        var userid = UserUtility.GetUserId(HttpContext);
+                        var menuitemmodel = new MenuItemDto
+                        {
+                            MenuItemId = menuItem.MenuItemId,
+                            Menuid = menuItem.Menuid,
+                            MenuName = selectedMenu.Menuname,
+                            ParentId = menuItem.ParentId,
+                            SortingOrder = menuItem.SortingOrder,
+                            CreatedAt = selectedMenu.CreatedAt,
+                            CreatedBy = selectedMenu.CreatedBy,
+                            UpdatedBy = userid,
+                            UpdatedAt = DateTime.Now,
+                            IsActive = menuItem.IsActive
+                        };
+                        await _menuItemService.UpdateMenuItem(menuitemmodel, menuItem.MenuItemId);
+                    }
+                    TempData["msg"] = "Data updated successfully!";
+                    return RedirectToAction("MenuItemView", "MenuItem");
+                }
+            }
+            else
+            {
+                ViewBag.errormsg = "Invalid data submitted.";
+            }
+            var menuitem = await _menuItemService.GetById(menuItem.MenuItemId);
+            var menus = await _menuMasterService.GetAllMenuMasters();
+            ViewBag.Menus = menus;
+            var menuItems = await _menuItemService.GetAll();
+            ViewBag.MenuItems = menuItems;
+            return View(menuitem);
+        }
+        public async Task<IActionResult> DeleteMenuItem(int id)
+        {
+            await _menuItemService.DeleteMenuItem(id);
+            return RedirectToAction("MenuItemView", "MenuItem");
+
+        }
     }
 }

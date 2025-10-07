@@ -13,7 +13,7 @@ namespace Attendance.Application.Interface
         Task<MenuItemDto> GetById(int id);
         Task<IEnumerable<MenuItemDto>> GetByMenuId(int menuId);
         Task<string> AddMenuItem(MenuItemDto menuItem);
-        Task<string> UpdateMenuItem(MenuItemDto menuItem);
+        Task<string> UpdateMenuItem(MenuItemDto menuItem, int id);
         Task<int> DeleteMenuItem(int id);
     }
 }
