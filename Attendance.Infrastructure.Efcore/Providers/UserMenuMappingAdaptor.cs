@@ -123,22 +123,22 @@ namespace Attendance.Infrastructure.Provider
             }
             return 0;
         }
-        public async Task<List<EmployeeDto>> GetAllEmployees()
+        public async Task<List<UserDto>> GetAllUserAsync()
         {
             var _httpClient = new HttpClient();
             _httpClient.DefaultRequestHeaders.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);
 
-            var response = await _httpClient.GetAsync(apiCredential.url + "Employee/GetAllEmployees");
+            var response = await _httpClient.GetAsync(apiCredential.url + "User/GetAllUsers'");
             var responseData = await response.Content.ReadAsStringAsync();
             var responseModel = JsonConvert.DeserializeObject<CommanResponseDto>(responseData);
 
             if (responseModel != null && responseModel.Data != null)
             {
-                var details = JsonConvert.DeserializeObject<List<EmployeeDto>>(Convert.ToString(responseModel.Data));
+                var details = JsonConvert.DeserializeObject<List<UserDto>>(Convert.ToString(responseModel.Data));
                 return details;
             }
-            return new List<EmployeeDto>();
+            return new List<UserDto>();
         }
     }
 }

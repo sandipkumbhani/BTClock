@@ -11,6 +11,6 @@ namespace Attendance.Application.Interface
         Task<string> AddUserMenuMapping(UserMenuMappingDto userMenuMapping);
         Task<string> UpdateMenuMapping(UserMenuMappingDto userMenuMapping, int id);
         Task<int> DeleteUserMenuMapping(int id);
-        Task<List<EmployeeDto>> GetAllEmployees();
+        Task<List<UserDto>> GetAllUser();
     }
 }

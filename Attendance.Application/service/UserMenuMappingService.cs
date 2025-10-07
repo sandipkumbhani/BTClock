@@ -37,9 +37,9 @@ namespace Attendance.Application.service
         {
             return await _userMenuMappingAdaptor.DeleteUserMenuMapping(id);
         }
-        public async Task<List<EmployeeDto>> GetAllEmployees()
+        public async Task<List<UserDto>> GetAllUser()
         {
-            return await _userMenuMappingAdaptor.GetAllEmployees();
+            return await _userMenuMappingAdaptor.GetAllUserAsync();
 
         }
     }

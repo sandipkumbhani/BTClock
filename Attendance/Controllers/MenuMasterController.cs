@@ -98,11 +98,11 @@ namespace Attendance.Controllers
         public async Task<IActionResult> MasterViewDetails()
         {
             var menuList = await _menuService.GetAllMenuMasters();
-            var employees = await _userMenuMappingService.GetAllEmployees();
+            var employees = await _userMenuMappingService.GetAllUser();
 
             var users = employees.Select(e => new
             {
-                id = e.EmployeeId,
+                id = e.UserId,
                 name = e.Name
             }).ToList();
 

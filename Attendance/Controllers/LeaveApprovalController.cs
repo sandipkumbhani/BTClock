@@ -29,7 +29,7 @@ namespace Attendance.Controllers
         {
             var leavesList = await _leaveTransactionService.GetAllLeaveTransactions();
             var leaveMasters = await _leaveMasterService.GetAllLeaveMasters();
-            var employees = await _userMenuMappingService.GetAllEmployees();
+            var employees = await _userMenuMappingService.GetAllUser();
 
             var masters = leaveMasters.Select(e => new
             {
@@ -39,7 +39,7 @@ namespace Attendance.Controllers
 
             var users = employees.Select(e => new
             {
-                id = e.EmployeeId,
+                id = e.UserId,
                 name = e.Name
             }).ToList();
 
