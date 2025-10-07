@@ -14,13 +14,12 @@ namespace Attendance.Domain.Models
     public class UserMenuMappingDto
     {
         public int Id { get; set; }
-        [ForeignKey("Menuid")]
-        public int? MenuMasterMenuid { get; set; }
-        public menuMasterDto? MenuMaster { get; set; }
-        [ForeignKey("Id")]
-        [Required(ErrorMessage = "User is required")]
-        public int? EmployeeId { get; set; }
-        public EmployeeDto? Employee { get; set; }
+        [ForeignKey("UserId")]
+        public int? UserId { get; set; }
+        public User? User { get; set; }
+        [ForeignKey("MenuItemId")]
+        public int? MenuItemId { get; set; }
+        public MenuItemDto? MenuItem { get; set; }
         public int? InsertBy { get; set; }
         public DateTime? InsertDate { get; set; }
         public int? UpdateBy { get; set; }

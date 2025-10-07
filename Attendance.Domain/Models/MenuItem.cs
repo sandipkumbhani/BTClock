@@ -18,9 +18,10 @@ namespace Attendance.Domain.Models
         public int MenuItemId { get; set; }
         public int Menuid { get; set; }
         [ForeignKey("Menuid")]
-        public MenuMaster? MenuMaster { get; set; }
+        public menuMasterDto? MenuMaster { get; set; }
         public string? MenuName { get; set; }
         public int? ParentId { get; set; }
+        [RegularExpression("([1-9][0-9]*)")]
         public int SortingOrder { get; set; }
         public bool IsActive { get; set; } = true;
         public int? CreatedBy { get; set; }

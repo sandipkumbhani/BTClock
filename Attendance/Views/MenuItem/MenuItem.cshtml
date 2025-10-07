@@ -27,32 +27,38 @@
                     <h2 class="page-form-title">Menu Item</h2>
                     <div class="">
                         <div class="item-input">
-                            <label for="MenuName" class="form-label col-form-label required fw-semibold fs-6; form-label">MenuName</label>
-                            <select class="select2-custom form-control select2-hidden-accessible; form-select" id="MenuName" name="MenuName" style="width:359.46px; height:48px;">
-                                <option value="0" disabled selected>Select Menu</option>
+                            <label for="MenuName" class="form-label required">Menu Name</label>
+                            <select class="select2-custom form-control select2-hidden-accessible form-select"
+                                    style="width:359.46px;"
+                                    id="Menuid"
+                                    name="Menuid"
+                                    required>
+                                <option value="" disabled selected>Select Menu</option>
                                 @foreach (var item in ViewBag.Menus)
                                 {
-                                    <option value="@item.Menuid">@item.MenuName</option>
+                                    <option value="@item.Menuid">@item.Menuname</option>
                                 }
                             </select>
-                        </div>
+
                     </div>
                     <div class="">
                         <div class="item-input">
-                            <label for="ParentId" class="form-label col-form-label required fw-semibold fs-6; form-label">ParentMenuName</label>
-                            <select class="select2-custom form-control select2-hidden-accessible; form-select" id="ParentId" name="ParentId" style="width:359.46px; height:48px;">
-                                <option value="0" disabled selected>Select Parent</option>
+                            <label for="ParentId" class="form-label required">Parent Menu</label>
+                            <select id="ParentId" name="ParentId" class="select2-custom form-control select2-hidden-accessible form-select" style="width:359.46px; height:48px;">
+                                <option value="" disabled selected>Select Parent</option>
                                 @foreach (var item in ViewBag.Menus)
                                 {
-                                    <option value="@item.Menuid">@item.MenuName</option>
+                                    <option value="@item.Menuid">@item.Menuname</option>
                                 }
                             </select>
+
                         </div>
                     </div>
                     <div class="">
                         <div class="item-input">
                             <label for="SortingOrder" class="form-label col-form-label required fw-semibold fs-6">SortingOrder</label>
-                            <input type="text" class="form-control userinput" id="SortingOrder" name="SortingOrder" placeholder="Enter SortingOrder" style="width:359.46px; height:48px;" required>
+                            <input type="text" class="form-control userinput" id="SortingOrder" name="SortingOrder" placeholder="Enter SortingOrder" style="width:359.46px; height:48px;" required step="1"
+                                   oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                         </div>
                     </div>
                 </div>
@@ -73,7 +79,7 @@
                 <div class="button-main">
                     <button type="submit" class="btn btn-primary me-2" style="width:95px;height:38px;background-color: #0466c8;">Save</button>
                     @*<button type="submit" formaction="@Url.Action("MasterView", "MenuMaster")" class="btn btn-primary me-2" style="width:95px;height:38px;background-color: #0466c8;">View</button>*@
-                    <a class="btn btn-primary me-2" href="/MenuMaster/MasterView" style=" width: 95px;height: 38px;background-color: #0466c8;">View</a>
+                    <a class="btn btn-primary me-2" href="/MenuItem/MenuItemView" style=" width: 95px;height: 38px;background-color: #0466c8;">View</a>
                 </div>
             </form>
         </div>

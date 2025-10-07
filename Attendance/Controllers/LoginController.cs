@@ -57,47 +57,62 @@ namespace Attendance.Controllers
                     });
                     var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
                     var email = jwt.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email || c.Type == "unique_name")?.Value;
-                    var employeeId = jwt.Claims.FirstOrDefault(c => c.Type == "EmployeeId" || c.Type == "unique_name")?.Value;
+                    var userId = jwt.Claims.FirstOrDefault(c => c.Type == "UserId" || c.Type == "unique_name")?.Value;
                     var role = jwt.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role || c.Type == "role")?.Value;
                     var claims = new List<Claim>
                     {
                         new Claim(ClaimTypes.Email, email ?? model.Email),
-                        new Claim("EmployeeId", employeeId ?? ""),
-                        new Claim(ClaimTypes.UserData, employeeId),
+                        new Claim("UserId", userId ?? ""),
+                        new Claim(ClaimTypes.UserData, userId),
                         new Claim(ClaimTypes.Role,role!.ToString())
                     };
                     var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     var principal = new ClaimsPrincipal(identity);
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-                    var existingMenus = await _userMenuMappingService.GetUserMenuById(Convert.ToInt32(employeeId));
+                    var existingMenus = await _userMenuMappingService.GetUserMenuById(Convert.ToInt32(userId));
                     if (!existingMenus.Any())
                     {
                         var allMenus = await _menuService.GetAllMenuMasters();
+
+                        if (allMenus == null)
+                        {
+                            _logger.LogWarning("GetAllMenuMasters returned null for userId: {UserId}", userId);
+                            allMenus = new List<menuMasterDto>();
+                        }
+
                         var defaultMenus = allMenus.Where(m => m.isDefault).ToList();
 
                         foreach (var menu in defaultMenus)
                         {
                             var mappingDto = new UserMenuMappingDto
                             {
-                                EmployeeId = Convert.ToInt32(employeeId),
-                                MenuMasterMenuid = menu.Menuid
+                                UserId = Convert.ToInt32(userId),
+                                MenuItemId = menu.Menuid
                             };
 
                             await _userMenuMappingService.AddUserMenuMapping(mappingDto);
                         }
                     }
-                    var _menus = new List<UserMenuMappingDto>();
-                    var menulist = await _userMenuMappingService.GetAll();
+
+                    var allUserMenuMappings = await _userMenuMappingService.GetAll();
+                    var userMenus = new List<UserMenuMappingDto>();
+
                     if (role == "Admin")
                     {
-                        _menus = menulist.ToList();
+                        userMenus = allUserMenuMappings.ToList();
                     }
                     else
                     {
-                        _menus = menulist.Where(x => x.EmployeeId == Convert.ToUInt32(employeeId)).ToList();
+                        userMenus = allUserMenuMappings
+                            .Where(x => x.UserId == Convert.ToInt32(userId))
+                            .ToList();
                     }
-                    var menus = _menus.Select(x => x.MenuMaster.Menuname).ToList();
-                    string menuJson = JsonSerializer.Serialize(menus);
+
+                    var menuNames = userMenus
+                        .Where(m => m.MenuItem != null)
+                        .Select(x => x.MenuItem.MenuName)
+                        .ToList();
+                    string menuJson = JsonSerializer.Serialize(menuNames);
                     Response.Cookies.Append("MenuAccess", menuJson, new CookieOptions
                     {
                         HttpOnly = true,

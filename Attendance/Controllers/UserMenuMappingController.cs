@@ -29,10 +29,10 @@ namespace Attendance.Controllers
 
         public async Task<IActionResult> UserMenuMapping()
         {
-            var employees = await _userMenuMappingService.GetAllEmployees();
+            var users = await _userMenuMappingService.GetAllUser();
             //var userlist = employees.Where(x => x.DesignationId != 17).ToList();
             var menus = await _menuService.GetAllMenuMasters();
-            ViewBag.employees = employees;
+            ViewBag.user = users;
             ViewBag.Menus = menus;
             var model = new UserMenuMappingDto();
             return View(model);
@@ -47,8 +47,8 @@ namespace Attendance.Controllers
                     if (userMenuMappingDto.MenuIds != null && userMenuMappingDto.MenuIds.Any())
                     {
                         var existingMappings = await _userMenuMappingService.GetAll();
-                        var userMappings = existingMappings.Where(m => m.EmployeeId == userMenuMappingDto.EmployeeId).ToList();
-                        var existingMenuIds = userMappings.Select(m => m.MenuMasterMenuid.GetValueOrDefault()).ToList();
+                        var userMappings = existingMappings.Where(m => m.UserId == userMenuMappingDto.UserId).ToList();
+                        var existingMenuIds = userMappings.Select(m => m.MenuItemId.GetValueOrDefault()).ToList();
 
                         var newMenuIds = userMenuMappingDto.MenuIds ?? new List<int>();
                         var toAdd = newMenuIds.Except(existingMenuIds).ToList();
@@ -61,9 +61,9 @@ namespace Attendance.Controllers
                             {
                                 var newMapping = new UserMenuMappingDto
                                 {
-                                    EmployeeId = userMenuMappingDto.EmployeeId,
-                                    MenuMasterMenuid = menuId,
-                                    InsertBy = userMenuMappingDto.EmployeeId,
+                                    UserId = userMenuMappingDto.UserId,
+                                    MenuItemId = menuId,
+                                    InsertBy = userMenuMappingDto.UserId,
                                     InsertDate = DateTime.Now
                                 };
                                 await _userMenuMappingService.AddUserMenuMapping(newMapping);
@@ -74,10 +74,10 @@ namespace Attendance.Controllers
                         {
                             foreach (var menuId in toUpdate)
                             {
-                                var existingMapping = userMappings.FirstOrDefault(m => m.MenuMasterMenuid == menuId);
+                                var existingMapping = userMappings.FirstOrDefault(m => m.MenuItemId == menuId);
                                 if (existingMapping != null)
                                 {
-                                    existingMapping.UpdateBy = userMenuMappingDto.EmployeeId;
+                                    existingMapping.UpdateBy = userMenuMappingDto.UserId;
                                     existingMapping.UpdateDate = DateTime.Now;
                                     await _userMenuMappingService.UpdateMenuMapping(existingMapping, existingMapping.Id);
                                     updateMade = true;
@@ -86,7 +86,7 @@ namespace Attendance.Controllers
                         }
                         if (toDelete.Any())
                         {
-                            foreach (var mapping in userMappings.Where(m => toDelete.Contains(m.MenuMasterMenuid ?? 0)))
+                            foreach (var mapping in userMappings.Where(m => toDelete.Contains(m.MenuItemId ?? 0)))
                             {
                                 await _userMenuMappingService.DeleteUserMenuMapping(mapping.Id);
                                 deleteMade = true;
@@ -100,10 +100,10 @@ namespace Attendance.Controllers
                         {
                             ViewBag.errormsg = "No changes were made.";
                         }
-                        var employees = await _userMenuMappingService.GetAllEmployees();
+                        var users = await _userMenuMappingService.GetAllUser();
                         //var userlist = users.Where(x => x.RoleId != 1).ToList();
                         var menus = await _menuService.GetAllMenuMasters();
-                        ViewBag.employees = employees;
+                        ViewBag.users = users;
                         ViewBag.Menus = menus;
                         return View(userMenuMappingDto);
                     }
@@ -121,8 +121,8 @@ namespace Attendance.Controllers
         {
             var allMappings = await _userMenuMappingService.GetAll();
             var employeeMenus = allMappings
-                .Where(m => m.EmployeeId == Convert.ToInt32(employeeId))
-                .Select(m => m.MenuMasterMenuid ?? 0)
+                .Where(m => m.UserId == Convert.ToInt32(employeeId))
+                .Select(m => m.MenuItemId ?? 0)
                 .ToList();
             if (!employeeMenus.Any())
             {

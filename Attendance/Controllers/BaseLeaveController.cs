@@ -36,7 +36,7 @@ namespace Attendance.Controllers
 
                 var employeeID = UserUtility.GetUserId(HttpContext);
                 var userMenus = await _userMenuMappingService.GetUserMenuById(Convert.ToInt32(employeeID));
-                var userMenuList = userMenus.Where(x => x.MenuMaster?.ModuleMasterId == 7).Select(x => x.MenuMasterMenuid);
+                var userMenuList = userMenus.Where(x => x.MenuItem?.MenuMaster?.ModuleMasterId == 7).Select(x => x.MenuItemId);
                 var menulist = await _menuService.GetAllMenuMasters();
                 var UserMenuAccesslist = menulist.Where(x => userMenuList.Contains(x.Menuid)).ToList();
 
