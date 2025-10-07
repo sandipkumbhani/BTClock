@@ -86,13 +86,13 @@ namespace Attendance.Infrastructure.Efcore.Providers
             }
             return null;
         }
-        public async Task<string> UpdateMenuItemAsync(MenuItemDto menuItem)
+        public async Task<string> UpdateMenuItemAsync(MenuItemDto menuItem, int id)
         {
             var _httpClient = new HttpClient();
             _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);
             var jsonContent = Newtonsoft.Json.JsonConvert.SerializeObject(menuItem);
             var contentString = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PutAsync(apiCredential.url + "MenuItem/UpdateMenuItem", contentString);
+            var response = await _httpClient.PutAsync(apiCredential.url + "MenuItem/UpdateMenuItem/" + id, contentString);
             var responseData = await response.Content.ReadAsStringAsync();
             var responseModel = Newtonsoft.Json.JsonConvert.DeserializeObject<CommanResponseDto>(responseData);
             if (responseModel != null)

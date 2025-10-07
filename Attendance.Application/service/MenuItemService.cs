@@ -33,9 +33,9 @@ namespace Attendance.Application.service
         {
             return await _menuItemAdaptor.AddMenuItemAsync(menuItem);
         }
-        public async Task<string> UpdateMenuItem(MenuItemDto menuItem)
+        public async Task<string> UpdateMenuItem(MenuItemDto menuItem, int id)
         {
-            return await _menuItemAdaptor.UpdateMenuItemAsync(menuItem);
+            return await _menuItemAdaptor.UpdateMenuItemAsync(menuItem,id);
         }
         public async Task<int> DeleteMenuItem(int id)
         {
