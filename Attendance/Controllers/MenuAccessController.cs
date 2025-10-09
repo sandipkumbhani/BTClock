@@ -15,25 +15,39 @@ namespace Attendance.Controllers
         private readonly GlobalClass _globalClass;
         private readonly IMenuMasterService _menuService;
         private readonly IUserMenuMappingService _userMenuMappingService;
-        public MenuAccessController(IConfiguration configuration, GlobalClass globalClass, IMenuMasterService menuService, IUserMenuMappingService userMenuMappingService) : base(menuService, userMenuMappingService)
+        private readonly IMenuItemService _menuItemService;
+
+        public MenuAccessController(IConfiguration configuration, GlobalClass globalClass, IMenuMasterService menuService, IUserMenuMappingService userMenuMappingService, IMenuItemService menuItemService) : base(menuService, userMenuMappingService, menuItemService)
         {
             _configuration = configuration;
             applicationURL = new ApplicationURL(configuration);
             _globalClass = globalClass;
             _menuService = menuService;
             _userMenuMappingService = userMenuMappingService;
+            _menuItemService = menuItemService;
         }
         public IActionResult Redirect()
         {
             if (_globalClass.Token != null)
             {
                 var jwt = new JwtSecurityTokenHandler().ReadJwtToken(_globalClass.Token);
-                var menus = ((List<menuMasterDto>)ViewBag.MainMenu);
+                var menus = ((List<MenuItemDto>)ViewBag.MainMenu);
+
                 if (menus.Count() > 0)
                 {
-                    var redirectTo = menus.FirstOrDefault()!.MenuPath;
-                    ViewBag.appUrl = applicationURL.url;
-                    return LocalRedirect(redirectTo);
+                    var redirectTo = menus
+                        .Where(menu => menu.MenuMaster != null)
+                        .FirstOrDefault()?.MenuMaster?.MenuPath;
+
+                    if (!string.IsNullOrEmpty(redirectTo))
+                    {
+                        ViewBag.appUrl = applicationURL.url;
+                        return LocalRedirect(redirectTo);
+                    }
+                    else
+                    {
+                        return RedirectToAction("AccessDenied", "Home");
+                    }
                 }
                 else
                 {
@@ -45,5 +59,6 @@ namespace Attendance.Controllers
                 return RedirectToAction("AccessDenied", "Home");
             }
         }
+
     }
 }

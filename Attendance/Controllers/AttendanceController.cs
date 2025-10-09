@@ -17,9 +17,12 @@ namespace Attendance.Controllers
         private readonly IAttendanceService _service;
         private readonly IMenuMasterService _menuService;
         private readonly IUserMenuMappingService _userMenuMappingService;
+        private readonly IMenuItemService _menuItemService;
+        private readonly ILogger<BaseClockInController> _logger;
 
 
-        public AttendanceController(IConfiguration configuration, GlobalClass globalClass, IAttendanceService service, IMenuMasterService menuService, IUserMenuMappingService userMenuMappingService) : base(menuService, userMenuMappingService)
+
+        public AttendanceController(IConfiguration configuration, GlobalClass globalClass, IAttendanceService service, IMenuMasterService menuService, IUserMenuMappingService userMenuMappingService, IMenuItemService menuItemService, ILogger<BaseClockInController> logger) : base(menuService, userMenuMappingService, menuItemService, logger)
         {
             _configuration = configuration;
             _globalClass = globalClass;
@@ -27,6 +30,8 @@ namespace Attendance.Controllers
             applicationURL = new ApplicationURL(configuration);
             _menuService = menuService;
             _userMenuMappingService = userMenuMappingService;
+            _menuItemService = menuItemService;
+            _logger = logger;
         }
         public IActionResult ClockIn()
         {
@@ -38,9 +43,9 @@ namespace Attendance.Controllers
                 var canAccess = UserUtility.CanAccessMenu(HttpContext, currentPage);
                 if (canAccess == true)
                 {
-                    var employee = claims.Claims.FirstOrDefault(x => x.Type == "EmployeeId");
-                    int EmployeeId = employee != null ? (!string.IsNullOrEmpty(employee.Value) ? Convert.ToInt32(employee.Value) : 0) : 0;
-                    ViewBag.EmployeeId = EmployeeId;
+                    var employee = claims.Claims.FirstOrDefault(x => x.Type == "UserId");
+                    int UserId = employee != null ? (!string.IsNullOrEmpty(employee.Value) ? Convert.ToInt32(employee.Value) : 0) : 0;
+                    ViewBag.UserId = UserId;
                     ViewBag.appUrl = applicationURL.url;
                     return View();
                 }
@@ -99,11 +104,11 @@ namespace Attendance.Controllers
         //    return Json(null);
         //}
         [HttpGet]
-        public async Task<IActionResult> Report(int employeeId)
+        public async Task<IActionResult> Report(int userId)
         {
             if (_globalClass.Token != null)
             {
-                var report = await _service.GetAttendanceByEmployeeAsync(employeeId);
+                var report = await _service.GetAttendanceByUserAsync(userId);
 
                 var topFive = report.OrderByDescending(x => x.ClockIn).Take(5).ToList();
 

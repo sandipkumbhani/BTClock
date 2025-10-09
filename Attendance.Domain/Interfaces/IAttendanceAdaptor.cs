@@ -6,8 +6,8 @@ namespace Attendance.Domain.Interfaces
     {
         Task<AttendanceRecordDto> ClockInAsync();
         Task<AttendanceRecordDto> ClockOutAsync();
-        Task<List<AttendanceRecordDto>> GetAttendanceByEmployeeAsync(int employeeId);
-        Task<List<AttendanceRecordDto>> GetLastFiveAttendanceRecordsAsync(int employeeId);
+        Task<List<AttendanceRecordDto>> GetAttendanceByUserAsync(int userId);
+        Task<List<AttendanceRecordDto>> GetLastFiveAttendanceRecordsAsync(int userId);
         Task<bool> IsUserClockedIn();
 		Task<List<AttendanceRecordDto>> GetAllAttendanceAsync();
 		Task<string> UpdateAttendanceRecordAsync(AttendanceRecordDto record, int id);

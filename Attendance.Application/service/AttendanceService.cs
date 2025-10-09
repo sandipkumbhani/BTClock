@@ -24,9 +24,9 @@ namespace Attendance.Application.Provider
             return await _adaptor.ClockOutAsync();
         }
 
-        public async Task<List<AttendanceRecordDto>> GetAttendanceByEmployeeAsync(int employeeId)
+        public async Task<List<AttendanceRecordDto>> GetAttendanceByUserAsync(int userId)
         {
-            return await _adaptor.GetAttendanceByEmployeeAsync(employeeId);
+            return await _adaptor.GetAttendanceByUserAsync(userId);
         }
 
         public Task<bool> IsUserClockedIn()
@@ -34,9 +34,9 @@ namespace Attendance.Application.Provider
             return _adaptor.IsUserClockedIn();
         }
 
-        public async Task<List<AttendanceRecordDto>> GetLastFiveAttendanceRecordsAsync(int employeeId)
+        public async Task<List<AttendanceRecordDto>> GetLastFiveAttendanceRecordsAsync(int userId)
         {
-            return await _adaptor.GetLastFiveAttendanceRecordsAsync(employeeId);
+            return await _adaptor.GetLastFiveAttendanceRecordsAsync(userId);
 
         }
         public async Task<List<AttendanceRecordDto>> GetAllAttendanceAsync()

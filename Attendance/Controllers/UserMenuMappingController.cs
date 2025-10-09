@@ -12,7 +12,7 @@ namespace Attendance.Controllers
     {
         private readonly ILogger<UserMenuMappingController> _logger;
         private readonly IConfiguration _configuration;
-        private ApplicationURL applicationURL;
+        private readonly ApplicationURL _applicationURL;
         private readonly GlobalClass _globalClass;
         private readonly IUserMenuMappingService _userMenuMappingService;
         private readonly IMenuMasterService _menuService;
@@ -20,21 +20,20 @@ namespace Attendance.Controllers
         private readonly IMenuItemService _menuItemService;
 
 
-		public UserMenuMappingController(ILogger<UserMenuMappingController> logger, IConfiguration configuration, IUserMenuMappingService userMenuMappingService, IMenuMasterService menuService,IUserService userService,IMenuItemService menuItemService) : base(menuService, userMenuMappingService)
+		public UserMenuMappingController(ILogger<UserMenuMappingController> logger, IConfiguration configuration, IUserMenuMappingService userMenuMappingService, IMenuMasterService menuService,IUserService userService,IMenuItemService menuItemService) : base(menuService, userMenuMappingService,menuItemService)
         {
             _logger = logger;
             _configuration = configuration;
             _globalClass = new GlobalClass();
-            applicationURL = new ApplicationURL(configuration);
+            _applicationURL = new ApplicationURL(configuration);
             _userMenuMappingService = userMenuMappingService;
             _menuService = menuService;
-			_userService = userService;
+      			_userService = userService;
             _menuItemService = menuItemService;
 		}
 
         public async Task<IActionResult> UserMenuMapping()
-		{
-			{
+		    {
 				var users = await _userService.GetAllUser();
 				var menus = await _menuService.GetAllMenuMasters();
 				var menuItems = await _menuItemService.GetAll();
@@ -43,8 +42,7 @@ namespace Attendance.Controllers
 				ViewBag.Menus = validMenus;
 				var model = new UserMenuMappingDto();
 				return View(model);
-			}
-		}
+		    }
         [HttpPost]
         public async Task<IActionResult> UserMenuMapping(UserMenuMappingDto userMenuMappingDto)
         {
@@ -56,13 +54,15 @@ namespace Attendance.Controllers
                     {
                         var existingMappings = await _userMenuMappingService.GetAll();
                         var userMappings = existingMappings.Where(m => m.UserId == userMenuMappingDto.UserId).ToList();
-                        var existingMenuIds = userMappings.Select(m => m.MenuItemId.GetValueOrDefault()).ToList();
+                        var existingMenuIds = userMappings.Select(m => m.MenuItemId ?? 0).ToList();
+                        var newMenuIds = userMenuMappingDto.MenuIds;
 
-                        var newMenuIds = userMenuMappingDto.MenuIds ?? new List<int>();
                         var toAdd = newMenuIds.Except(existingMenuIds).ToList();
                         var toDelete = existingMenuIds.Except(newMenuIds).ToList();
                         var toUpdate = existingMenuIds.Intersect(newMenuIds).ToList();
+
                         bool addMade = false, updateMade = false, deleteMade = false;
+
                         if (toAdd.Any())
                         {
                             foreach (var menuId in toAdd)
@@ -80,6 +80,7 @@ namespace Attendance.Controllers
                                 addMade = true;
                             }
                         }
+
                         if (toUpdate.Any())
                         {
                             foreach (var menuId in toUpdate)
@@ -94,6 +95,7 @@ namespace Attendance.Controllers
                                 }
                             }
                         }
+
                         if (toDelete.Any())
                         {
                             foreach (var mapping in userMappings.Where(m => toDelete.Contains(m.MenuItemId ?? 0)))
@@ -102,9 +104,10 @@ namespace Attendance.Controllers
                                 deleteMade = true;
                             }
                         }
+
                         if (addMade || deleteMade)
                         {
-                            ViewBag.msg = "UserMenu Save successfully!";
+                            ViewBag.msg = "User menu mapping updated successfully!";
                         }
                         else
                         {
@@ -124,10 +127,11 @@ namespace Attendance.Controllers
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error updating menu mapping");
+                    _logger.LogError(ex, "Error updating user menu mappings");
+                    ViewBag.errormsg = "An error occurred while saving the user menu mappings.";
                 }
             }
-            return View();
+            return View(userMenuMappingDto);
         }
 
         [HttpGet]

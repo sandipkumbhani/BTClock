@@ -16,19 +16,19 @@ $(document).ready(async function () {
     attachHeaderSortHandlers();
     addExportButton();
     setupMonthPicker();
-    syncEmployeeDropdownWidth();
+    syncUserDropdownWidth();
 
     const datepickerElement = document.getElementById('reportrange');
     if (datepickerElement) {
         const resizeObserver = new ResizeObserver(() => {
-            syncEmployeeDropdownWidth();
+            syncUserDropdownWidth();
         });
 
         resizeObserver.observe(datepickerElement);
     };
 
-    $("#EmployeeId").on("change", function () {
-        applyEmployeeAndDateFilter();
+    $("#UserId").on("change", function () {
+        applyUserAndDateFilter();
     });
     // Set default to current month
     const now = new Date();
@@ -79,7 +79,7 @@ function sortFilteredRecords() {
     filteredRecords.sort((a, b) => {
         let aVal, bVal;
         switch (col) {
-            case 0: aVal = a.employeeName?.toLowerCase(); bVal = b.employeeName?.toLowerCase(); break;
+            case 0: aVal = a.userName?.toLowerCase(); bVal = b.userName?.toLowerCase(); break;
             case 1: aVal = new Date(a.date); bVal = new Date(b.date); break;
             case 2: aVal = timeToSeconds(a.clockIn); bVal = timeToSeconds(b.clockIn); break;
             case 3: aVal = timeToSeconds(a.clockOut); bVal = timeToSeconds(b.clockOut); break;
@@ -109,7 +109,7 @@ function renderTable() {
         paginatedData.forEach(rec => {
             const row = document.createElement("tr");
             row.innerHTML = `
-                <td>${rec.employeeName}</td>
+                <td>${rec.userName}</td>
                 <td>${rec.date}</td>
                 <td>${rec.clockIn}</td>
                 <td>${rec.clockOut}</td>
@@ -253,9 +253,9 @@ function addExportButton() {
         }
 
         // Generate CSV content
-        const header = ["Employee Name", "Date", "Clock In", "Clock Out", "Total Time", "Overtime Hours"];
+        const header = ["User Name", "Date", "Clock In", "Clock Out", "Total Time", "Overtime Hours"];
         const rows = exportData.map(r => [
-            r.employeeName,
+            r.userName,
             r.date,
             r.clockIn,
             r.clockOut,
@@ -266,9 +266,8 @@ function addExportButton() {
         let csvContent = header.join(",") + "\n";
         csvContent += rows.map(r => r.join(",")).join("\n");
 
-        // Get employee name
-        const employeeSelect = document.getElementById("EmployeeId");
-        const employeeText = employeeSelect?.options[employeeSelect.selectedIndex]?.text || "All_Employees";
+        const userSelect = document.getElementById("UserId");
+        const userText = userSelect?.options[userSelect.selectedIndex]?.text || "All_Users";
 
         // Get date range
         const rangeSpan = document.querySelector("#reportrange span");
@@ -276,7 +275,7 @@ function addExportButton() {
 
         // Clean filename parts
         const cleanText = (text) => text.replace(/[,]/g, '').replace(/\s*-\s*/g, '_to_').replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_-]/g, '');
-        const filename = `Attendance_${cleanText(employeeText)}_${cleanText(dateRangeText)}.csv`;
+        const filename = `Attendance_${cleanText(userText)}_${cleanText(dateRangeText)}.csv`;
 
         // Create and download CSV file
         const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
@@ -299,7 +298,7 @@ function setupSearch() {
     searchInput.addEventListener("keyup", function () {
         const term = this.value.trim().toLowerCase();
         filteredRecords = term === "" ? [...monthFilteredRecords] : monthFilteredRecords.filter(r =>
-            (r.employeeName ?? "").toLowerCase().includes(term) ||
+            (r.userName ?? "").toLowerCase().includes(term) ||
             (r.date ?? "").toLowerCase().includes(term) ||
             (r.clockIn ?? "").toLowerCase().includes(term) ||
             (r.clockOut ?? "").toLowerCase().includes(term) ||
@@ -380,34 +379,32 @@ function filterByDateRange(start, end) {
     const startDate = start.startOf('day');
     const endDate = end.endOf('day');
 
-    // 🔥 Instead of assigning directly, just filter by date and later by employee
     monthFilteredRecords = allRecords.filter(rec => {
         const recDate = moment(rec.date, 'DD-MMM-YYYY');
         return recDate.isBetween(startDate, endDate, null, '[]');
     });
 
-    applyEmployeeAndDateFilter(); // ✅ Call combined filter after date change
+    applyUserAndDateFilter(); // ✅ Call combined filter after date change
 }
-function applyEmployeeAndDateFilter() {
-    const selectedEmpId = $("#EmployeeId").val();
+function applyUserAndDateFilter() {
+    const selectedUserId = $("#UserId").val();
 
-    // If "All Employees" or no selection, keep all records for the date range
-    filteredRecords = selectedEmpId
-        ? monthFilteredRecords.filter(r => r.employeeId == selectedEmpId)
+    filteredRecords = selectedUserId
+        ? monthFilteredRecords.filter(r => r.userId == selectedUserId)
         : [...monthFilteredRecords];
 
     currentPage = 1;
     renderTable();
     renderPagination();
 }
-function syncEmployeeDropdownWidth() {
+function syncUserDropdownWidth() {
     const datepicker = document.getElementById('reportrange');
-    const employeeDropdown = document.getElementById('EmployeeId');
+    const userDropdown = document.getElementById('UserId');
 
-    if (!datepicker || !employeeDropdown) return;
+    if (!datepicker || !userDropdown) return;
 
     const width = datepicker.offsetWidth;
-    employeeDropdown.style.width = width + 'px';
+    userDropdown.style.width = width + 'px';
 }
 
 

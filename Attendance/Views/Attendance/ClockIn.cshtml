@@ -2,7 +2,7 @@
 @{
     Layout = "~/Views/Shared/_LayoutTimesheet.cshtml";
     ViewData["Title"] = "ClockIn";
-    int EmployeeId = ViewBag.EmployeeId != null ? Convert.ToInt32(ViewBag.EmployeeId) : 0;
+    int UserId = ViewBag.UserId != null ? Convert.ToInt32(ViewBag.UserId) : 0;
 }
 
 <head>
@@ -70,7 +70,7 @@
     </div>
 @section Scripts {
     <script>
-        const employeeId = @EmployeeId;
+        const userId = @UserId;
     </script>
     <script src="~/js/clockin.js"></script>
 }

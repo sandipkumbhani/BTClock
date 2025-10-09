@@ -20,7 +20,9 @@ namespace Attendance.Controllers
 		private readonly IHolidayMasterService _holidayMasterService;
         private readonly IMenuMasterService _menuService;
         private readonly IUserMenuMappingService _userMenuMappingService;
-        public MasterController(IConfiguration configuration, GlobalClass globalClass, IDepartmentService departmentService, IDesignationService designationService, ILeaveMasterService leaveMasterService, IModuleMasterService moduleMasterService, IHolidayMasterService holidayMasterService, IMenuMasterService menuService, IUserMenuMappingService userMenuMappingService) : base(menuService, userMenuMappingService)
+        private readonly IMenuItemService _menuItemService;
+
+        public MasterController(IConfiguration configuration, GlobalClass globalClass, IDepartmentService departmentService, IDesignationService designationService, ILeaveMasterService leaveMasterService, IModuleMasterService moduleMasterService, IHolidayMasterService holidayMasterService, IMenuMasterService menuService, IUserMenuMappingService userMenuMappingService, IMenuItemService menuItemService) : base(menuService, userMenuMappingService, menuItemService)
         {
             _configuration = configuration;
             applicationURL = new ApplicationURL(configuration);
@@ -32,6 +34,7 @@ namespace Attendance.Controllers
             _holidayMasterService = holidayMasterService;
             _menuService = menuService;
             _userMenuMappingService = userMenuMappingService;
+            _menuItemService = menuItemService;
         }
         public IActionResult MasterTable()
 		{

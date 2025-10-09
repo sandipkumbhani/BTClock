@@ -19,10 +19,10 @@ namespace Attendance.Controllers
         private readonly ILeaveMasterService _leaveMasterService;
         private readonly IUserMenuMappingService _userMenuMappingService;
         private readonly IMenuMasterService _menuService;
+        private readonly IMenuItemService _menuItemService;
         private readonly IUserService _userService;
-
-
-        public LeaveTransactionController(ILogger<UserMenuMappingController> logger, IConfiguration configuration, GlobalClass globalClass, ILeaveTransactionService leaveTransactionService, ILeaveMasterService leaveMasterService, IUserMenuMappingService userMenuMappingService, IMenuMasterService menuService,IUserService userService) : base(menuService, userMenuMappingService)
+        
+        public LeaveTransactionController(ILogger<UserMenuMappingController> logger, IConfiguration configuration, GlobalClass globalClass, ILeaveTransactionService leaveTransactionService, ILeaveMasterService leaveMasterService, IUserMenuMappingService userMenuMappingService, IMenuMasterService menuService, IMenuItemService menuItemService,IUserService userService) : base(menuService, userMenuMappingService, menuItemService)
         {
             _logger = logger;
             _configuration = configuration;
@@ -32,7 +32,8 @@ namespace Attendance.Controllers
             _leaveMasterService = leaveMasterService;
             _userMenuMappingService = userMenuMappingService;
             _menuService = menuService;
-			_userService = userService;
+            _menuItemService = menuItemService;
+      			_userService = userService;
 		}
 
         public async Task<IActionResult> LeaveTransaction()

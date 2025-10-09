@@ -28,5 +28,7 @@ namespace Attendance.Domain.Models
         public DateTime? CreatedAt { get; set; }
         public int? UpdatedBy { get; set; }
         public DateTime? UpdatedAt { get; set; }
+        public List<MenuItemDto>? Children { get; set; }
+
     }
 }

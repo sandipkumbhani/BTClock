@@ -12,7 +12,7 @@ function updateButtonStates() {
 	}
 }
 function fetchAttendance() {
-	fetch(`/Attendance/GetLastFiveRecords?employeeId=${employeeId}`)
+	fetch(`/Attendance/GetLastFiveRecords?userId=${userId}`)
 		.then(res => res.json())
 		.then(data => {
 			attendanceRecords = data;
@@ -62,7 +62,7 @@ function formatTimeSpan(timeSpan) {
 
 
 function fetchAttendance(IsLiveInterval = 1) {
-	fetch(`/Attendance/Report?employeeId=${employeeId}`)
+	fetch(`/Attendance/Report?userId=${userId}`)
 		.then(res => res.json())
 		.then(data => {
 			attendanceRecords = data;
