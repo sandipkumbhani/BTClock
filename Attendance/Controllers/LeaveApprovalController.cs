@@ -12,14 +12,16 @@ namespace Attendance.Controllers
         private readonly ILeaveMasterService _leaveMasterService;
         private readonly IUserMenuMappingService _userMenuMappingService;
         private readonly IMenuMasterService _menuService;
+        private readonly IUserService _userService;
 
-        public LeaveApprovalController(ILeaveTransactionService leaveTransactionService, ILeaveMasterService leaveMasterService, IUserMenuMappingService userMenuMappingService, IMenuMasterService menuService) : base(menuService, userMenuMappingService)
+		public LeaveApprovalController(ILeaveTransactionService leaveTransactionService, ILeaveMasterService leaveMasterService, IUserMenuMappingService userMenuMappingService, IMenuMasterService menuService,IUserService userService) : base(menuService, userMenuMappingService)
         {
             _leaveTransactionService = leaveTransactionService;
             _leaveMasterService = leaveMasterService;
             _userMenuMappingService = userMenuMappingService;
             _menuService = menuService;
-        }
+			_userService = userService;
+		}
 
         public IActionResult LeaveApproval()
         {
@@ -29,15 +31,16 @@ namespace Attendance.Controllers
         {
             var leavesList = await _leaveTransactionService.GetAllLeaveTransactions();
             var leaveMasters = await _leaveMasterService.GetAllLeaveMasters();
-            var employees = await _userMenuMappingService.GetAllUser();
+            //var employees = await _userMenuMappingService.GetAllUser();
+            var user = await _userService.GetAllUser();
 
-            var masters = leaveMasters.Select(e => new
+			var masters = leaveMasters.Select(e => new
             {
                 id = e.LeaveMasterId,
                 name = e.LeaveType
             }).ToList();
 
-            var users = employees.Select(e => new
+            var users = user.Select(e => new
             {
                 id = e.UserId,
                 name = e.Name

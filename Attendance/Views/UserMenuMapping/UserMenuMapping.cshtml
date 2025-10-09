@@ -2,7 +2,7 @@
 @model Attendance.Domain.Models.UserMenuMappingDto
 @{
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
-    
+    var validMenus = ViewBag.Menus as List<Attendance.Domain.Models.MenuItemDto>;
 }
 <div class="main-inner container-fluid">
     @{
@@ -24,27 +24,27 @@
                 <div class="top-details">
                     <h2 class="page-form-title">User Menu Mapping</h2>
                     <div class="item-input mb-3">
-                        <label for="EmployeeId" class="form-label fw-semibold fs-6 required">User</label>
-                        <select class="select2-custom form-control select2-hidden-accessible; form-select" id="EmployeeId" name="EmployeeId" style="width:359.46px; height:48px;" required>
+                        <label for="UserId" class="form-label fw-semibold fs-6 required">User</label>
+                        <select class="select2-custom form-control select2-hidden-accessible; form-select" id="UserId" name="UserId" style="width:359.46px; height:48px;" required>
                             <option value="" id="userID" disabled selected>Select User</option>
-                            @foreach (var employee in ViewBag.employees)
+                            @foreach (var user in ViewBag.user)
                             {
-                                <option value="@employee.EmployeeId">@employee.Name</option>
+                                <option value="@user.UserId">@user.Name</option>
                             }
                         </select>
                     </div>
                     <div class="col-lg-3">
                         <label class="form-label fw-semibold fs-6">Select Menus</label>
                         <div class="item-input">
-                            @foreach (var menu in ViewBag.Menus)
+                            @foreach (var menu in validMenus)
                             {
                                 <label class="form-label fw-semibold fs-6 d-block mt-2">
                                     <input type="checkbox"
                                            class="form-check-input menu-checkbox"
                                            name="MenuIds"
-                                           value="@menu.Menuid"
-                                           data-is-default="@menu.isDefault.ToString().ToLower()" />
-                                    &nbsp; @menu.Menuname
+                                           value="@menu.MenuItemId"
+                                           data-is-default="@menu.MenuMaster?.isDefault.ToString().ToLower()" />
+                                    &nbsp; @menu.MenuName
                                 </label>
                             }
                         </div>

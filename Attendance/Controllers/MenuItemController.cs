@@ -16,8 +16,9 @@ namespace Attendance.Controllers
         private readonly IMenuMasterService _menuMasterService;
         private readonly IMenuMasterService _menuService;
         private readonly IUserMenuMappingService _userMenuMappingService;
+        private readonly IUserService _userService;
 
-        public MenuItemController(ILogger<MenuMasterController> logger, IConfiguration configuration, GlobalClass globalClass, IMenuItemService menuItemService, IMenuMasterService menuMasterService, IMenuMasterService menuService, IUserMenuMappingService userMenuMappingService) : base(menuService, userMenuMappingService)
+		public MenuItemController(ILogger<MenuMasterController> logger, IConfiguration configuration, GlobalClass globalClass, IMenuItemService menuItemService, IMenuMasterService menuMasterService, IMenuMasterService menuService, IUserMenuMappingService userMenuMappingService,IUserService userService) : base(menuService, userMenuMappingService)
         {
             _logger = logger;
             _configuration = configuration;
@@ -27,7 +28,8 @@ namespace Attendance.Controllers
             _menuMasterService = menuMasterService;
             _menuService = menuService;
             _userMenuMappingService = userMenuMappingService;
-        }
+			_userService = userService;
+		}
 
         public async Task<IActionResult> MenuItem()
         {

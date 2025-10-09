@@ -19,9 +19,10 @@ namespace Attendance.Controllers
         private readonly ILeaveMasterService _leaveMasterService;
         private readonly IUserMenuMappingService _userMenuMappingService;
         private readonly IMenuMasterService _menuService;
+        private readonly IUserService _userService;
 
 
-        public LeaveTransactionController(ILogger<UserMenuMappingController> logger, IConfiguration configuration, GlobalClass globalClass, ILeaveTransactionService leaveTransactionService, ILeaveMasterService leaveMasterService, IUserMenuMappingService userMenuMappingService, IMenuMasterService menuService) : base(menuService, userMenuMappingService)
+        public LeaveTransactionController(ILogger<UserMenuMappingController> logger, IConfiguration configuration, GlobalClass globalClass, ILeaveTransactionService leaveTransactionService, ILeaveMasterService leaveMasterService, IUserMenuMappingService userMenuMappingService, IMenuMasterService menuService,IUserService userService) : base(menuService, userMenuMappingService)
         {
             _logger = logger;
             _configuration = configuration;
@@ -31,7 +32,8 @@ namespace Attendance.Controllers
             _leaveMasterService = leaveMasterService;
             _userMenuMappingService = userMenuMappingService;
             _menuService = menuService;
-        }
+			_userService = userService;
+		}
 
         public async Task<IActionResult> LeaveTransaction()
         {
@@ -135,15 +137,16 @@ namespace Attendance.Controllers
             var employeeLeaves = leavesList.Where(l => l.EmployeeId == currentUserId).ToList();
 
             var leaveMasters = await _leaveMasterService.GetAllLeaveMasters();
-            var employees = await _userMenuMappingService.GetAllUser();
+            //var employees = await _userMenuMappingService.GetAllUser();
+            var user = await _userService.GetAllUser();
 
-            var masters = leaveMasters.Select(e => new
+			var masters = leaveMasters.Select(e => new
             {
                 id = e.LeaveMasterId,
                 name = e.LeaveType
             }).ToList();
 
-            var users = employees.Select(e => new
+            var users = user.Select(e => new
             {
                 id = e.UserId,
                 name = e.Name

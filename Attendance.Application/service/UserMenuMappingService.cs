@@ -27,7 +27,7 @@ namespace Attendance.Application.service
         }
         public async Task<string> AddUserMenuMapping(UserMenuMappingDto userMenuMapping)
         {
-            return await _userMenuMappingAdaptor.AddUserMenuMapping(userMenuMapping);
+                return await _userMenuMappingAdaptor.AddUserMenuMapping(userMenuMapping);
         }
         public async Task<string> UpdateMenuMapping(UserMenuMappingDto userMenuMapping, int id)
         {
@@ -37,10 +37,6 @@ namespace Attendance.Application.service
         {
             return await _userMenuMappingAdaptor.DeleteUserMenuMapping(id);
         }
-        public async Task<List<UserDto>> GetAllUser()
-        {
-            return await _userMenuMappingAdaptor.GetAllUserAsync();
-
-        }
+        
     }
 }
