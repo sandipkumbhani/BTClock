@@ -60,11 +60,11 @@ namespace Attendance.Infrastructure.Efcore.Providers
             return null;
         }
 
-        public async Task<List<AttendanceRecordDto>> GetAttendanceByEmployeeAsync(int employeeId)
+        public async Task<List<AttendanceRecordDto>> GetAttendanceByUserAsync(int userId)
         {
             var _httpClient = new HttpClient();
             _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);
-            var response = await _httpClient.GetAsync(apiCredential.url + "Attendance/Report?employeeID" + employeeId);
+            var response = await _httpClient.GetAsync(apiCredential.url + "Attendance/Report?userID" + userId);
             var responseData = await response.Content.ReadAsStringAsync();
             var responseModel = JsonConvert.DeserializeObject<CommanResponseDto>(responseData);
             if (responseModel != null)
@@ -74,11 +74,11 @@ namespace Attendance.Infrastructure.Efcore.Providers
             }
             return null;
         }
-        public async Task<List<AttendanceRecordDto>> GetLastFiveAttendanceRecordsAsync(int employeeId)
+        public async Task<List<AttendanceRecordDto>> GetLastFiveAttendanceRecordsAsync(int userId)
         {
             var _httpClient = new HttpClient();
             _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);
-            var response = await _httpClient.GetAsync(apiCredential.url + "Attendance/Report?employeeID" + employeeId);
+            var response = await _httpClient.GetAsync(apiCredential.url + "Attendance/Report?userID" + userId);
             var responseData = await response.Content.ReadAsStringAsync();
             var responseModel = JsonConvert.DeserializeObject<CommanResponseDto>(responseData);
             if (responseModel != null)

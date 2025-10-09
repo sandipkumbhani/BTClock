@@ -1,7 +1,7 @@
 ﻿@using Attendance.Domain.Models
 @{
     Layout = "_LayoutTimesheet";
-    int EmployeeID = ViewBag.EmployeeID;
+    int UserID = ViewBag.UserID;
     ViewData["Title"] = "Records";
 }
 <!-- DataTables CSS -->
@@ -94,7 +94,7 @@
 {
 
     <script type="text/javascript">
-        var UserID = Number.parseInt(@EmployeeID);
+        var UserID = Number.parseInt(@UserID);
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="~/js/record.js"></script>

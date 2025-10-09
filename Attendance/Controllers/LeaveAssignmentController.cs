@@ -19,9 +19,11 @@ namespace Attendance.Controllers
         private readonly ILeaveMasterService _leaveMasterService;
         private readonly IMenuMasterService _menuService;
         private readonly IUserMenuMappingService _userMenuMappingService;
+        private readonly IMenuItemService _menuItemService;
 
 
-        public LeaveAssignmentController(ILogger<LeaveAssignmentController> logger, IConfiguration configuration, GlobalClass globalClass, IDepartmentService departmentService, ILeaveAssignmentService leaveAssignmentService, ILeaveMasterService leaveMasterService, IMenuMasterService menuService, IUserMenuMappingService userMenuMappingService) : base(menuService, userMenuMappingService)
+
+        public LeaveAssignmentController(ILogger<LeaveAssignmentController> logger, IConfiguration configuration, GlobalClass globalClass, IDepartmentService departmentService, ILeaveAssignmentService leaveAssignmentService, ILeaveMasterService leaveMasterService, IMenuMasterService menuService, IUserMenuMappingService userMenuMappingService, IMenuItemService menuItemService) : base(menuService, userMenuMappingService, menuItemService)
         {
             _logger = logger;
             _configuration = configuration;
@@ -32,6 +34,7 @@ namespace Attendance.Controllers
             _leaveMasterService = leaveMasterService;
             _menuService = menuService;
             _userMenuMappingService = userMenuMappingService;
+            _menuItemService = menuItemService;
         }
 
         public async Task<IActionResult> LeaveAssignment()

@@ -16,7 +16,7 @@
             });
 
             if (result.data && result.data.length > 0) {
-                $('#employeelist').show();
+                $('#userList').show();
                 const newRows = [];
 
                 $.each(result.data, function (index, detail) {

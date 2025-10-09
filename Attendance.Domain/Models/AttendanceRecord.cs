@@ -15,9 +15,9 @@ namespace Attendance.Domain.Models
     public class AttendanceRecordDto
     {
         public int Id { get; set; }
-        [ForeignKey("EmployeeId")]
-        public int EmployeeId { get; set; }
-        public Employee? employee { get; set; }
+        [ForeignKey("UserId")]
+        public int UserId { get; set; }
+        public User? user { get; set; }
         public DateTime Date { get; set; }
         public DateTime ClockIn { get; set; }
         public DateTime? ClockOut { get; set; }

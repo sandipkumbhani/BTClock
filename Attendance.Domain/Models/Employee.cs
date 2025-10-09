@@ -31,18 +31,5 @@ namespace Attendance.Domain.Models
 		public int? UpdatedBy { get; set; }
 		public bool IsActive { get; set; } = true;
 	}
-	public class CommanResponseDto
-	{
-		public int? StatusCode { get; set; }
-
-		public object Data { get; set; }
-
-		public string? Message { get; set; }
-
-		public string? ErrorMessage { get; set; }
-	}
-	public class CommonFailureDto
-	{
-		public string Error { get; set; }
-	}
+	
 }

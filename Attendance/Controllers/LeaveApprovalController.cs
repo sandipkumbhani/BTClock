@@ -12,13 +12,16 @@ namespace Attendance.Controllers
         private readonly ILeaveMasterService _leaveMasterService;
         private readonly IUserMenuMappingService _userMenuMappingService;
         private readonly IMenuMasterService _menuService;
+        private readonly IMenuItemService _menuItemService;
 
-        public LeaveApprovalController(ILeaveTransactionService leaveTransactionService, ILeaveMasterService leaveMasterService, IUserMenuMappingService userMenuMappingService, IMenuMasterService menuService) : base(menuService, userMenuMappingService)
+
+        public LeaveApprovalController(ILeaveTransactionService leaveTransactionService, ILeaveMasterService leaveMasterService, IUserMenuMappingService userMenuMappingService, IMenuMasterService menuService, IMenuItemService menuItemService) : base(menuService, userMenuMappingService,menuItemService)
         {
             _leaveTransactionService = leaveTransactionService;
             _leaveMasterService = leaveMasterService;
             _userMenuMappingService = userMenuMappingService;
             _menuService = menuService;
+            _menuItemService = menuItemService;
         }
 
         public IActionResult LeaveApproval()

@@ -22,6 +22,8 @@ namespace Attendance.Controllers
         private readonly ILeaveTransactionService _leaveTransactionService;
         private readonly IMenuMasterService _menuService;
         private readonly IUserMenuMappingService _userMenuMappingService;
+        private readonly IMenuItemService _menuItemService;
+
 
         public LeaveBalanceController(
         ILogger<LeaveBalanceController> logger,
@@ -33,7 +35,8 @@ namespace Attendance.Controllers
         ILeaveAssignmentService leaveAssignment,
         ILeaveTransactionService leaveTransaction,
         IMenuMasterService menuService,
-        IUserMenuMappingService userMenuMappingService) : base(menuService, userMenuMappingService)
+        IUserMenuMappingService userMenuMappingService,
+        IMenuItemService menuItemService) : base(menuService, userMenuMappingService, menuItemService)
         {
             _logger = logger;
             _configuration = configuration;
@@ -46,6 +49,7 @@ namespace Attendance.Controllers
             _leaveTransactionService = leaveTransaction;
             _menuService = menuService;
             _userMenuMappingService = userMenuMappingService;
+            _menuItemService = menuItemService;
         }
 
 

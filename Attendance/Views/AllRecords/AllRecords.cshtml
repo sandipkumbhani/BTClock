@@ -14,16 +14,16 @@
                 <div class="col-4 mb-3" id="employee-container" style="width:auto;">
                     <!-- Employee Dropdown -->
                     <div class="item-input mb-2">
-                        <label for="EmployeeId" class="form-label required fw-semibold fs-6">Employee</label>
+                        <label for="UserId" class="form-label required fw-semibold fs-6">Employee</label>
                         <select class="select2-custom form-control form-select"
-                                id="EmployeeId"
-                                name="EmployeeId"
+                                id="UserId"
+                                name="UserId"
                                 style="width: 100%;">
                             <!-- width will be controlled by parent -->
-                            <option value="">All Employees</option>
-                            @foreach (var employee in ViewBag.EmployeeList)
+                            <option value="">All Users</option>
+                            @foreach (var user in ViewBag.userList)
                             {
-                                <option value="@employee.EmployeeId">@employee.Name</option>
+                                <option value="@user.UserId">@user.Name</option>
                             }
                         </select>
                     </div>
@@ -84,7 +84,7 @@
                             <table id="franchiseTable" class="table dt-responsive nowrap">
                                 <thead>
                                     <tr>
-                                        <th>Employee Name</th>
+                                        <th>User Name</th>
                                         <th>Date</th>
                                         <th>Clock In</th>
                                         <th>Clock Out</th>

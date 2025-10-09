@@ -15,25 +15,30 @@ namespace Attendance.Controllers
 		private readonly IAttendanceService _service;
 		private readonly IMenuMasterService _menuService;
 		private readonly IUserMenuMappingService _userMenuMappingService;
-		private readonly IEmployeeService _employeeService;
+		private readonly IUserService _userService;
+		private readonly IMenuItemService _menuItemService;
+        private readonly ILogger<BaseClockInController> _logger;
 
-		public AllRecordsController(IConfiguration configuration, GlobalClass globalClass, IAttendanceService service, IMenuMasterService menuService, IUserMenuMappingService userMenuMappingService, IEmployeeService employeeService) : base(menuService, userMenuMappingService)
-		{
-			_configuration = configuration;
-			applicationURL = new ApplicationURL(configuration);
-			_globalClass = globalClass;
-			_service = service;
-			_menuService = menuService;
-			_userMenuMappingService = userMenuMappingService;
-			_employeeService = employeeService;
-		}
-		public async Task<IActionResult> AllRecords()
+
+        public AllRecordsController(IConfiguration configuration, GlobalClass globalClass, IAttendanceService service, IMenuMasterService menuService, IUserMenuMappingService userMenuMappingService, IUserService userService, IMenuItemService menuItemService, ILogger<BaseClockInController> logger) : base(menuService, userMenuMappingService, menuItemService,logger)
+        {
+            _configuration = configuration;
+            applicationURL = new ApplicationURL(configuration);
+            _globalClass = globalClass;
+            _service = service;
+            _menuService = menuService;
+            _userMenuMappingService = userMenuMappingService;
+            _userService = userService;
+            _menuItemService = menuItemService;
+            _logger = logger;
+        }
+        public async Task<IActionResult> AllRecords()
 		{
 			if (_globalClass.Token != null)
 			{
-				var employees = await _employeeService.GetAllEmployee();
-				ViewBag.EmployeeList = employees;
-				var jwt = new JwtSecurityTokenHandler().ReadJwtToken(_globalClass.Token);
+				var userList = await _userService.GetAllUser();
+				ViewBag.userList = userList;
+                var jwt = new JwtSecurityTokenHandler().ReadJwtToken(_globalClass.Token);
 				var claims = UserUtility.addClaimstoUser(HttpContext, jwt.Claims);
 				ViewBag.appUrl = applicationURL.url;
 			}
@@ -48,8 +53,8 @@ namespace Attendance.Controllers
 				.Select(r => new
 				{
 					id = r.Id,
-					EmployeeId = r.EmployeeId,
-					EmployeeName = r.employee.Name.ToString(), // Replace with actual employee name retrieval if needed
+					UserId = r.UserId,
+					UserName = r.user.Name.ToString(),
 					date = r.Date.ToString("dd-MMM-yyyy"),
 					clockIn = r.ClockIn.ToString(@"hh\:mm\:ss"),
 					clockOut = r.ClockOut?.ToString(@"hh\:mm\:ss") ?? "-",
@@ -110,7 +115,7 @@ namespace Attendance.Controllers
 					overtime = workingHour > standardWorkingHour ? workingHour - standardWorkingHour : TimeSpan.Zero;
 				}
 
-				existingRecord.EmployeeId = model.EmployeeId;
+				existingRecord.UserId = model.UserId;
 				existingRecord.Date = model.Date;
 				existingRecord.ClockIn = model.ClockIn;
 				existingRecord.ClockOut = model.ClockOut;

@@ -73,53 +73,60 @@
                 <div class="left-sidebar-wrap">
                     <div class="sidebar-menu-area">
                         <!--- Sidemenu -->
-                        <ul id="leftside-menu-container" class="side-nav" style="padding:initial;">
+                        <ul id="leftside-menu-container" class="side-nav">
                             @if (ViewBag.MainMenu != null)
                             {
-                                @foreach (var item in ViewBag.MainMenu as List<menuMasterDto>)
+                                @foreach (var item in ViewBag.MainMenu as List<MenuItemDto>)
                                 {
-                                    @if (item.Children.Count() == 0)
+                                    if (item.MenuMaster != null)  // Check if MenuMaster is not null
                                     {
-                                        <li class="side-nav-item">
-                                            <a class="side-nav-link" href="@ViewBag.appUrl@item.MenuPath">
-                                                <i class="@item.Icon-line"></i>
-                                                <i class="@item.Icon-fill"></i>
-                                                <span>@item.Menuname</span>
-                                            </a>
-                                        </li>
-                                    }
-                                    else
-                                    {
-                                        <li class="side-nav-item dropdown">
-                                            <a class="side-nav-link" href="javascript:void(0)">
-                                                <i class="@item.Icon-line"></i>
-                                                <i class="@item.Icon-fill"></i>
-                                                <span>@item.Menuname</span>
-                                            </a>
-                                            @if (item.Children != null && item.Children.Any())
-                                            {
-                                                <ul class="sidebar-submenu">
-                                                    @foreach (var subItem in item.Children)
-                                                    {
-                                                        <li>
-                                                            <a href="@ViewBag.appUrl@subItem.MenuPath">
-                                                                <span>@subItem.Menuname</span>
-                                                            </a>
-                                                        </li>
-                                                    }
-                                                </ul>
-                                            }
-                                        </li>
+                                        if (item.Children.Count() == 0)
+                                        {
+                                            <li class="side-nav-item">
+                                                <a class="side-nav-link" href="@ViewBag.appUrl@item.MenuMaster.MenuPath">
+                                                    <i class="@item.MenuMaster.Icon-line"></i>
+                                                    <i class="@item.MenuMaster.Icon-fill"></i>
+                                                    <span>@item.MenuMaster.Menuname</span>
+                                                </a>
+                                            </li>
+                                        }
+                                        else
+                                        {
+                                            <li class="side-nav-item dropdown">
+                                                <a class="side-nav-link" href="javascript:void(0)">
+                                                    <i class="@item.MenuMaster.Icon-line"></i>
+                                                    <i class="@item.MenuMaster.Icon-fill"></i>
+                                                    <span>@item.MenuMaster.Menuname</span>
+                                                </a>
+                                                @if (item.Children != null && item.Children.Any())
+                                                {
+                                                    <ul class="sidebar-submenu">
+                                                        @foreach (var subItem in item.Children)
+                                                        {
+                                                            if (subItem.MenuMaster != null)
+                                                            {
+                                                                <li>
+                                                                    <a href="@ViewBag.appUrl@subItem.MenuMaster.MenuPath">
+                                                                        <span>@subItem.MenuMaster.Menuname</span>
+                                                                    </a>
+                                                                </li>
+                                                            }
+                                                        }
+                                                    </ul>
+                                                }
+                                            </li>
+                                        }
                                     }
                                 }
                             }
+
                             <li class="side-nav-item">
                                 <a href="@ViewBag.appUrl/Login/Logout" class="side-nav-link">
                                     <i class="ri-logout-circle-line"></i>
                                     <i class="ri-logout-circle-fill"></i>
                                     <span> Log out </span>
                                 </a>
-                            </li>   
+                            </li>
                         </ul>
                         <!--- End Sidemenu -->
                         <div class="clearfix"></div>

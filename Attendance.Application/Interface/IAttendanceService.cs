@@ -6,8 +6,8 @@ namespace Attendance.Application.Interface
     {
         Task<AttendanceRecordDto> ClockInAsync();
         Task<AttendanceRecordDto> ClockOutAsync();
-        Task<List<AttendanceRecordDto>> GetAttendanceByEmployeeAsync(int employeeId);
-        Task<List<AttendanceRecordDto>> GetLastFiveAttendanceRecordsAsync(int employeeId);
+        Task<List<AttendanceRecordDto>> GetAttendanceByUserAsync(int userId);
+        Task<List<AttendanceRecordDto>> GetLastFiveAttendanceRecordsAsync(int userId);
 		//Task AutoClockOutAsync(int employeeId);
 		Task<List<AttendanceRecordDto>> GetAllAttendanceAsync();
 
