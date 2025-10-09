@@ -16,8 +16,9 @@ namespace Attendance.Controllers
         private readonly IMenuMasterService _menuMasterService;
         private readonly IMenuMasterService _menuService;
         private readonly IUserMenuMappingService _userMenuMappingService;
+        private readonly IUserService _userService;
 
-        public MenuItemController(ILogger<MenuMasterController> logger, IConfiguration configuration, GlobalClass globalClass, IMenuItemService menuItemService, IMenuMasterService menuMasterService, IMenuMasterService menuService, IUserMenuMappingService userMenuMappingService) : base(menuService, userMenuMappingService)
+		public MenuItemController(ILogger<MenuMasterController> logger, IConfiguration configuration, GlobalClass globalClass, IMenuItemService menuItemService, IMenuMasterService menuMasterService, IMenuMasterService menuService, IUserMenuMappingService userMenuMappingService,IUserService userService) : base(menuService, userMenuMappingService)
         {
             _logger = logger;
             _configuration = configuration;
@@ -27,7 +28,8 @@ namespace Attendance.Controllers
             _menuMasterService = menuMasterService;
             _menuService = menuService;
             _userMenuMappingService = userMenuMappingService;
-        }
+			_userService = userService;
+		}
 
         public async Task<IActionResult> MenuItem()
         {
@@ -97,7 +99,7 @@ namespace Attendance.Controllers
         public async Task<IActionResult> MenuItemViewDetails()
         {
             var menuItems = await _menuItemService.GetAll();
-            var users = await _userMenuMappingService.GetAllUser();
+            //var users = await _userMenuMappingService.GetAllUser();
             var parents = await _menuMasterService.GetAllMenuMasters();
 
             var menuListWithParents = menuItems.Select(menu => new
@@ -118,7 +120,7 @@ namespace Attendance.Controllers
                 result = "success",
                 data = menuListWithParents,
                 parents = parents,
-                users = users
+                //users = users
             });
         }
 

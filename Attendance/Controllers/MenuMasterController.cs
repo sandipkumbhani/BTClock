@@ -18,8 +18,9 @@ namespace Attendance.Controllers
         private readonly IMenuMasterService _menuService;
         private readonly IModuleMasterService _moduleMasterService;
         private readonly IUserMenuMappingService _userMenuMappingService;
+        private readonly IUserService _userService;
 
-        public MenuMasterController(ILogger<MenuMasterController> logger, IConfiguration configuration, IMenuMasterService menuService, IModuleMasterService moduleMasterService, IUserMenuMappingService userMenuMappingService) : base(menuService, userMenuMappingService)
+		public MenuMasterController(ILogger<MenuMasterController> logger, IConfiguration configuration, IMenuMasterService menuService, IModuleMasterService moduleMasterService, IUserMenuMappingService userMenuMappingService,IUserService userService) : base(menuService, userMenuMappingService)
         {
             _logger = logger;
             _configuration = configuration;
@@ -28,7 +29,8 @@ namespace Attendance.Controllers
             _menuService = menuService;
             _moduleMasterService = moduleMasterService;
             _userMenuMappingService = userMenuMappingService;
-        }
+			_userService = userService;
+		}
         public async Task<IActionResult> MenuMaster()
         {
             var modules = await _moduleMasterService.GetAllModuleMaster();
@@ -98,9 +100,9 @@ namespace Attendance.Controllers
         public async Task<IActionResult> MasterViewDetails()
         {
             var menuList = await _menuService.GetAllMenuMasters();
-            var employees = await _userMenuMappingService.GetAllUser();
-
-            var users = employees.Select(e => new
+            //var employees = await _userMenuMappingService.GetAllUser();
+            var user = await _userService.GetAllUser();
+			var users = user.Select(e => new
             {
                 id = e.UserId,
                 name = e.Name

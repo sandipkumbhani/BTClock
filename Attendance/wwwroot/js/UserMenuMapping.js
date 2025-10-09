@@ -1,6 +1,6 @@
 ﻿document.addEventListener("DOMContentLoaded", function () {
     const clearButton = document.querySelector(".outline-bar");
-    const $userSelect = $("#EmployeeId"); // FIXED: You were using an undefined variable before
+    const $userSelect = $("#UserId"); // FIXED: You were using an undefined variable before
     $userSelect.select2();
 
     const checkboxes = document.querySelectorAll(".menu-checkbox");
@@ -25,12 +25,12 @@
 
     if ($userSelect.length) {
         $userSelect.on("change", function () {
-            const selectedEmployee = $(this).val();
+            const selectedUser = $(this).val();
 
             checkboxes.forEach(cb => cb.checked = false);
 
-            if (selectedEmployee) {
-                fetch(`/UserMenuMapping/GetEmployeeMenus?employeeId=${selectedEmployee}`)
+            if (selectedUser) {
+                fetch(`/UserMenuMapping/GetUserMenus?userId=${selectedUser}`)
                     .then(response => {
                         if (!response.ok) throw new Error("Menu fetch failed");
                         return response.json();
