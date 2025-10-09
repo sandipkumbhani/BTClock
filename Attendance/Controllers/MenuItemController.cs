@@ -27,7 +27,7 @@ namespace Attendance.Controllers
             _menuMasterService = menuMasterService;
             _menuService = menuService;
             _userMenuMappingService = userMenuMappingService;
-        }
+		}
 
         public async Task<IActionResult> MenuItem()
         {

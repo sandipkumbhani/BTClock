@@ -1,11 +1,8 @@
 ﻿@using Attendance.Domain.Models
-@model Attendance.Domain.Models.UserMenuMappingDto
-    ;
+@model Attendance.Domain.Models.UserMenuMappingDto;
 @{
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
     var validMenus = ViewBag.Menus as List<Attendance.Domain.Models.MenuItemDto>;
-    var users = ViewBag.Users as List<Attendance.Domain.Models.UserDto>;
-
 }
 <div class="main-inner container-fluid">
     @{
@@ -28,9 +25,9 @@
                     <h2 class="page-form-title">User Menu Mapping</h2>
                     <div class="item-input mb-3">
                         <label for="UserId" class="form-label fw-semibold fs-6 required">User</label>
-                        <select class="select2-custom form-control form-select" id="UserId" name="UserId" style="width:359.46px; height:48px;" required>
+                        <select class="select2-custom form-control select2-hidden-accessible; form-select" id="UserId" name="UserId" style="width:359.46px; height:48px;" required>
                             <option value="" id="userID" disabled selected>Select User</option>
-                            @foreach (var user in users)
+                            @foreach (var user in ViewBag.user)
                             {
                                 <option value="@user.UserId">@user.Name</option>
                             }

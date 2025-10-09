@@ -3,6 +3,7 @@ using Attendance.Domain.Helper;
 using Attendance.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Runtime.CompilerServices;
 
 namespace Attendance.Controllers
 {
@@ -15,15 +16,11 @@ namespace Attendance.Controllers
         private readonly GlobalClass _globalClass;
         private readonly IUserMenuMappingService _userMenuMappingService;
         private readonly IMenuMasterService _menuService;
-        private readonly IMenuItemService _menuItemService;
         private readonly IUserService _userService;
+        private readonly IMenuItemService _menuItemService;
 
-        public UserMenuMappingController(ILogger<UserMenuMappingController> logger,
-                                          IConfiguration configuration,
-                                          IUserMenuMappingService userMenuMappingService,
-                                          IMenuMasterService menuService,
-                                          IMenuItemService menuItemService,
-                                          IUserService userService) : base(menuService, userMenuMappingService, menuItemService)
+
+		public UserMenuMappingController(ILogger<UserMenuMappingController> logger, IConfiguration configuration, IUserMenuMappingService userMenuMappingService, IMenuMasterService menuService,IUserService userService,IMenuItemService menuItemService) : base(menuService, userMenuMappingService,menuItemService)
         {
             _logger = logger;
             _configuration = configuration;
@@ -31,24 +28,21 @@ namespace Attendance.Controllers
             _applicationURL = new ApplicationURL(configuration);
             _userMenuMappingService = userMenuMappingService;
             _menuService = menuService;
+      			_userService = userService;
             _menuItemService = menuItemService;
-            _userService = userService;
-        }
+		}
 
         public async Task<IActionResult> UserMenuMapping()
-        {
-            var users = await _userService.GetAllUser();
-            var menus = await _menuService.GetAllMenuMasters();
-            var menuItems = await _menuItemService.GetAll();
-
-            var validMenus = menuItems.Where(item => menus.Any(menu => menu.Menuid == item.Menuid)).ToList();
-            ViewBag.Users = users;
-            ViewBag.Menus = validMenus;
-
-            var model = new UserMenuMappingDto();
-            return View(model);
-        }
-
+		    {
+				var users = await _userService.GetAllUser();
+				var menus = await _menuService.GetAllMenuMasters();
+				var menuItems = await _menuItemService.GetAll();
+				var validMenus = menuItems.Where(item => menus.Any(menu => menu.Menuid == item.Menuid)).ToList();
+				ViewBag.User = users;
+				ViewBag.Menus = validMenus;
+				var model = new UserMenuMappingDto();
+				return View(model);
+		    }
         [HttpPost]
         public async Task<IActionResult> UserMenuMapping(UserMenuMappingDto userMenuMappingDto)
         {
@@ -75,8 +69,10 @@ namespace Attendance.Controllers
                             {
                                 var newMapping = new UserMenuMappingDto
                                 {
+                                    //Id=userMenuMappingDto.MenuItem.Menuid,
                                     UserId = userMenuMappingDto.UserId,
                                     MenuItemId = menuId,
+
                                     InsertBy = userMenuMappingDto.UserId,
                                     InsertDate = DateTime.Now
                                 };
@@ -89,7 +85,7 @@ namespace Attendance.Controllers
                         {
                             foreach (var menuId in toUpdate)
                             {
-                                var existingMapping = userMappings.FirstOrDefault(m => m.MenuItemId == menuId);
+                                var existingMapping = userMappings.FirstOrDefault(m => m.MenuItem?.Menuid == menuId);
                                 if (existingMapping != null)
                                 {
                                     existingMapping.UpdateBy = userMenuMappingDto.UserId;
@@ -117,13 +113,16 @@ namespace Attendance.Controllers
                         {
                             ViewBag.errormsg = "No changes were made.";
                         }
-
+                        //var users = await _userMenuMappingService.GetAllUser();
                         var users = await _userService.GetAllUser();
-                        var menus = await _menuService.GetAllMenuMasters();
-                        ViewBag.users = users;
-                        ViewBag.Menus = menus;
-
-                        return View(userMenuMappingDto);
+						//var userlist = users.Where(x => x.RoleId != 1).ToList();
+						var menus = await _menuService.GetAllMenuMasters();
+						var menuItems = await _menuItemService.GetAll();
+						var validMenus = menuItems.Where(item => menus.Any(menu => menu.Menuid == item.Menuid)).ToList();
+						ViewBag.User = users;
+						ViewBag.Menus = validMenus;
+						var model = new UserMenuMappingDto();
+						return View(userMenuMappingDto);
                     }
                 }
                 catch (Exception ex)
@@ -139,17 +138,17 @@ namespace Attendance.Controllers
         public async Task<IActionResult> GetUserMenus(int userId)
         {
             var allMappings = await _userMenuMappingService.GetAll();
-            var employeeMenus = allMappings
-                .Where(m => m.UserId == userId)
+            var userMenus = allMappings
+                .Where(m => m.UserId == Convert.ToInt32(userId))
                 .Select(m => m.MenuItemId ?? 0)
                 .ToList();
-            if (!employeeMenus.Any())
+            if (!userMenus.Any())
             {
                 var menus = await _menuService.GetAllMenuMasters();
-                employeeMenus = menus.Where(m => m.isDefault).Select(m => m.Menuid).ToList();
+				userMenus = menus.Where(m => m.isDefault).Select(m => m.Menuid).ToList();
             }
 
-            return Json(new { menuIds = employeeMenus });
+            return Json(new { menuIds = userMenus });
         }
     }
 }

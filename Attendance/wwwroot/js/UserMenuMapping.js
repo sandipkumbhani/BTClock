@@ -1,11 +1,7 @@
 ﻿document.addEventListener("DOMContentLoaded", function () {
     const clearButton = document.querySelector(".outline-bar");
-    const $userSelect = $("#UserId"); // Ensure you're targeting the correct select element
-
-    // Initialize Select2
-    if ($userSelect.length) {
-        $userSelect.select2();
-    }
+    const $userSelect = $("#UserId"); // FIXED: You were using an undefined variable before
+    $userSelect.select2();
 
     const checkboxes = document.querySelectorAll(".menu-checkbox");
 
@@ -42,7 +38,6 @@
             checkboxes.forEach(cb => cb.checked = false);
 
             if (selectedUser) {
-                // Fetch menus for the selected user
                 fetch(`/UserMenuMapping/GetUserMenus?userId=${selectedUser}`)
                     .then(response => {
                         if (!response.ok) throw new Error("Menu fetch failed");

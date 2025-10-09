@@ -19,9 +19,8 @@ namespace Attendance.Controllers
         private readonly IModuleMasterService _moduleMasterService;
         private readonly IUserMenuMappingService _userMenuMappingService;
         private readonly IMenuItemService _menuItemService;
-
-
-        public MenuMasterController(ILogger<MenuMasterController> logger, IConfiguration configuration, IMenuMasterService menuService, IModuleMasterService moduleMasterService, IUserMenuMappingService userMenuMappingService, IMenuItemService menuItemService) : base(menuService, userMenuMappingService, menuItemService)
+        private readonly IUserService _userService;
+        public MenuMasterController(ILogger<MenuMasterController> logger, IConfiguration configuration, IMenuMasterService menuService, IModuleMasterService moduleMasterService, IUserMenuMappingService userMenuMappingService, IMenuItemService menuItemService,IUserService userService) : base(menuService, userMenuMappingService, menuItemService)
         {
             _logger = logger;
             _configuration = configuration;
@@ -31,7 +30,8 @@ namespace Attendance.Controllers
             _moduleMasterService = moduleMasterService;
             _userMenuMappingService = userMenuMappingService;
             _menuItemService = menuItemService;
-        }
+      			_userService = userService;
+	    	}
         public async Task<IActionResult> MenuMaster()
         {
             var modules = await _moduleMasterService.GetAllModuleMaster();
@@ -101,9 +101,9 @@ namespace Attendance.Controllers
         public async Task<IActionResult> MasterViewDetails()
         {
             var menuList = await _menuService.GetAllMenuMasters();
-            var employees = await _userMenuMappingService.GetAllUser();
-
-            var users = employees.Select(e => new
+            //var employees = await _userMenuMappingService.GetAllUser();
+            var user = await _userService.GetAllUser();
+			var users = user.Select(e => new
             {
                 id = e.UserId,
                 name = e.Name
