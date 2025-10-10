@@ -103,10 +103,9 @@ $(document).ready(function () {
 
                 $('#totalRemindersCorporate').text(`Total List: ${newRows.length}`);
             } else {
-                table.row.add([
-                    `<span class="text-center" style="display:block;" colspan="12">No Data Found</span>`,
-                    '', '', '', '', '', '', '', '', ''
-                ]).draw();
+                var noDataRow = `<tr><td colspan="12" class="text-center">No Data Found</td></tr>`;
+                $('#corporateTable tbody').html(noDataRow);
+
                 $('#totalRemindersCorporate').text(`Total List: 0`);
             }
 

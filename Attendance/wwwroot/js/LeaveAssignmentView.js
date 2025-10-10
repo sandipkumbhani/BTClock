@@ -2,6 +2,9 @@
     $("#dataLoader").show();
     $("#corporateTable tbody").empty();
 
+    let table = $('#corporateTable').DataTable();
+    table.clear().draw();
+
     $.ajax({
         url: '/LeaveAssignment/LeaveAssignmentViewDetails',
         method: 'GET',
@@ -11,10 +14,9 @@
 
             var table = $('#corporateTable').DataTable();
             table.clear();
-            table.on('draw', function () {
-                var visibleRows = table.rows({ filter: 'applied' }).count();
-                $('#totalRemindersCorporate').text(`Total List: ${visibleRows}`);
-            });
+
+
+            $('#corporateTable').DataTable();
 
             if (result.data && result.data.length > 0) {
                 $('#userList').show();
@@ -23,27 +25,22 @@
                 $.each(result.data, function (index, detail) {
                     console.log(detail);
                     var leaveMaster = result.masters.find(m => m.id === detail.leavemasterId);
-                    var department = result.depts.find(m => m.id === detail.departmentId);
-                    var IsActive = detail.isActive ? "Active" : "Deactive";
-
 
                     newRows.push([
                         leaveMaster ? leaveMaster.name : '',
-                        department ? department.name : '',
                         detail.totalAllocatedLeaves,
                         detail.paidAllocatedLeaves,
-                        //IsActive,
                         `<a href="${url + detail.leaveAssignmentId}" style="margin-right: 10px;"><i class="ri-edit-2-line" style="font-size:x-large;"></i></a>`
                     ]);
                 });
 
                 table.rows.add(newRows).draw();
+
                 $('#totalRemindersCorporate').text(`Total List: ${newRows.length}`);
             } else {
-                table.row.add([
-                    `<span class="text-center" style="display:block;" colspan="9">No Data Found</span>`,
-                    'No Data Found', '', '', '', '', '', '', ''
-                ]).draw();
+                var noDataRow = `<tr><td colspan="4" class="text-center">No Data Found</td></tr>`;
+                $('#corporateTable tbody').html(noDataRow);
+
                 $('#totalRemindersCorporate').text(`Total List: 0`);
             }
 
@@ -53,5 +50,12 @@
             console.log(err);
             $("#dataLoader").hide();
         }
+
+    });
+
+
+    $('#corporateTable').on('draw.dt', function () {
+        const visibleRows = table.rows({ filter: 'applied' }).count();
+        $('#totalRemindersCorporate').text(`Total List: ${visibleRows}`);
     });
 });

@@ -12,9 +12,9 @@ namespace Attendance.Application.service
         {
             _leaveTransactionAdaptor = leaveTransactionAdaptor;
         }
-        public async Task<IEnumerable<LeaveTransactionDto>> GetLeaveTransactionsByEmployeeId(int employeeId)
+        public async Task<IEnumerable<LeaveTransactionDto>> GetLeaveTransactionsByUserId(int userId)
         {
-            return await _leaveTransactionAdaptor.GetLeaveTransactionsByEmployeeId(employeeId);
+            return await _leaveTransactionAdaptor.GetLeaveTransactionsByUserId(userId);
         }
         public async Task<List<LeaveTransactionDto>> GetAllLeaveTransactions()
         {

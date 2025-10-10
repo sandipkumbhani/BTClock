@@ -73,12 +73,11 @@
                                 Is HalfDay
                             </label>
                         </div>
-                    </div>
+                    </div>  
                     <div class="">
                         <div class="item-input">
                             <label for="AddFile" class="form-label col-form-label fw-semibold fs-6">Add File</label>
-                            <input type="file" accept=".pdf" id="AddFile" name="AddFile" class="form-control userinput" onchange="document.getElementById('AddFile').src = window.URL.createObjectURL(this.files[0])" placeholder="Upload file" style="width:359.46px;">
-
+                            <input type="file" accept=".pdf" id="AddFile" name="AddFile" class="form-control userinput" placeholder="Upload file" style="width:359.46px;" onchange="previewFile()">
                         </div>
                     </div>
                 </div>

@@ -38,11 +38,11 @@ namespace Attendance.Infrastructure.Efcore.Providers
             return null;
         }
         
-        public async Task<IEnumerable<LeaveBalanceDto>> GetLeaveBalanceByEmployeeId(int employeeId)
+        public async Task<IEnumerable<LeaveBalanceDto>> GetLeaveBalanceByUserId(int userId)
         {
             var _httpClient = new HttpClient();
             _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);
-            var response = await _httpClient.GetAsync(apiCredential.url + "LeaveBalance/GetLeaveBalanceByEmployeeId/" + employeeId);
+            var response = await _httpClient.GetAsync(apiCredential.url + "LeaveBalance/GetLeaveBalanceByUserId/" + userId);
             var responseData = await response.Content.ReadAsStringAsync();
             var responseModel = Newtonsoft.Json.JsonConvert.DeserializeObject<CommanResponseDto>(responseData);
             if (responseModel != null)

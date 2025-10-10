@@ -21,8 +21,8 @@ namespace Attendance.Controllers
         private readonly IMenuMasterService _menuService;
         private readonly IMenuItemService _menuItemService;
         private readonly IUserService _userService;
-        
-        public LeaveTransactionController(ILogger<UserMenuMappingController> logger, IConfiguration configuration, GlobalClass globalClass, ILeaveTransactionService leaveTransactionService, ILeaveMasterService leaveMasterService, IUserMenuMappingService userMenuMappingService, IMenuMasterService menuService, IMenuItemService menuItemService,IUserService userService) : base(menuService, userMenuMappingService, menuItemService)
+
+        public LeaveTransactionController(ILogger<UserMenuMappingController> logger, IConfiguration configuration, GlobalClass globalClass, ILeaveTransactionService leaveTransactionService, ILeaveMasterService leaveMasterService, IUserMenuMappingService userMenuMappingService, IMenuMasterService menuService, IMenuItemService menuItemService, IUserService userService) : base(menuService, userMenuMappingService, menuItemService)
         {
             _logger = logger;
             _configuration = configuration;
@@ -33,8 +33,8 @@ namespace Attendance.Controllers
             _userMenuMappingService = userMenuMappingService;
             _menuService = menuService;
             _menuItemService = menuItemService;
-      			_userService = userService;
-		}
+            _userService = userService;
+        }
 
         public async Task<IActionResult> LeaveTransaction()
         {
@@ -47,9 +47,9 @@ namespace Attendance.Controllers
 
                 if (canAccess)
                 {
-                    var employee = claims.Claims.FirstOrDefault(x => x.Type == "EmployeeId");
-                    int EmployeeId = employee != null ? (!string.IsNullOrEmpty(employee.Value) ? Convert.ToInt32(employee.Value) : 0) : 0;
-                    ViewBag.EmployeeId = EmployeeId;
+                    var user = claims.Claims.FirstOrDefault(x => x.Type == "UserId");
+                    int UserId = user != null ? (!string.IsNullOrEmpty(user.Value) ? Convert.ToInt32(user.Value) : 0) : 0;
+                    ViewBag.UserId = UserId;
                     ViewBag.appUrl = applicationURL.url;
                     var leaveMasters = await _leaveMasterService.GetAllLeaveMasters();
                     var leaves = await _leaveTransactionService.GetAllLeaveTransactions();
@@ -80,7 +80,7 @@ namespace Attendance.Controllers
                     }
 
                     var existingLeaves = await _leaveTransactionService.GetAllLeaveTransactions();
-                    var leaveExists = existingLeaves.Any(l => l.EmployeeId == leaveTransaction.EmployeeId &&
+                    var leaveExists = existingLeaves.Any(l => l.UserId == leaveTransaction.UserId &&
                                                              l.LeaveMasterId == leaveTransaction.LeaveMasterId &&
                                                              l.StartDate == leaveTransaction.StartDate &&
                                                              l.EndDate == leaveTransaction.EndDate);
@@ -104,8 +104,8 @@ namespace Attendance.Controllers
                             AppliedOn = DateTime.Now,
                             AppliedBy = userid,
                             LeaveStatus = LeaveStatus.Pending,
-                            AddFile = leaveTransaction.AddFile,
-                            EmployeeId = userid,
+                            AddFile = filename,
+                            UserId = userid,
                         });
                         ViewBag.appUrl = applicationURL.url;
                         ViewBag.msg = "Leave saved successfully!";
@@ -133,15 +133,14 @@ namespace Attendance.Controllers
         }
         public async Task<IActionResult> LeaveTransactionViewDetails()
         {
-            var currentUserId = UserUtility.GetUserId(HttpContext); // logged in employeeId
+            var currentUserId = UserUtility.GetUserId(HttpContext); 
             var leavesList = await _leaveTransactionService.GetAllLeaveTransactions();
-            var employeeLeaves = leavesList.Where(l => l.EmployeeId == currentUserId).ToList();
+            var userLeaves = leavesList.Where(l => l.UserId == currentUserId).ToList();
 
             var leaveMasters = await _leaveMasterService.GetAllLeaveMasters();
-            //var employees = await _userMenuMappingService.GetAllUser();
             var user = await _userService.GetAllUser();
 
-			var masters = leaveMasters.Select(e => new
+            var masters = leaveMasters.Select(e => new
             {
                 id = e.LeaveMasterId,
                 name = e.LeaveType
@@ -153,7 +152,7 @@ namespace Attendance.Controllers
                 name = e.Name
             }).ToList();
 
-            return Json(new { result = "success", data = employeeLeaves, users, masters });
+            return Json(new { result = "success", data = userLeaves, users, masters });
         }
         public string UploadFile(IFormFile file)
         {
@@ -231,7 +230,7 @@ namespace Attendance.Controllers
                     AppliedOn = existingLeaveTransaction.AppliedOn,
                     Updatedat = DateTime.Now,
                     Updatedby = Convert.ToInt32(currentUserId),
-                    EmployeeId = existingLeaveTransaction.EmployeeId,
+                    UserId = existingLeaveTransaction.UserId,
                     LeaveStatus = newStatus,
                     AddFile = fileName
                 };

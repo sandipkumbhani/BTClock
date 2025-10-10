@@ -4,7 +4,7 @@ namespace Attendance.Domain.Interfaces
 {
     public interface ILeaveTransactionAdaptor
     {
-        Task<IEnumerable<LeaveTransactionDto>> GetLeaveTransactionsByEmployeeId(int employeeId);
+        Task<IEnumerable<LeaveTransactionDto>> GetLeaveTransactionsByUserId(int userId);
         Task<LeaveTransactionDto> GetLeaveTransactionById(int id);
         Task<List<LeaveTransactionDto>> GetAllLeaveTransactions();
         Task<string> AddLeaveTransaction(LeaveTransactionDto leaveTransaction);

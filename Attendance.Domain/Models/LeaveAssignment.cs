@@ -23,9 +23,6 @@ namespace Attendance.Domain.Models
         [ForeignKey("leavemasterId")]
         public int leavemasterId { get; set; }
         public LeaveMaster? LeaveMaster { get; set; }
-        [ForeignKey("DepartmentId")]
-        public int DepartmentId { get; set; }
-        public Department? Department { get; set; }
         public int TotalAllocatedLeaves { get; set; }
         public int PaidAllocatedLeaves { get; set; }
         public bool IsActive { get; set; } = true;
