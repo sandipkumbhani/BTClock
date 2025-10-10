@@ -5,7 +5,6 @@
     var users = ViewBag.users;
 }
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet" />
-
 <div class="content-page" style="margin:35px 0 0 0">
     <div class="content">
         <div class="main-inner container-fluid">
@@ -100,8 +99,8 @@
 
 @section Scripts {
     <script type="text/javascript">
-        var url = '@Url.Action("UpdateLeaveTransaction", "LeaveTransaction")' + '?id=';
-        var deleteurl = '@Url.Action("DeleteLeaveTransaction", "LeaveTransaction")' + '?id=';
+        var urlUpdate = '@Url.Action("UpdateLeaveTransaction", "LeaveTransaction")' + '?id=';
+        var urlDelete = '@Url.Action("DeleteLeaveTransaction", "LeaveTransaction")' + '?id=';
     </script>
     <script src="~/js/leavetransactionview.js"></script>
     <script src="~/js/msgtimeout.js"></script>

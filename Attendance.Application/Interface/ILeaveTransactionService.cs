@@ -9,7 +9,7 @@ namespace Attendance.Application.Interface
 {
     public interface ILeaveTransactionService
     {
-        Task<IEnumerable<LeaveTransactionDto>> GetLeaveTransactionsByEmployeeId(int employeeId);
+        Task<IEnumerable<LeaveTransactionDto>> GetLeaveTransactionsByUserId(int userId);
         Task<LeaveTransactionDto> GetLeaveTransactionById(int id);
         Task<List<LeaveTransactionDto>> GetAllLeaveTransactions();
         Task<string> AddLeaveTransaction(LeaveTransactionDto leaveTransaction);

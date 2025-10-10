@@ -1,12 +1,19 @@
 ﻿$(function () {
-    const defaultStart = moment().add(1, 'days');
-    const defaultEnd = moment().add(1, 'days');
+    const defaultStart = moment();
+    const defaultEnd = moment();
 
     function cb(start, end) {
+        const totalDays = end.diff(start, 'days') + 1;
         $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-        $('#TotalDays').val(end.diff(start, 'days') + 1);
+        $('#TotalDays').val(totalDays);
         $('#StartDate').val(start.format('YYYY-MM-DD'));
         $('#EndDate').val(end.format('YYYY-MM-DD'));
+
+        if (totalDays > 1) {
+            $('#Ishalfday').prop('checked', false).prop('disabled', true);
+        } else {
+            $('#Ishalfday').prop('disabled', false);
+        }
     }
 
     $('#reportrange').daterangepicker({
@@ -17,4 +24,3 @@
 
     cb(defaultStart, defaultEnd);
 });
-

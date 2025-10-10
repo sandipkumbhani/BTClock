@@ -21,7 +21,7 @@
                 const newRows = [];
                 $.each(result, function (index, detail) {
                     newRows.push([
-                        detail.employee.name,
+                        detail.user.name,
                         detail.leaveMaster.leaveType,
                         detail.assignedLeaves,
                         detail.usedLeaves,
@@ -47,6 +47,4 @@
         }
     });
 });
-
-
 

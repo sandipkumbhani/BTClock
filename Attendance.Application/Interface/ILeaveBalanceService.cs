@@ -10,7 +10,7 @@ namespace Attendance.Application.Interface
     public interface ILeaveBalanceService
     {
         Task<List<LeaveBalanceDto>> GetAllLeaveBalances();
-        Task<IEnumerable<LeaveBalanceDto>> GetLeaveBalanceByEmployeeId(int employeeId);
+        Task<IEnumerable<LeaveBalanceDto>> GetLeaveBalanceByUserId(int userId);
 		Task<LeaveBalanceDto> UpsertLeaveBalance(LeaveBalanceDto leaveBalance);
 
 	}

@@ -15,7 +15,6 @@ namespace Attendance.Controllers
         private ApplicationURL applicationURL;
         private readonly GlobalClass _globalClass;
         private readonly ILeaveAssignmentService _leaveAssignmentService;
-        private readonly IDepartmentService _departmentService;
         private readonly ILeaveMasterService _leaveMasterService;
         private readonly IMenuMasterService _menuService;
         private readonly IUserMenuMappingService _userMenuMappingService;
@@ -23,13 +22,12 @@ namespace Attendance.Controllers
 
 
 
-        public LeaveAssignmentController(ILogger<LeaveAssignmentController> logger, IConfiguration configuration, GlobalClass globalClass, IDepartmentService departmentService, ILeaveAssignmentService leaveAssignmentService, ILeaveMasterService leaveMasterService, IMenuMasterService menuService, IUserMenuMappingService userMenuMappingService, IMenuItemService menuItemService) : base(menuService, userMenuMappingService, menuItemService)
+        public LeaveAssignmentController(ILogger<LeaveAssignmentController> logger, IConfiguration configuration, GlobalClass globalClass,  ILeaveAssignmentService leaveAssignmentService, ILeaveMasterService leaveMasterService, IMenuMasterService menuService, IUserMenuMappingService userMenuMappingService, IMenuItemService menuItemService) : base(menuService, userMenuMappingService, menuItemService)
         {
             _logger = logger;
             _configuration = configuration;
             _globalClass = globalClass;
             applicationURL = new ApplicationURL(configuration);
-            _departmentService = departmentService;
             _leaveAssignmentService = leaveAssignmentService;
             _leaveMasterService = leaveMasterService;
             _menuService = menuService;
@@ -43,8 +41,6 @@ namespace Attendance.Controllers
             ViewBag.leaveMasters = leaveMasters;
             var leaveAssignments = await _leaveAssignmentService.GetAllLeaveAssignments();
             ViewBag.leaveAssignments = leaveAssignments;
-            var departments = await _departmentService.GetAllDepartments();
-            ViewBag.departments = departments;
             return View();
         }
         [HttpPost]
@@ -55,7 +51,7 @@ namespace Attendance.Controllers
                 try
                 {
                     var existingAssignments = await _leaveAssignmentService.GetAllLeaveAssignments();
-                    var assignmentExists = existingAssignments.Any(l => l.DepartmentId == leaveAssignment.DepartmentId && l.leavemasterId == leaveAssignment.leavemasterId);
+                    var assignmentExists = existingAssignments.Any(l => l.leavemasterId == leaveAssignment.leavemasterId);
                     if (assignmentExists)
                     {
                         ViewBag.errormsg = "Leave Assignment Already Exists";
@@ -66,7 +62,6 @@ namespace Attendance.Controllers
                         await _leaveAssignmentService.AddLeaveAssignment(new LeaveAssignmentDto
                         {
                             leavemasterId = leaveAssignment.leavemasterId,
-                            DepartmentId = leaveAssignment.DepartmentId,
                             TotalAllocatedLeaves = leaveAssignment.TotalAllocatedLeaves,
                             PaidAllocatedLeaves = leaveAssignment.PaidAllocatedLeaves,
 
@@ -85,8 +80,6 @@ namespace Attendance.Controllers
             ViewBag.leaveMasters = leaveMasters;
             var leaveAssignments = await _leaveAssignmentService.GetAllLeaveAssignments();
             ViewBag.leaveAssignments = leaveAssignments;
-            var departments = await _departmentService.GetAllDepartments();
-            ViewBag.departments = departments;
             return View(leaveAssignment);
         }
         public async Task<IActionResult> LeaveAssignmentView()
@@ -98,18 +91,13 @@ namespace Attendance.Controllers
         {
             var leaveAssignments = await _leaveAssignmentService.GetAllLeaveAssignments();
             var leaveMasters = await _leaveMasterService.GetAllLeaveMasters();
-            var departments = await _departmentService.GetAllDepartments();
             var masters = leaveMasters.Select(e => new
             {
                 id = e.LeaveMasterId,
                 name = e.LeaveType
             }).ToList();
-            var depts = departments.Select(d => new
-            {
-                id = d.Id,
-                name = d.Name
-            }).ToList();
-            return Json(new { result = "success", data = leaveAssignments, depts, masters });
+            
+            return Json(new { result = "success", data = leaveAssignments, masters });
         }
         public async Task<IActionResult> UpdateLeaveAssignment(int id)
         {
@@ -117,8 +105,6 @@ namespace Attendance.Controllers
             var leaves = await _leaveAssignmentService.GetAllLeaveAssignments();
             var leaveMasters = await _leaveMasterService.GetAllLeaveMasters();
             ViewBag.leaveMasters = leaveMasters;
-            var departments = await _departmentService.GetAllDepartments();
-            ViewBag.departments = departments;
             return View(leaveAssignment);
         }
         [HttpPost]
@@ -129,7 +115,7 @@ namespace Attendance.Controllers
                 try
                 {
                     var existingAssignments = await _leaveAssignmentService.GetAllLeaveAssignments();
-                    var assignmentExists = existingAssignments.Any(l => l.DepartmentId == leaveAssignment.DepartmentId && l.leavemasterId == leaveAssignment.leavemasterId && l.LeaveAssignmentId != leaveAssignment.LeaveAssignmentId);
+                    var assignmentExists = existingAssignments.Any(l => l.leavemasterId == leaveAssignment.leavemasterId && l.LeaveAssignmentId != leaveAssignment.LeaveAssignmentId);
                     if (assignmentExists)
                     {
                         ViewBag.errormsg = "Leave Assignment Already Exists";
@@ -144,7 +130,6 @@ namespace Attendance.Controllers
                         var leaveAssign = new LeaveAssignmentDto
                         {
                             leavemasterId = leaveAssignment.leavemasterId,
-                            DepartmentId = leaveAssignment.DepartmentId,
                             TotalAllocatedLeaves = leaveAssignment.TotalAllocatedLeaves,
                             PaidAllocatedLeaves = leaveAssignment.PaidAllocatedLeaves,
                             IsActive = existingLeaveAssignment.IsActive,
@@ -164,8 +149,6 @@ namespace Attendance.Controllers
             var leaveassignmentDto = await _leaveAssignmentService.GetLeaveAssignmentById(leaveAssignment.LeaveAssignmentId);
             var leaveMasters = await _leaveMasterService.GetAllLeaveMasters();
             ViewBag.leaveMasters = leaveMasters;
-            var departments = await _departmentService.GetAllDepartments();
-            ViewBag.departments = departments;
             var leaves = await _leaveAssignmentService.GetAllLeaveAssignments();
             ViewBag.leaves = leaves;
             return View(leaveassignmentDto);

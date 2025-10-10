@@ -21,9 +21,9 @@ namespace Attendance.Application.service
         {
             return await _leaveBalanceAdaptor.GetAllLeaveBalances();
         }
-        public async Task<IEnumerable<LeaveBalanceDto>> GetLeaveBalanceByEmployeeId(int employeeId)
+        public async Task<IEnumerable<LeaveBalanceDto>> GetLeaveBalanceByUserId(int userId)
         {
-            return await _leaveBalanceAdaptor.GetLeaveBalanceByEmployeeId(employeeId);
+            return await _leaveBalanceAdaptor.GetLeaveBalanceByUserId(userId);
         }
         public async Task<LeaveBalanceDto> UpsertLeaveBalance(LeaveBalanceDto leaveBalance)
 		{

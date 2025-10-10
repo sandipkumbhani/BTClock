@@ -20,9 +20,9 @@ namespace Attendance.Domain.Models
     public class LeaveTransactionDto
     {
         public int LeaveTransactionId { get; set; }
-        [ForeignKey("EmployeeId")]
-        public int EmployeeId { get; set; }
-        public Employee? Employee { get; set; }
+        [ForeignKey("UserId")]
+        public int UserId { get; set; }
+        public User? User { get; set; }
         [ForeignKey("LeaveMasterId")]
         public int LeaveMasterId { get; set; }
         public LeaveMaster? LeaveMaster { get; set; }

@@ -52,4 +52,8 @@
     <ProjectReference Include="..\Attendance.Infrastructure.Efcore\Attendance.Infrastructure.Efcore.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\leave_pdf\" />
+  </ItemGroup>
+
 </Project>

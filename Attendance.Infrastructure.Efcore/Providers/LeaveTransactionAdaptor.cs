@@ -34,11 +34,11 @@ namespace Attendance.Infrastructure.Efcore.Providers
             }
             return null;
         }
-        public async Task<IEnumerable<LeaveTransactionDto>> GetLeaveTransactionsByEmployeeId(int employeeId)
+        public async Task<IEnumerable<LeaveTransactionDto>> GetLeaveTransactionsByUserId(int userId)
         {
             var _httpClient = new HttpClient();
             _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);
-            var response = await _httpClient.GetAsync(apiCredential.url + "LeaveTransaction/GetLeaveTransactionsByEmployeeId/" + employeeId);
+            var response = await _httpClient.GetAsync(apiCredential.url + "LeaveTransaction/GetLeaveTransactionsByUserId/" + userId);
             var responseData = await response.Content.ReadAsStringAsync();
             var responseModel = JsonConvert.DeserializeObject<CommanResponseDto>(responseData);
             if (responseModel != null)

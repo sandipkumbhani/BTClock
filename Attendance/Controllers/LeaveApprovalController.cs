@@ -50,7 +50,7 @@ namespace Attendance.Controllers
             var mappedLeaves = leavesList.Select(leave => new
             {
                 leave.LeaveTransactionId,
-                leave.EmployeeId,
+                leave.UserId,
                 leave.LeaveMasterId,
                 leave.StartDate,
                 leave.EndDate,

@@ -16,13 +16,13 @@ namespace Attendance.Controllers
         private readonly GlobalClass _globalClass;
         private readonly ApplicationURL applicationURL;
         private readonly ILeaveBalanceService _leaveBalanceService;
-        private readonly IEmployeeService _employeeService;
         private readonly ILeaveMasterService _leaveMasterService;
         private readonly ILeaveAssignmentService _leaveAssignmentService;
         private readonly ILeaveTransactionService _leaveTransactionService;
         private readonly IMenuMasterService _menuService;
         private readonly IUserMenuMappingService _userMenuMappingService;
         private readonly IMenuItemService _menuItemService;
+        private readonly IUserService _userService;
 
 
         public LeaveBalanceController(
@@ -30,49 +30,50 @@ namespace Attendance.Controllers
         IConfiguration configuration,
         GlobalClass globalClass,
         ILeaveBalanceService leaveBalanceService,
-        IEmployeeService employeeService,
         ILeaveMasterService leaveMaster,
         ILeaveAssignmentService leaveAssignment,
         ILeaveTransactionService leaveTransaction,
         IMenuMasterService menuService,
         IUserMenuMappingService userMenuMappingService,
-        IMenuItemService menuItemService) : base(menuService, userMenuMappingService, menuItemService)
+
+        IMenuItemService menuItemService,
+        IUserService userService) : base(menuService, userMenuMappingService, menuItemService)
         {
             _logger = logger;
             _configuration = configuration;
             _globalClass = globalClass;
             applicationURL = new ApplicationURL(configuration);
             _leaveBalanceService = leaveBalanceService;
-            _employeeService = employeeService;
             _leaveMasterService = leaveMaster;
             _leaveAssignmentService = leaveAssignment;
             _leaveTransactionService = leaveTransaction;
             _menuService = menuService;
             _userMenuMappingService = userMenuMappingService;
             _menuItemService = menuItemService;
+            _userService = userService;
         }
 
 
         public async Task<IActionResult> LeaveBalance()
         {
-            var employees = await _employeeService.GetAllEmployee();
+            var users = await _userService.GetAllUser();
             var leaveMasters = await _leaveMasterService.GetAllLeaveMasters();
             var leaveAssignments = await _leaveAssignmentService.GetAllLeaveAssignments();
             var leaveTransactions = await _leaveTransactionService.GetAllLeaveTransactions();
 
             var balances = new List<LeaveBalanceDto>();
 
-            foreach (var emp in employees)
+            foreach (var user in users)
             {
                 foreach (var master in leaveMasters)
                 {
                     var allocated = leaveAssignments
-                        .FirstOrDefault(x => x.DepartmentId == emp.DepartmentId && x.leavemasterId == master.LeaveMasterId);
+                        .FirstOrDefault(x => x.leavemasterId == master.LeaveMasterId);
 
                     var allocatedLeaves = allocated?.TotalAllocatedLeaves ?? 0;
 
                     var usedLeaves = leaveTransactions
-                        .Where(x => x.EmployeeId == emp.EmployeeId && x.LeaveMasterId == master.LeaveMasterId && x.LeaveStatus == LeaveStatus.Approved)
+                        .Where(x => x.UserId == user.UserId && x.LeaveMasterId == master.LeaveMasterId && x.LeaveStatus == LeaveStatus.Approved)
                         .Sum(x => x.Ishalfday ? 0.5 : x.TotalDays);
                     var balance = allocatedLeaves - usedLeaves;
                     if (balance < 0) balance = 0;
@@ -82,7 +83,7 @@ namespace Attendance.Controllers
                         : 0;
                     balances.Add(new LeaveBalanceDto
                     {
-                        EmployeeId = emp.EmployeeId,
+                        UserId = user.UserId,
                         LeaveMasterId = master.LeaveMasterId,
                         AssignedLeaves = allocatedLeaves,
                         UsedLeaves = usedLeaves,
@@ -99,7 +100,7 @@ namespace Attendance.Controllers
 
             var leavebalance = await _leaveBalanceService.GetAllLeaveBalances();
             ViewBag.LeaveBalances = balances;
-            ViewBag.Employees = employees;
+            ViewBag.Users = users;
             ViewBag.LeaveMasters = leaveMasters;
             return View();
         }
@@ -108,9 +109,9 @@ namespace Attendance.Controllers
         {
             var currentUserId = UserUtility.GetUserId(HttpContext);
             var leaveList = await _leaveBalanceService.GetAllLeaveBalances();
-            var employeeLeaveList = leaveList.Where(l => l.EmployeeId == currentUserId).ToList();
+            var userLeaveList = leaveList.Where(l => l.UserId == currentUserId).ToList();
 
-            return Json(employeeLeaveList);
+            return Json(userLeaveList);
         }
     }
 }

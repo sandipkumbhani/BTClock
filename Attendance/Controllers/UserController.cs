@@ -44,11 +44,11 @@ namespace Attendance.Controllers
                     var User = claims.Claims.FirstOrDefault(x => x.Type == "UserId");
                     int UserId = User != null ? (!string.IsNullOrEmpty(User.Value) ? Convert.ToInt32(User.Value) : 0) : 0;
                     ViewBag.UserId = UserId;
-                    ViewBag.appUrl = applicationURL.url;
                     var roles = _roleService.GetAll().Result;
                     ViewBag.Roles = roles;
                     var users = _userService.GetAllUser().Result;
                     ViewBag.Users = users;
+                    ViewBag.appUrl = applicationURL.url;
                     return View();
                 }
                 else

@@ -1,8 +1,17 @@
 function updateTotalDays(start, end) {
     let days = end.diff(start, 'days') + 1;
-    if (days < 1) days = 1; // prevent zero or negative days
+    if (days < 1) days = 1; 
 
-    const isHalfDay = document.getElementById("Ishalfday").checked;
+    const isHalfDayCheckbox = document.getElementById("Ishalfday");
+
+    if (days > 1) {
+        isHalfDayCheckbox.checked = false;
+        isHalfDayCheckbox.disabled = true;
+    } else {
+        isHalfDayCheckbox.disabled = false;
+    }
+
+    const isHalfDay = isHalfDayCheckbox.checked;
     const totalDays = isHalfDay ? 0.5 : days;
 
     document.getElementById("TotalDays").value = totalDays;
@@ -11,8 +20,8 @@ function updateTotalDays(start, end) {
     if (totalDaysDisplay) {
         totalDaysDisplay.textContent = totalDays;
     }
-
 }
+
 
 $(function () {
     var start = $('#StartDate').val() ? moment($('#StartDate').val()) : moment();
