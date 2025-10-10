@@ -20,7 +20,7 @@ namespace Attendance.Infrastructure.Provider
 		}
 
 		public async Task<IEnumerable<UserMenuMappingDto>> GetUserMenuById(int id)
-		{
+			{
 			try
 			{
 				var _httpClient = new HttpClient();
