@@ -77,7 +77,7 @@ $(document).ready(function () {
 
                 $.each(result.data, function (index, detail) {
                     var parent = result.data.find(x => x.menuid === detail.parentId);
-                    var parentName = parent ? parent.menuname : '';
+                    var parentName = parent ? parent.menuname : '-';
 
                     var username = result.users.find(x => x.id === detail.updatedBy);
                     var user = username?.name || '';
@@ -89,7 +89,7 @@ $(document).ready(function () {
                         detail.menuname || '',
                         detail.icon || '',
                         detail.moduleMaster?.moduleName || '',
-                        parentName || '',
+                        parentName || '-',
                         detail.isDefault ? 'Yes' : 'No',
                         detail.isActive ? 'Active' : 'Deactive',
                         user,

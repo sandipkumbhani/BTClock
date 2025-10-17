@@ -18,11 +18,10 @@ namespace Attendance.Controllers
         private readonly IMenuMasterService _menuService;
         private readonly IUserMenuMappingService _userMenuMappingService;
         private readonly IMenuItemService _menuItemService;
-        private readonly ILogger<BaseClockInController> _logger;
 
 
 
-        public AttendanceController(IConfiguration configuration, GlobalClass globalClass, IAttendanceService service, IMenuMasterService menuService, IUserMenuMappingService userMenuMappingService, IMenuItemService menuItemService, ILogger<BaseClockInController> logger) : base(menuService, userMenuMappingService, menuItemService, logger)
+        public AttendanceController(IConfiguration configuration, GlobalClass globalClass, IAttendanceService service, IMenuMasterService menuService, IUserMenuMappingService userMenuMappingService, IMenuItemService menuItemService) : base(menuService, userMenuMappingService, menuItemService)
         {
             _configuration = configuration;
             _globalClass = globalClass;
@@ -31,14 +30,13 @@ namespace Attendance.Controllers
             _menuService = menuService;
             _userMenuMappingService = userMenuMappingService;
             _menuItemService = menuItemService;
-            _logger = logger;
         }
         public IActionResult ClockIn()
         {
             if (_globalClass.Token != null)
             {
                 var jwt = new JwtSecurityTokenHandler().ReadJwtToken(_globalClass.Token);
-                var claims = UserUtility.addClaimstoUser(HttpContext, jwt.Claims);
+                var claims = UserUtility.AddClaimsToUser(HttpContext, jwt.Claims);
                 string currentPage = "Clockin";
                 var canAccess = UserUtility.CanAccessMenu(HttpContext, currentPage);
                 if (canAccess == true)

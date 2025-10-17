@@ -1,202 +1,159 @@
 ﻿using Attendance.Application.Interface;
 using Attendance.Domain.Helper;
 using Attendance.Domain.Models;
-using Attendance.Domain.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Attendance.Controllers
 {
+    [Authorize]
     public class MenuItemController : BaseAdminController
     {
-        private readonly ILogger<MenuMasterController> _logger;
-        private readonly IConfiguration _configuration;
-        private ApplicationURL applicationURL;
-        private readonly GlobalClass _globalClass;
+        private readonly ILogger<MenuItemController> _logger;
         private readonly IMenuItemService _menuItemService;
         private readonly IMenuMasterService _menuMasterService;
-        private readonly IMenuMasterService _menuService;
         private readonly IUserMenuMappingService _userMenuMappingService;
+        private readonly IUserService _userService;
+        private readonly ApplicationURL _applicationURL;
+        private readonly GlobalClass _globalClass;
 
-        public MenuItemController(ILogger<MenuMasterController> logger, IConfiguration configuration, GlobalClass globalClass, IMenuItemService menuItemService, IMenuMasterService menuMasterService, IMenuMasterService menuService, IUserMenuMappingService userMenuMappingService) : base(menuService, userMenuMappingService, menuItemService)
+        public MenuItemController(
+            ILogger<MenuItemController> logger,
+            IConfiguration configuration,
+            IMenuItemService menuItemService,
+            IMenuMasterService menuMasterService,
+            IUserMenuMappingService userMenuMappingService,
+            IUserService userService,
+            IMenuMasterService menuService)
+            : base(menuService, userMenuMappingService, menuItemService)
         {
             _logger = logger;
-            _configuration = configuration;
-            _globalClass = globalClass;
-            applicationURL = new ApplicationURL(configuration);
             _menuItemService = menuItemService;
             _menuMasterService = menuMasterService;
-            _menuService = menuService;
             _userMenuMappingService = userMenuMappingService;
-		}
+            _userService = userService;
+            _applicationURL = new ApplicationURL(configuration);
+            _globalClass = new GlobalClass();
+        }
 
+        // GET: MenuItem
         public async Task<IActionResult> MenuItem()
         {
-            var menuItems = await _menuItemService.GetAll();
-            ViewBag.MenuItems = menuItems;
-            var menus = await _menuMasterService.GetAllMenuMasters();
-            ViewBag.Menus = menus;
+            ViewBag.MenuItems = await _menuItemService.GetAllMenuItems();
+            ViewBag.Menus = await _menuMasterService.GetAllMenuMasters();
             return View();
         }
+
         [HttpPost]
-        public async Task<IActionResult> MenuItem(MenuItemDto menuItemDto)
+        public async Task<IActionResult> AddMenuItem(MenuItemDto menuItemDto)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    var existingMenuItems = await _menuItemService.GetAll();
-                    var menuItemExists = existingMenuItems.Any(m => m.MenuName.Equals(menuItemDto.MenuName, StringComparison.OrdinalIgnoreCase));
-                    if (menuItemExists)
-                    {
-                        ViewBag.errormsg = "Menu Item Already Exists";
-                    }
-                    else
-                    {
-                        var allMenus = await _menuMasterService.GetAllMenuMasters();
-                        var selectedMenu = allMenus.FirstOrDefault(x => x.Menuid == menuItemDto.Menuid);
-
-                        if (selectedMenu == null)
-                        {
-                            ViewBag.errormsg = "Selected Menu not found.";
-                        }
-                        else
-                        {
-                            var userid = UserUtility.GetUserId(HttpContext);
-                            await _menuItemService.AddMenuItem(new MenuItemDto
-                            {
-                                Menuid = menuItemDto.Menuid,
-                                MenuName = selectedMenu.Menuname,
-                                ParentId = menuItemDto.ParentId,
-                                SortingOrder = menuItemDto.SortingOrder,
-                                CreatedBy = userid,
-                                CreatedAt = DateTime.Now,
-                            });
-
-                            ViewBag.succmsg = "Menu Item Added Successfully";
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error in MenuItem POST");
-                    ViewBag.errormsg = "An error occurred while processing your request.";
-                }
+                ViewBag.errormsg = "Fill the form.";
+                return View("MenuItem", menuItemDto);
             }
 
-            var menuItems = await _menuItemService.GetAll();
-            ViewBag.MenuItems = menuItems;
-            var menus = await _menuMasterService.GetAllMenuMasters();
-            ViewBag.Menus = menus;
-            return View(menuItemDto);
+            try
+            {
+                await _menuItemService.AddMenuItem(menuItemDto);
+                ViewBag.msg = "Menu Item added successfully!";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error adding MenuItem");
+                ViewBag.errormsg = ex.Message;
+            }
+
+            ViewBag.MenuItems = await _menuItemService.GetAllMenuItems();
+            ViewBag.Menus = await _menuMasterService.GetAllMenuMasters();
+            return View("MenuItem", menuItemDto);
         }
 
-        public async Task<IActionResult> MenuItemView()
+        public IActionResult MenuItemView()
         {
             return View();
         }
+
         public async Task<IActionResult> MenuItemViewDetails()
         {
-            var menuItems = await _menuItemService.GetAll();  // Get all menu items with MenuMaster
-            var parents = await _menuMasterService.GetAllMenuMasters();  // Get all parent menus
+            var menuItems = await _menuItemService.GetAllMenuItems();
+            var menuMasters = await _menuMasterService.GetAllMenuMasters();
+            var users = (await _userService.GetAllUser())
+                        .Select(u => new { id = u.UserId, name = u.Name })
+                        .ToList();
 
-            var menuListWithParents = menuItems.Select(menu => new
+            var menuItemData = menuItems.Select(menu => new
             {
                 menu.MenuItemId,
                 menu.MenuName,
                 menu.ParentId,
                 menu.SortingOrder,
+                menu.IsActive,
                 menu.CreatedAt,
                 menu.CreatedBy,
-                menu.IsActive,
                 menu.UpdatedAt,
                 menu.UpdatedBy,
                 MenuMaster = menu.MenuMaster != null ? new
                 {
-                    menu.MenuMaster.Menuid,
-                    menu.MenuMaster.Menuname,
+                    menu.MenuMaster.MenuId,
+                    menu.MenuMaster.MenuName,
                     menu.MenuMaster.ModuleMasterId
-                } : null  // Ensure MenuMaster is included
+                } : null
             }).ToList();
 
-            return Json(new
-            {
-                result = "success",
-                data = menuListWithParents,
-                parents = parents
-            });
+            return Json(new { result = "success", data = menuItemData, users, menuMasters });
         }
 
         public async Task<IActionResult> UpdateMenuItem(int id)
         {
-            var menuItem = await _menuItemService.GetById(id);
-            if (menuItem == null)
-            {
-                return NotFound();
-            }
-            var menus = await _menuMasterService.GetAllMenuMasters();
-            ViewBag.Menus = menus;
-            var menuItems = await _menuItemService.GetAll();
-            ViewBag.MenuItems = menuItems;
+            var menuItem = await _menuItemService.GetMenuItemById(id);
+            if (menuItem == null) return NotFound();
+
+            ViewBag.Menus = await _menuMasterService.GetAllMenuMasters();
+            ViewBag.MenuItems = await _menuItemService.GetAllMenuItems();
             return View(menuItem);
         }
-        [HttpPost]
-        public async Task<IActionResult> UpdateMenuItem(MenuItemDto menuItem)
-        {
-            if (ModelState.IsValid)
-            {
 
-                var existingMenuItems = await _menuItemService.GetAll();
-                var menuItemExists = existingMenuItems.Any(m => m.MenuName.Equals(menuItem.MenuName, StringComparison.OrdinalIgnoreCase) && m.MenuItemId != menuItem.MenuItemId);
-                if (menuItemExists)
-                {
-                    ViewBag.errormsg = "Menu Item Already Exists";
-                }
-                else
-                {
-                    var allMenus = await _menuMasterService.GetAllMenuMasters();
-                    var selectedMenu = allMenus.FirstOrDefault(x => x.Menuid == menuItem.Menuid);
-                    if (selectedMenu == null)
-                    {
-                        ViewBag.errormsg = "Selected Menu not found.";
-                    }
-                    else
-                    {
-                        var userid = UserUtility.GetUserId(HttpContext);
-                        var menuitemmodel = new MenuItemDto
-                        {
-                            MenuItemId = menuItem.MenuItemId,
-                            Menuid = menuItem.Menuid,
-                            MenuName = selectedMenu.Menuname,
-                            ParentId = menuItem.ParentId,
-                            SortingOrder = menuItem.SortingOrder,
-                            CreatedAt = selectedMenu.CreatedAt,
-                            CreatedBy = selectedMenu.CreatedBy,
-                            UpdatedBy = userid,
-                            UpdatedAt = DateTime.Now,
-                            IsActive = menuItem.IsActive
-                        };
-                        await _menuItemService.UpdateMenuItem(menuitemmodel, menuItem.MenuItemId);
-                    }
-                    TempData["msg"] = "Data updated successfully!";
-                    return RedirectToAction("MenuItemView", "MenuItem");
-                }
-            }
-            else
+        [HttpPost]
+        public async Task<IActionResult> UpdateMenuItem(MenuItemDto menuItemDto)
+        {
+            if (!ModelState.IsValid)
             {
-                ViewBag.errormsg = "Invalid data submitted.";
+                ViewBag.errormsg = "Fill the form correctly.";
+                ViewBag.Menus = await _menuMasterService.GetAllMenuMasters();
+                ViewBag.MenuItems = await _menuItemService.GetAllMenuItems();
+                return View("EditMenuItem", menuItemDto);
             }
-            var menuitem = await _menuItemService.GetById(menuItem.MenuItemId);
-            var menus = await _menuMasterService.GetAllMenuMasters();
-            ViewBag.Menus = menus;
-            var menuItems = await _menuItemService.GetAll();
-            ViewBag.MenuItems = menuItems;
-            return View(menuitem);
+
+            try
+            {
+                await _menuItemService.UpdateMenuItem(menuItemDto, menuItemDto.MenuItemId);
+                TempData["msg"] = "Menu Item updated successfully!";
+                return RedirectToAction("MenuItemView");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating MenuItem");
+                ViewBag.errormsg = ex.Message;
+            }
+
+            ViewBag.Menus = await _menuMasterService.GetAllMenuMasters();
+            ViewBag.MenuItems = await _menuItemService.GetAllMenuItems();
+            return View(menuItemDto);
         }
+
         public async Task<IActionResult> DeleteMenuItem(int id)
         {
-            await _menuItemService.DeleteMenuItem(id);
-            return RedirectToAction("MenuItemView", "MenuItem");
-
+            try
+            {
+                await _menuItemService.DeleteMenuItem(id);
+                return RedirectToAction("MenuItemView");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting MenuItem");
+                return Json(new { success = false, message = ex.Message });
+            }
         }
     }
 }

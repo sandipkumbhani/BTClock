@@ -28,11 +28,11 @@
                     <h2 class="page-form-title">Update Menu Item</h2>
                     <div class="item-input">
                         <label for="MenuName" class="form-label required">Menu Name</label>
-                        <select class="form-select" asp-for="Menuid" name="Menuid" style="width:359.46px; height:48px;" required>
+                        <select class="form-select" asp-for="MenuId" name="MenuId" style="width:359.46px; height:48px;" required>
                             <option value="">Select Menu</option>
                             @foreach (var item in ViewBag.Menus)
                             {
-                                <option value="@item.Menuid" selected="@(item.Menuid == Model.Menuid ? "selected" : null)">@item.Menuname</option>
+                                <option value="@item.MenuId" selected="@(item.MenuId == Model.MenuId ? "selected" : null)">@item.MenuName</option>
                             }
                         </select>
                     </div>
@@ -42,7 +42,7 @@
                             <option value="">Select Parent</option>
                             @foreach (var item in ViewBag.Menus)
                             {
-                                <option value="@item.Menuid" selected="@(item.Menuid == Model.ParentId ? "selected" : null)">@item.Menuname</option>
+                                <option value="@item.Menuid" selected="@(item.Menuid == Model.ParentId ? "selected" : null)">@item.MenuName</option>
                             }
                         </select>
                     </div>

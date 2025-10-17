@@ -1,76 +1,69 @@
 ﻿@using Attendance.Domain.Models
-@model Attendance.Domain.Models.UserMenuMappingDto;
+@model Attendance.Domain.Models.UserMenuMappingDto
+
 @{
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
-    var validMenus = ViewBag.Menus as List<Attendance.Domain.Models.MenuItemDto>;
+    var validMenus = ViewBag.Menus as List<MenuItemDto>;
 }
+
 <div class="main-inner container-fluid">
     @{
-        ViewBag.Breadcrumbs = new List<Attendance.Domain.Models.BreadcrumbItem>
+        ViewBag.Breadcrumbs = new List<BreadcrumbItem>
         {
         new BreadcrumbItem { Title = "Dashboard", Url = Url.Action("Dashboard", "Dashboard"), IsActive = false },
-        new BreadcrumbItem { Title = "UserMenuMapping", Url = "", IsActive = true }
+        new BreadcrumbItem { Title = "User Menu Mapping", Url = "", IsActive = true }
         };
     }
+
     <div class="col-12">
-        <div class="page-title-box" style="margin-top:20px;">
+        <div class="page-title-box mt-3">
             <h1 class="page-title">User Menu Mapping</h1>
         </div>
     </div>
 
     <div class="col-12">
         <div class="card com-profile-info">
-            <form class="form" id="userForm" method="post" asp-action="UserMenuMapping" asp-controller="UserMenuMapping">
+            <form class="form" id="userForm">
                 <div class="top-details">
                     <h2 class="page-form-title">User Menu Mapping</h2>
+
+                    <!-- User Selection -->
                     <div class="item-input mb-3">
                         <label for="UserId" class="form-label fw-semibold fs-6 required">User</label>
-                        <select class="select2-custom form-control select2-hidden-accessible; form-select" id="UserId" name="UserId" style="width:359.46px; height:48px;" required>
-                            <option value="" id="userID" disabled selected>Select User</option>
-                            @foreach (var user in ViewBag.user)
+                        <select class="select2-custom form-control form-select" id="UserId" style="width:360px;height:48px;" required>
+                            <option value="" disabled selected>Select User</option>
+                            @foreach (var user in ViewBag.User)
                             {
                                 <option value="@user.UserId">@user.Name</option>
                             }
                         </select>
                     </div>
+
+                    <!-- Menu Items -->
                     <div class="col-lg-3">
                         <label class="form-label fw-semibold fs-6">Select Menus</label>
-                        <div class="item-input">
+                        <div class="item-input" id="menuItemsContainer">
                             @foreach (var menu in validMenus)
                             {
                                 <label class="form-label fw-semibold fs-6 d-block mt-2">
                                     <input type="checkbox"
                                            class="form-check-input menu-checkbox"
-                                           name="MenuIds"
-                                           value="@menu.MenuItemId"
-                                           data-is-default="@menu.MenuMaster?.isDefault.ToString().ToLower()" />
+                                           value="@menu.MenuItemId" />
                                     &nbsp; @menu.MenuName
                                 </label>
                             }
                         </div>
                     </div>
+
+                    <!-- Messages -->
                     <div class="col-xl-6">
-                        @if (ViewBag.msg != null)
-                        {
-                            <div class="usermsg" id="temporaryMessage">
-                                <span style="color:#00af00;font-weight:600;">@ViewBag.msg</span>
-                            </div>
-                        }
-                        else if (ViewBag.errormsg != null)
-                        {
-                            <div class="usermsg" id="temporaryMessage">
-                                <span style="color:#d21313;font-weight:600;"> @ViewBag.errormsg</span>
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="usermsg" id="temporaryMessage">
-                            </div>
-                        }
+                        <div class="usermsg" id="temporaryMessage"></div>
                     </div>
                 </div>
+
+                <!-- Buttons -->
                 <div class="button-main mt-4">
-                    <button type="submit" id="saveButton" class="btn btn-primary me-2" style="width:95px;height:38px;background:#0466C8">
+                    <button type="button" id="saveButton" class="btn btn-primary me-2" style="width:95px;height:38px;background:#0466C8">
                         Save
                     </button>
                     <button type="reset" class="btn btn-primary outline-bar me-2" style="background:#0466C8">
@@ -83,5 +76,5 @@
 </div>
 
 @section Scripts {
-    <script src="~/js/UserMenuMapping.js"></script>
+    <script src="~/js/usermenumapping.js"></script>
 }

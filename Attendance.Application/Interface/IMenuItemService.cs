@@ -9,11 +9,12 @@ namespace Attendance.Application.Interface
 {
     public interface IMenuItemService
     {
-        Task<IEnumerable<MenuItemDto>> GetAll();
-        Task<MenuItemDto> GetById(int id);
-        Task<IEnumerable<MenuItemDto>> GetByMenuId(int menuId);
-        Task<string> AddMenuItem(MenuItemDto menuItem);
-        Task<string> UpdateMenuItem(MenuItemDto menuItem, int id);
+        Task<IEnumerable<MenuItemDto>> GetAllMenuItems();
+        Task<MenuItemDto> GetMenuItemById(int id);
+        Task<IEnumerable<MenuItemDto>> GetMenuItemsByMenuId(int menuId);
+        Task<string> AddMenuItem(MenuItemDto menuItemDto);
+        Task<string> UpdateMenuItem(MenuItemDto menuItemDto, int id);
         Task<int> DeleteMenuItem(int id);
+        Task<IEnumerable<MenuItemDto>> GetAccessibleMenuItems(int userId);
     }
 }

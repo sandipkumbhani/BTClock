@@ -31,7 +31,7 @@ $(document).ready(function () {
                 const newRows = [];
 
                 $.each(response.data, function (index, detail) {
-                    const employee = response.users.find(user => user.id === detail.employeeId);
+                    const user = response.users.find(user => user.id === detail.userId);
                     const leaveMaster = response.masters.find(m => m.id === detail.leaveMasterId);
                     var appliedon = detail.appliedOn || "";
                     var splitAppliedon = appliedon.split('T')[0];
@@ -61,7 +61,7 @@ $(document).ready(function () {
                     const row = [
                         checkbox,
                         statusText,
-                        employee?.name || '',
+                        user?.name || '',
                         leaveMaster?.name || '',
                         detail.isPaid ? 'Yes' : 'No',
                         detail.ishalfday ? 'Yes' : 'No',

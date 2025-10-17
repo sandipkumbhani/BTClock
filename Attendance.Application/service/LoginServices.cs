@@ -1,13 +1,9 @@
 ﻿using Attendance.Application.Interface;
 using Attendance.Domain.Interfaces;
 using Attendance.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Attendance.Application.service
+namespace Attendance.Application.Service
 {
     public class LoginServices : ILoginServices
     {
@@ -17,9 +13,10 @@ namespace Attendance.Application.service
         {
             _loginAdaptor = loginAdaptor;
         }
-        public async Task<string> Login(Employee model)
+
+        public async Task<LoginResponseData?> Login(User model)
         {
-            return await _loginAdaptor.PostApiDataAsync(model);
+            return await _loginAdaptor.LoginAsync(model);
         }
     }
 }

@@ -56,7 +56,7 @@ namespace Attendance.Controllers
 				{
 					var module = new ModuleMasterDto
 					{
-						ModuleName = moduleMasterDto.ModuleName,
+						Name = moduleMasterDto.Name,
 					};
 					var result = await _moduleMasterService.AddModuleMaster(module);
 					if (result != null)

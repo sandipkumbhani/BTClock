@@ -83,10 +83,10 @@
                                         if (item.Children.Count() == 0)
                                         {
                                             <li class="side-nav-item">
-                                                <a class="side-nav-link" href="@ViewBag.appUrl@item.MenuMaster.MenuPath">
+                                                <a class="side-nav-link" href="@ViewBag.appUrl@item.MenuMaster.Path">
                                                     <i class="@item.MenuMaster.Icon-line"></i>
                                                     <i class="@item.MenuMaster.Icon-fill"></i>
-                                                    <span>@item.MenuMaster.Menuname</span>
+                                                    <span>@item.MenuMaster.MenuName</span>
                                                 </a>
                                             </li>
                                         }
@@ -96,7 +96,7 @@
                                                 <a class="side-nav-link" href="javascript:void(0)">
                                                     <i class="@item.MenuMaster.Icon-line"></i>
                                                     <i class="@item.MenuMaster.Icon-fill"></i>
-                                                    <span>@item.MenuMaster.Menuname</span>
+                                                    <span>@item.MenuMaster.MenuName</span>
                                                 </a>
                                                 @if (item.Children != null && item.Children.Any())
                                                 {
@@ -106,8 +106,8 @@
                                                             if (subItem.MenuMaster != null)
                                                             {
                                                                 <li>
-                                                                    <a href="@ViewBag.appUrl@subItem.MenuMaster.MenuPath">
-                                                                        <span>@subItem.MenuMaster.Menuname</span>
+                                                                    <a href="@ViewBag.appUrl@subItem.MenuMaster.Path">
+                                                                        <span>@subItem.MenuMaster.MenuName</span>
                                                                     </a>
                                                                 </li>
                                                             }

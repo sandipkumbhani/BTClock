@@ -1,156 +1,93 @@
 using Attendance.Application.Interface;
 using Attendance.Domain.Helper;
+using Attendance.Domain.Interfaces;
 using Attendance.Domain.Models;
-using Azure;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text.Json;
 
-[Authorize]
-public class LoginController : Controller
+namespace Attendance.UI.Controllers
 {
-    private readonly ILogger<LoginController> _logger;
-    private readonly ILoginServices _loginServices;
-    private readonly IConfiguration _configuration;
-    private ApplicationURL applicationURL;
-    private readonly IMenuMasterService _menuService;
-    private readonly IUserMenuMappingService _userMenuMappingService;
-
-    public LoginController(ILogger<LoginController> logger, ILoginServices loginServices, IConfiguration configuration, IMenuMasterService menuService, IUserMenuMappingService userMenuMappingService)
+    [Authorize]
+    public class LoginController : Controller
     {
-        _logger = logger;
-        _loginServices = loginServices;
-        _configuration = configuration;
-        applicationURL = new ApplicationURL(configuration);
-        _menuService = menuService;
-        _userMenuMappingService = userMenuMappingService;
-    }
+        private readonly ILoginServices _loginServices;
+        private readonly IConfiguration _configuration;
+        private readonly ApplicationURL _applicationURL;
 
-    [AllowAnonymous]
-    public IActionResult Login()
-    {
-        return View();
-    }
-
-    [AllowAnonymous]
-    [HttpPost]
-    public async Task<IActionResult> Login(Employee model, string? returnUrl)
-    {
-        if (ModelState.IsValid)
+        public LoginController(ILoginAdaptor loginAdaptor, ILoginServices loginServices, IConfiguration configuration)
         {
-            var token = await _loginServices.Login(model);
-            if (!string.IsNullOrEmpty(token))
-            {
-                Response.Cookies.Append("jwtToken", token, new CookieOptions
-                {
-                    HttpOnly = true,
-                    SameSite = SameSiteMode.Strict,
-                    Secure = true
-                });
-
-                var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
-                var email = jwt.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email || c.Type == "unique_name")?.Value;
-                var userId = jwt.Claims.FirstOrDefault(c => c.Type == "UserId" || c.Type == "unique_name")?.Value;
-                var role = jwt.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role || c.Type == "role")?.Value;
-
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Email, email ?? model.Email),
-                    new Claim("UserId", userId ?? ""),
-                    new Claim(ClaimTypes.UserData, userId),
-                    new Claim(ClaimTypes.Role, role!)
-                };
-                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                var principal = new ClaimsPrincipal(identity);
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-
-                var existingMenus = await _userMenuMappingService.GetUserMenuById(Convert.ToInt32(userId));
-                if (!existingMenus.Any())
-                {
-                    var allMenus = await _menuService.GetAllMenuMasters();
-
-                    if (allMenus == null)
-                    {
-                        _logger.LogWarning("GetAllMenuMasters returned null for userId: {UserId}", userId);
-                        allMenus = new List<menuMasterDto>();
-                    }
-
-                    if (role == "Admin" || role == "SuperAdmin")
-                    {
-                        foreach (var menu in allMenus)
-                        {
-                            var mappingDto = new UserMenuMappingDto
-                            {
-                                UserId = Convert.ToInt32(userId),
-                                MenuItemId = menu.Menuid
-                            };
-                            await _userMenuMappingService.AddUserMenuMapping(mappingDto);
-                        }
-                    }
-                    else
-                    {
-                        var defaultMenus = allMenus.Where(m => m.isDefault).ToList();
-                        foreach (var menu in defaultMenus)
-                        {
-                            var mappingDto = new UserMenuMappingDto
-                            {
-                                UserId = Convert.ToInt32(userId),
-                                MenuItemId = menu.Menuid
-                            };
-                            await _userMenuMappingService.AddUserMenuMapping(mappingDto);
-                        }
-                    }
-                }
-
-                var allUserMenuMappings = await _userMenuMappingService.GetAll();
-                var userMenus = new List<UserMenuMappingDto>();
-
-                if (role == "Admin" || role == "SuperAdmin")
-                {
-                    userMenus = allUserMenuMappings.ToList();  
-                }
-                else
-                {
-                    userMenus = allUserMenuMappings
-                        .Where(x => x.UserId == Convert.ToInt32(userId))
-                        .ToList();  // Other users get only their specific mappings
-                }
-
-                var menuNames = userMenus
-                    .Where(m => m.MenuItem != null)
-                    .Select(x => x.MenuItem.MenuName)
-                    .ToList();
-                string menuJson = JsonSerializer.Serialize(menuNames);
-                Response.Cookies.Append("MenuAccess", menuJson, new CookieOptions
-                {
-                    HttpOnly = true,
-                    Secure = true,
-                    SameSite = SameSiteMode.Strict,
-                });
-
-                if (!string.IsNullOrEmpty(returnUrl))
-                {
-                    return LocalRedirect(returnUrl);
-                }
-                else
-                {
-                    return RedirectToAction("Dashboard", "Dashboard");
-                }
-            }
+            _loginServices = loginServices;
+            _configuration = configuration;
+            _applicationURL = new(_configuration);
         }
-        ViewData["LoginMessage"] = "Invalid username or password..!";
-        ViewBag.appUrl = applicationURL.url;
-        return View();
-    }
 
-    public IActionResult Logout()
-    {
-        Response.Cookies.Delete("jwtToken");
-        HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        return RedirectToAction("Login", "Login");
+        [AllowAnonymous]
+        public IActionResult Login() => View();
+
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<IActionResult> Login(User model, string? returnUrl)
+        {
+            if (string.IsNullOrEmpty(model.Email) || string.IsNullOrEmpty(model.Password))
+            {
+                ViewData["LoginMessage"] = "Email and password are required!";
+                return View();
+            }
+
+            var tokenString = await _loginServices.Login(model);
+
+            if (tokenString == null || string.IsNullOrEmpty(tokenString.Token))
+            {
+                ViewData["LoginMessage"] = "Invalid email or password!";
+                return View();
+            }
+
+            Response.Cookies.Append("jwtToken", tokenString.Token, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = false, // allow HTTP during dev
+                SameSite = SameSiteMode.Lax,
+                Expires = DateTime.Now.AddHours(24)
+            });
+
+            var menuNames = new List<string>();
+            var menuJson = JsonSerializer.Serialize(menuNames);
+            Response.Cookies.Append("MenuAccess", menuJson, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = false,
+                SameSite = SameSiteMode.Lax,
+                Expires = DateTime.Now.AddHours(24)
+            });
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, tokenString.User.UserId.ToString()),
+                new Claim(ClaimTypes.Name, tokenString.User.Name ?? ""),
+                new Claim(ClaimTypes.Email, tokenString.User.Email ?? ""),
+                new Claim(ClaimTypes.Role, tokenString.User.RoleId.ToString() ?? "0"),
+                new Claim("RoleName", tokenString.User.Role?.RoleName ?? "")
+            };
+
+            var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme));
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+            return string.IsNullOrEmpty(returnUrl)
+                ? RedirectToAction("Dashboard", "Dashboard")
+                : LocalRedirect(returnUrl);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            Response.Cookies.Delete("jwtToken");
+            Response.Cookies.Delete("MenuAccess");
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Login");
+        }
     }
 }

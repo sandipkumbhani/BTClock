@@ -2,7 +2,7 @@
 using Attendance.Domain.Interfaces;
 using Attendance.Domain.Models;
 
-namespace Attendance.Application.service
+namespace Attendance.Application.Services
 {
     public class UserMenuMappingService : IUserMenuMappingService
     {
@@ -12,31 +12,39 @@ namespace Attendance.Application.service
         {
             _userMenuMappingAdaptor = userMenuMappingAdaptor;
         }
+        public async Task<IEnumerable<UserMenuMappingDto>> GetAllUserMenuMappings()
+        {
+            return await _userMenuMappingAdaptor.GetAllUserMenuMappingsAsync();
+        }
 
-        public async Task<IEnumerable<UserMenuMappingDto>> GetUserMenuById(int id)
+        public async Task<IEnumerable<UserMenuMappingDto>> GetUserMenuMappingsByUserId(int userId)
         {
-            return await _userMenuMappingAdaptor.GetUserMenuById(id);
+            return await _userMenuMappingAdaptor.GetUserMenuMappingsByUserIdAsync(userId);
         }
-        public async Task<UserMenuMappingDto> GetById(int id)
+
+        public async Task<UserMenuMappingDto> GetUserMenuMappingById(int id)
         {
-            return await _userMenuMappingAdaptor.GetById(id);
+            return await _userMenuMappingAdaptor.GetUserMenuMappingByIdAsync(id);
         }
-        public async Task<IEnumerable<UserMenuMappingDto>> GetAll()
+
+        public async Task<string> AddUserMenuMapping(UserMenuMappingDto userMenuMappingDto)
         {
-            return await _userMenuMappingAdaptor.GetAll();
+            return await _userMenuMappingAdaptor.AddUserMenuMappingAsync(userMenuMappingDto);
         }
-        public async Task<string> AddUserMenuMapping(UserMenuMappingDto userMenuMapping)
+
+        public async Task<string> UpdateUserMenuMapping(int id, UserMenuMappingDto userMenuMappingDto)
         {
-                return await _userMenuMappingAdaptor.AddUserMenuMapping(userMenuMapping);
+            return await _userMenuMappingAdaptor.UpdateUserMenuMappingAsync(id, userMenuMappingDto);
         }
-        public async Task<string> UpdateMenuMapping(UserMenuMappingDto userMenuMapping, int id)
-        {
-            return await _userMenuMappingAdaptor.UpdateMenuMapping(userMenuMapping, id);
-        }
+
         public async Task<int> DeleteUserMenuMapping(int id)
         {
-            return await _userMenuMappingAdaptor.DeleteUserMenuMapping(id);
+            return await _userMenuMappingAdaptor.DeleteUserMenuMappingAsync(id);
         }
-        
+
+        public async Task<string> UpdateUserMenuMappingsForUser(int userId, List<int> menuIds)
+        {
+            return await _userMenuMappingAdaptor.UpdateUserMenuMappingsForUserAsync(userId, menuIds);
+        }
     }
 }

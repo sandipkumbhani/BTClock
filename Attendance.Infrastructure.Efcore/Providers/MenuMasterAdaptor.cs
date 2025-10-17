@@ -3,134 +3,101 @@ using Attendance.Domain.Interfaces;
 using Attendance.Domain.Models;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace Attendance.Infrastructure.Provider
+namespace Attendance.Infrastructure.Efcore.Providers
 {
     public class MenuMasterAdaptor : IMenuMasterAdaptor
     {
         private readonly GlobalClass _globalClass;
-        private readonly IConfiguration _configuration;
-        private APICredential apiCredential;
+        private readonly APICredential _apiCredential;
+
         public MenuMasterAdaptor(GlobalClass globalClass, IConfiguration configuration)
         {
             _globalClass = globalClass;
-            _configuration = configuration;
-            apiCredential = new APICredential(configuration);
+            _apiCredential = new APICredential(configuration);
         }
 
-        public async Task<IEnumerable<menuMasterDto>> GetAllMenuMasters()
+        private HttpClient GetHttpClient()
         {
-            var _httpClient = new HttpClient();
-            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);
-            var response = await _httpClient.GetAsync(apiCredential.url + "MenuMaster/GetAllMenuMasters");
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);
+            return client;
+        }
+
+        public async Task<IEnumerable<MenuMasterDto>> GetAllMenuMastersAsync()
+        {
+            var client = GetHttpClient();
+            var response = await client.GetAsync($"{_apiCredential.url}MenuMaster/GetAllMenuMasters");
             var responseData = await response.Content.ReadAsStringAsync();
             var responseModel = JsonConvert.DeserializeObject<CommanResponseDto>(responseData);
-            if (responseModel != null)
+            if (responseModel?.Data != null)
             {
-                var details = JsonConvert.DeserializeObject<List<menuMasterDto>>(Convert.ToString(responseModel.Data!));
-                return details;
+                return JsonConvert.DeserializeObject<List<MenuMasterDto>>(Convert.ToString(responseModel.Data));
+            }
+            return new List<MenuMasterDto>();
+        }
+
+        public async Task<MenuMasterDto> GetByIdAsync(int id)
+        {
+            var client = GetHttpClient();
+            var response = await client.GetAsync($"{_apiCredential.url}MenuMaster/GetMenuMasterById/{id}");
+            var responseData = await response.Content.ReadAsStringAsync();
+            var responseModel = JsonConvert.DeserializeObject<CommanResponseDto>(responseData);
+            if (responseModel?.Data != null)
+            {
+                return JsonConvert.DeserializeObject<MenuMasterDto>(Convert.ToString(responseModel.Data));
             }
             return null;
         }
 
-        public async Task<IEnumerable<menuMasterDto>> GetMenuMasterById(int id)
+        public async Task<IEnumerable<MenuMasterDto>> GetMenuMasterByIdAsync(int id)
         {
-            try
-            {
-                var _httpClient = new HttpClient();
-                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);
-                var response = await _httpClient.GetAsync(apiCredential.url + "/MenuMaster/GetMenuMasterById/" + id);
-                var responseData = await response.Content.ReadAsStringAsync();
-                var responseModel = JsonConvert.DeserializeObject<CommanResponseDto>(responseData);
-                if (responseModel != null)
-                {
-                    var menulist = JsonConvert.DeserializeObject<List<menuMasterDto>>(Convert.ToString(responseModel.Data!));
-                    return menulist;
-                }
-                return null;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public async Task<menuMasterDto> GetById(int id)
-        {
-            var _httpClient = new HttpClient();
-            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);
-            var response = await _httpClient.GetAsync(apiCredential.url + "MenuMaster/GetMenuMasterById/" + id);
+            var client = GetHttpClient();
+            var response = await client.GetAsync($"{_apiCredential.url}MenuMaster/GetMenuMasterById/{id}");
             var responseData = await response.Content.ReadAsStringAsync();
             var responseModel = JsonConvert.DeserializeObject<CommanResponseDto>(responseData);
-            if (responseModel != null)
+            if (responseModel?.Data != null)
             {
-                var details = JsonConvert.DeserializeObject<menuMasterDto>(Convert.ToString(responseModel.Data!));
-                return details;
+                return JsonConvert.DeserializeObject<List<MenuMasterDto>>(Convert.ToString(responseModel.Data));
             }
-            return null;
+            return new List<MenuMasterDto>();
         }
 
-        public async Task<string> AddMenuMaster(menuMasterDto menu)
+        public async Task<string> AddMenuMasterAsync(MenuMasterDto menuMaster)
         {
-            try
-            {
-                var _httpClient = new HttpClient();
-                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);
-                var content = new StringContent(JsonConvert.SerializeObject(menu), Encoding.UTF8, "application/json");
-                var response = await _httpClient.PostAsync(apiCredential.url + "MenuMaster/AddMenuMaster", content);
-                var responseData = await response.Content.ReadAsStringAsync();
-                var responseModel = JsonConvert.DeserializeObject<CommanResponseDto>(responseData);
-                if (responseModel != null)
-                {
-                    var result = responseModel.StatusCode;
-                    if (result == 200)
-                    {
-                        return "add menu succesfully";
-                    }
-                    else
-                    {
-                        return "menu not add";
-                    }
-                }
-                return null;
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-
-            }
-        }
-
-        public async Task<string> UpdateMenuMaster(menuMasterDto menu, int id)
-        {
-            var _httpClient = new HttpClient();
-            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);
-            var content = new StringContent(JsonConvert.SerializeObject(menu), Encoding.UTF8, "application/json");
-            var response = await _httpClient.PutAsync(apiCredential.url + "MenuMaster/UpdateMenuMaster/" + id, content);
+            var client = GetHttpClient();
+            var jsonContent = JsonConvert.SerializeObject(menuMaster);
+            var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+            var response = await client.PostAsync($"{_apiCredential.url}MenuMaster/AddMenuMaster", content);
             var responseData = await response.Content.ReadAsStringAsync();
             var responseModel = JsonConvert.DeserializeObject<CommanResponseDto>(responseData);
-           if (responseModel != null && response.IsSuccessStatusCode)
-            {
-                return "Menu Updated successfully";
-            }
-            else
-            {
-                return "Menu Updated Failed";
-            }
+            return responseModel?.Message ?? "Error adding menu master";
         }
 
-        public async Task<int> DeleteMenuMaster(int id)
+        public async Task<string> UpdateMenuMasterAsync(MenuMasterDto menuMaster, int id)
         {
-            var _httpClient = new HttpClient();
-            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _globalClass.Token);
-            var response = await _httpClient.DeleteAsync(apiCredential.url + "MenuMaster/DeleteMenuMaster/" + id);
-            if (response.IsSuccessStatusCode)
-            {
-                return id;
-            }
-            return 0;
+            var client = GetHttpClient();
+            var jsonContent = JsonConvert.SerializeObject(menuMaster);
+            var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+            var response = await client.PutAsync($"{_apiCredential.url}MenuMaster/UpdateMenuMaster/{id}", content);
+            var responseData = await response.Content.ReadAsStringAsync();
+            var responseModel = JsonConvert.DeserializeObject<CommanResponseDto>(responseData);
+            return responseModel?.Message ?? "Error updating menu master";
+        }
+
+        public async Task<int> DeleteMenuMasterAsync(int id)
+        {
+            var client = GetHttpClient();
+            var response = await client.DeleteAsync($"{_apiCredential.url}MenuMaster/DeleteMenuMaster/{id}");
+            var responseData = await response.Content.ReadAsStringAsync();
+            var responseModel = JsonConvert.DeserializeObject<CommanResponseDto>(responseData);
+            return responseModel?.StatusCode ?? 0;
         }
     }
 }
-

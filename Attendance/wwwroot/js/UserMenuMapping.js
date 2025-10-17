@@ -1,64 +1,83 @@
 ﻿document.addEventListener("DOMContentLoaded", function () {
     const clearButton = document.querySelector(".outline-bar");
-    const $userSelect = $("#UserId"); // FIXED: You were using an undefined variable before
+    const saveButton = document.getElementById("saveButton");
+    const $userSelect = $("#UserId");
     $userSelect.select2();
 
     const checkboxes = document.querySelectorAll(".menu-checkbox");
 
-    // Clear checkboxes on page load
-    checkboxes.forEach(checkbox => {
-        checkbox.checked = false;
-    });
+    // Reset checkboxes initially
+    checkboxes.forEach(cb => cb.checked = false);
 
-    // Event listener for the "Clear All" button
+    // Clear All
     if (clearButton) {
         clearButton.addEventListener("click", function (e) {
             e.preventDefault();
             const form = document.getElementById("userForm");
-
-            // Reset the form
-            if (form) {
-                form.reset();
-            }
-
-            // Reset checkboxes
+            if (form) form.reset();
             checkboxes.forEach(cb => cb.checked = false);
-
-            // Reset the Select2 dropdown to its default state
             $userSelect.val("").trigger("change");
+            document.getElementById("temporaryMessage").innerHTML = "";
         });
     }
 
-    // Event listener for the user selection change
+    // Load user's menus on selection
     if ($userSelect.length) {
         $userSelect.on("change", function () {
             const selectedUser = $(this).val();
-
-            // Reset checkboxes each time a user is selected
             checkboxes.forEach(cb => cb.checked = false);
 
             if (selectedUser) {
-                fetch(`/UserMenuMapping/GetUserMenus?userId=${selectedUser}`)
-                    .then(response => {
-                        if (!response.ok) throw new Error("Menu fetch failed");
-                        return response.json();
-                    })
+                fetch(`/api/UserMenuMapping/GetUserMenuMappingsByUserId/${selectedUser}`)
+                    .then(res => res.json())
                     .then(data => {
-                        // Check if the response contains valid menuIds
-                        if (data && Array.isArray(data.menuIds)) {
-                            // Update checkboxes based on the fetched menuIds
+                        if (data && Array.isArray(data.menuItemIds)) {
                             checkboxes.forEach(cb => {
-                                if (data.menuIds.includes(parseInt(cb.value))) {
+                                if (data.menuItemIds.includes(parseInt(cb.value))) {
                                     cb.checked = true;
                                 }
                             });
                         }
                     })
-                    .catch(error => {
-                        console.error("Error fetching user menus:", error);
+                    .catch(err => {
+                        console.error("Error fetching user menus:", err);
                         alert("Unable to load user menus.");
                     });
             }
+        });
+    }
+
+    // Save selected menu items via API
+    if (saveButton) {
+        saveButton.addEventListener("click", function () {
+            const selectedUser = $userSelect.val();
+            if (!selectedUser) {
+                alert("Please select a user.");
+                return;
+            }
+
+            const selectedMenuIds = Array.from(checkboxes)
+                .filter(cb => cb.checked)
+                .map(cb => parseInt(cb.value));
+
+            fetch(`/api/UserMenuMapping/UpdateUserMenuMappingsForUser/${selectedUser}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ MenuItemIds: selectedMenuIds })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    const msgDiv = document.getElementById("temporaryMessage");
+                    if (data && data.message) {
+                        msgDiv.innerHTML = `<span style="color:#00af00;font-weight:600;">${data.message}</span>`;
+                    } else {
+                        msgDiv.innerHTML = `<span style="color:#d21313;font-weight:600;">Error updating menus.</span>`;
+                    }
+                })
+                .catch(err => {
+                    console.error("Error updating menus:", err);
+                    alert("Unable to save user menus.");
+                });
         });
     }
 });

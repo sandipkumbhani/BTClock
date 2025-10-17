@@ -17,29 +17,33 @@ namespace Attendance.Application.service
         {
             _menuItemAdaptor = menuItemAdaptor;
         }
-        public async Task<IEnumerable<MenuItemDto>> GetAll()
+        public async Task<IEnumerable<MenuItemDto>> GetAllMenuItems()
         {
-            return await _menuItemAdaptor.GetAllAsync();
+            return await _menuItemAdaptor.GetAllMenuItemsAsync();
         }
-        public async Task<MenuItemDto> GetById(int id)
+        public async Task<MenuItemDto> GetMenuItemById(int id)
         {
-            return await _menuItemAdaptor.GetByIdAsync(id);
+            return await _menuItemAdaptor.GetMenuItemByIdAsync(id);
         }
-        public async Task<IEnumerable<MenuItemDto>> GetByMenuId(int menuId)
+        public async Task<IEnumerable<MenuItemDto>> GetMenuItemsByMenuId(int menuId)
         {
-            return await _menuItemAdaptor.GetByMenuIdAsync(menuId);
+            return await _menuItemAdaptor.GetMenuItemsByMenuIdAsync(menuId);
         }
-        public async Task<string> AddMenuItem(MenuItemDto menuItem)
+        public async Task<string> AddMenuItem(MenuItemDto menuItemDto)
         {
-            return await _menuItemAdaptor.AddMenuItemAsync(menuItem);
+            return await _menuItemAdaptor.AddMenuItemAsync(menuItemDto);
         }
-        public async Task<string> UpdateMenuItem(MenuItemDto menuItem, int id)
+        public async Task<string> UpdateMenuItem(MenuItemDto menuItemDto, int id)
         {
-            return await _menuItemAdaptor.UpdateMenuItemAsync(menuItem,id);
+            return await _menuItemAdaptor.UpdateMenuItemAsync(menuItemDto, id);
         }
         public async Task<int> DeleteMenuItem(int id)
         {
             return await _menuItemAdaptor.DeleteMenuItemAsync(id);
+        }
+        public async Task<IEnumerable<MenuItemDto>> GetAccessibleMenuItems(int userId)
+        {
+            return await _menuItemAdaptor.GetAccessibleMenuItemsAsync(userId);
         }
     }
 }

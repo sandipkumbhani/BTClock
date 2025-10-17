@@ -1,6 +1,8 @@
 ﻿using Attendance.Application.Interface;
 using Attendance.Application.Provider;
 using Attendance.Application.service;
+using Attendance.Application.Service;
+using Attendance.Application.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Attendance.Application.Extension

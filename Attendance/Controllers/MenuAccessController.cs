@@ -37,7 +37,7 @@ namespace Attendance.Controllers
                 {
                     var redirectTo = menus
                         .Where(menu => menu.MenuMaster != null)
-                        .FirstOrDefault()?.MenuMaster?.MenuPath;
+                        .FirstOrDefault()?.MenuMaster?.Path;
 
                     if (!string.IsNullOrEmpty(redirectTo))
                     {

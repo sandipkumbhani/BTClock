@@ -28,13 +28,12 @@
                             <input type="text" class="form-control userinput" id="UserId" name="UserId" value="@Model.UserId" style="width:659.46px; height:48px;" readonly>
                         </div>
                     </div>
-                    <div class="">
-                        <div class="item-input">
-                            <label for="Name" class="form-label col-form-label required fw-semibold fs-6">UserName</label>
-                            <input type="text" class="form-control userinput" id="Name" name="Name" value="@Model.user?.Name" style="width:659.46px; height:48px;" readonly>
-                            <span asp-validation-for="UserId" class="text-danger"></span>
-                        </div>
+                    <div class="item-input">
+                        <label for="Name" class="form-label col-form-label required fw-semibold fs-6">UserName</label>
+                        <input type="text" class="form-control userinput" id="Name" name="Name" value="@Model.user?.Name" style="width:659.46px; height:48px;" readonly>
+                        <span asp-validation-for="UserId" class="text-danger"></span>
                     </div>
+
                     <div class="">
                         <div class="item-input">
                             <label for="Date" class="form-label col-form-label required fw-semibold fs-6">Date</label>
@@ -84,6 +83,18 @@
                             <span style="color:#d21313;font-weight:600;"> @ViewBag.errormsg</span>
                         </div>
                     }
+                </div>
+                <div class="col-xl-6" style="margin-left:30px;">
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger">
+                            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <p>@error.ErrorMessage</p>
+                            }
+                        </div>
+                    }
+
                 </div>
                 <div class="button-main">
                     <button type="submit" class="btn btn-primary me-2" style="width:95px;height:38px;background-color: #0466c8;">Update</button>

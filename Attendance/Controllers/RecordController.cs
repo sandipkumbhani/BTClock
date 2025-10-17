@@ -15,9 +15,8 @@ public class RecordController : BaseClockInController
     private readonly IMenuMasterService _menuService;
     private readonly IUserMenuMappingService _userMenuMappingService;
     private readonly IMenuItemService _menuItemService;
-    private readonly ILogger<BaseClockInController> _logger;
 
-    public RecordController(IConfiguration configuration, GlobalClass globalClass, IAttendanceService service, IMenuMasterService menuService, IUserMenuMappingService userMenuMappingService, IMenuItemService menuItemService, ILogger<BaseClockInController> logger) : base(menuService, userMenuMappingService, menuItemService, logger)
+    public RecordController(IConfiguration configuration, GlobalClass globalClass, IAttendanceService service, IMenuMasterService menuService, IUserMenuMappingService userMenuMappingService, IMenuItemService menuItemService, ILogger<BaseClockInController> logger) : base(menuService, userMenuMappingService, menuItemService)
     {
         _configuration = configuration;
         applicationURL = new ApplicationURL(configuration);
@@ -26,14 +25,13 @@ public class RecordController : BaseClockInController
         _menuService = menuService;
         _userMenuMappingService = userMenuMappingService;
         _menuItemService = menuItemService;
-        _logger = logger;
     }
     public IActionResult Record()
     {
         if (_globalClass.Token != null)
         {
             var jwt = new JwtSecurityTokenHandler().ReadJwtToken(_globalClass.Token);
-            var claims = UserUtility.addClaimstoUser(HttpContext, jwt.Claims);
+            var claims = UserUtility.AddClaimsToUser(HttpContext, jwt.Claims);
             var user = claims.Claims.FirstOrDefault(x => x.Type == "UserId");
             int UserID = user != null ? (!string.IsNullOrEmpty(user.Value) ? Convert.ToInt32(user.Value) : 0) : 0;
             ViewBag.UserID = UserID;
@@ -89,7 +87,7 @@ public class RecordController : BaseClockInController
     public async Task<IActionResult> GetAvailableMonths()
     {
         var jwt = new JwtSecurityTokenHandler().ReadJwtToken(_globalClass.Token);
-        var claims = UserUtility.addClaimstoUser(HttpContext, jwt.Claims);
+        var claims = UserUtility.AddClaimsToUser(HttpContext, jwt.Claims);
         var user = claims.Claims.FirstOrDefault(x => x.Type == "UserId");
         int userId = user != null ? (!string.IsNullOrEmpty(user.Value) ? Convert.ToInt32(user.Value) : 0) : 0;
         var records = await _service.GetAttendanceByUserAsync(userId);

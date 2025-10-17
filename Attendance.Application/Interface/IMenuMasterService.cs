@@ -4,11 +4,11 @@ namespace Attendance.Application.Interface
 {
     public interface IMenuMasterService
     {
-        Task<IEnumerable<menuMasterDto>> GetMenuMasterById(int id);
-        Task<menuMasterDto> GetById(int id);
-        Task<IEnumerable<menuMasterDto>> GetAllMenuMasters();
-        Task<string> AddMenuMaster(menuMasterDto menu);
-        Task<string> UpdateMenuMaster(menuMasterDto menu, int id);
+        Task<IEnumerable<MenuMasterDto>> GetMenuMasterById(int id);
+        Task<MenuMasterDto> GetById(int id);
+        Task<IEnumerable<MenuMasterDto>> GetAllMenuMasters();
+        Task<string> AddMenuMaster(MenuMasterDto menuMasterDto);
+        Task<string> UpdateMenuMaster(MenuMasterDto menuMasterDto, int id);
         Task<int> DeleteMenuMaster(int id);
     }
 }

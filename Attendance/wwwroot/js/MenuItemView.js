@@ -19,7 +19,7 @@
 
                 $.each(result.data, function (index, item) {
                     var parent = result.parents.find(x => x.menuid === item.parentId);
-                    var parentName = parent ? parent.menuname : '';
+                    var parentName = parent ? parent.menuname : '-';
 
                     var user = result.users.find(x => x.id === item.updatedBy);
                     var updatedBy = user ? user.name : '';
@@ -32,7 +32,7 @@
                         item.menuName || '',
                         parentName || '',
                         item.sortingOrder || '',
-                        item.isActive ? 'Active' : 'Inactive',
+                        item.isActive ? 'Active' : 'Deactive',
                         updatedBy,
                         updatedAt,
                         `<a href="${url + item.menuItemId}" style="margin-right: 10px;">
