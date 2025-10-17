@@ -56,13 +56,13 @@
 								</select>
 							</div>
 							<div class="item-input">
-								<label for="Perent" class="form-label col-form-label required fw-semibold fs-6; form-label">Perent</label>
+								<label for="Perent" class="form-label col-form-label required fw-semibold fs-6; form-label">Parent</label>
 								<select class="select2-custom form-control select2-hidden-accessible; form-select" style="width: 422px;" data-placeholder="Select Perenet" id="PerentId" name="PerentId">
 									@* <select class="form-select" aria-label="Default select example" id="RoleId" name="RoleId"> *@
-									<option selected disabled>Select Perenet</option>
-									@foreach (var Perent in ViewBag.Users)
+									<option selected disabled>Select Parent</option>
+									@foreach (var Parent in ViewBag.Users)
 									{
-										<option value="@Perent.UserId">@Perent.Name</option>
+										<option value="@Parent.UserId">@Parent.Name</option>
 									}
 								</select>
 							</div>

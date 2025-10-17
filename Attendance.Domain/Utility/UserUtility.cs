@@ -6,43 +6,38 @@ namespace Attendance.Domain.Utility
 {
     public static class UserUtility
     {
-        public static ClaimsPrincipal addClaimstoUser(HttpContext context, IEnumerable<Claim> claims)
+        public static ClaimsPrincipal AddClaimsToUser(HttpContext context, IEnumerable<Claim> claims)
         {
             var claimsIdentity = new ClaimsIdentity(claims, "UserAuthentication");
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
             context.User = claimsPrincipal;
             return claimsPrincipal;
         }
+
         public static bool CanAccessMenu(HttpContext context, string actionName)
         {
             var menulist = context.Request.Cookies["MenuAccess"];
-            if (menulist != null)
+            if (!string.IsNullOrEmpty(menulist))
             {
                 var menu = JsonSerializer.Deserialize<List<string>>(menulist);
-                if (menu != null)
-                {
-                    if (menu.Contains(actionName))
-                    {
-                        return true;
-                    }
-                }
-
+                if (menu != null && menu.Contains(actionName))
+                    return true;
             }
             return false;
         }
+
         public static int GetUserId(HttpContext context)
         {
-
             ClaimsPrincipal currentUser = context.User;
-            Claim userIdClaim = currentUser?.FindFirst(ClaimTypes.UserData);
+            Claim userIdClaim = currentUser?.FindFirst(ClaimTypes.NameIdentifier);
             return userIdClaim != null ? int.Parse(userIdClaim.Value) : 0;
         }
-        public static string GetRole(HttpContext context)
+
+        public static int GetRoleId(HttpContext context)
         {
             ClaimsPrincipal currentUser = context.User;
-            Claim userIdClaim = currentUser?.FindFirst(ClaimTypes.Role);
-            return userIdClaim?.Value;
+            Claim roleClaim = currentUser?.FindFirst(ClaimTypes.Role);
+            return roleClaim != null ? int.Parse(roleClaim.Value) : 0;
         }
     }
 }
-

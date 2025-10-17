@@ -1,4 +1,4 @@
-﻿@model Attendance.Domain.Models.menuMasterDto
+﻿@model Attendance.Domain.Models.MenuMasterDto
 
 @using System.Security.Claims
 @using Attendance.Domain.Models
@@ -33,7 +33,7 @@
                     </div>
 
                     <div class="">
-                        <div class="item-input">                                      
+                        <div class="item-input">
                             <label for="MenuPath" class="form-label col-form-label required fw-semibold fs-6">Path</label>
                             <input type="text" class="form-control userinput" id="MenuPath" name="MenuPath" placeholder="Enter Path" style="width:359.46px; height:48px;" required>
                         </div>
@@ -60,18 +60,6 @@
                                 @foreach (var module in ViewBag.Modules)
                                 {
                                     <option value="@module.Id">@module.ModuleName</option>
-                                }
-                            </select>
-                        </div>
-                    </div>
-                    <div class="">
-                        <div class="item-input">
-                            <label for="Parent" class="form-label col-form-label required fw-semibold fs-6; form-label">ParentMenuName</label>
-                            <select class="select2-custom form-control select2-hidden-accessible; form-select" id="ParentId" name="ParentId" style="width:359.46px; height:48px;">
-                                <option value="0" disabled selected>Select Parent</option>
-                                @foreach (var item in ViewBag.menu)
-                                {
-                                    <option value="@item.Menuid">@item.Menuname</option>
                                 }
                             </select>
                         </div>

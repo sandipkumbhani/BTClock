@@ -351,7 +351,7 @@ function setupMonthPicker() {
 
 async function fetchAndApplyMonth(monthStr) {
     try {
-        const response = await fetch(`/AllRecords/GetAttendanceByMonth=${monthStr}`);
+        const response = await fetch(`/AllRecords/GetAttendanceByMonth?month=${monthStr}`);
         if (!response.ok) throw new Error(`Fetch failed: ${response.statusText}`);
         const data = await response.json();
         monthFilteredRecords = [...data];

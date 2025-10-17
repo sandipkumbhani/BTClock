@@ -47,40 +47,36 @@
                 </a>
                 <div class="sign-right">
                     <a href="@ViewBag.appUrl/Dashboard/Dashboard">
-                        <img src="~/images/login-illustration.svg" />
-
+                        <img src="~/images/login-illustration.svg" alt="Login Illustration" />
                     </a>
                 </div>
                 <div class="sign-left">
                     <div class="inner-sign-info">
                         <div class="login-main">
-                            @{
-                                var returnUrl = Context.Request.Query["returnUrl"].ToString();
-                            }
                             <form class="theme-form all-custom-class requires-validation" method="post" action="@Url.Action("Login", "Login")" novalidate>
                                 <h2 style="color:#0466C8;">Welcome to BTClock</h2>
+                                @{
+                                    var returnUrl = Context.Request.Query["returnUrl"].ToString();
+                                }
                                 <input type="hidden" name="returnUrl" value="@returnUrl" />
-                                <div class="login-social-title mb-5">
-                                </div>
                                 <div class="item-input">
                                     <label for="email" class="form-label">Email</label>
-                                    <input class="form-control" type="email" required="" id="email" name="email" placeholder="Email" />
-                                    <div class="invalid-feedback"><i class="ri-information-line"></i> Please put valid Email Id</div>
+                                    <input class="form-control" type="email" id="email" name="email" placeholder="Email" required />
+                                    <div class="invalid-feedback">
+                                        <i class="ri-information-line"></i> Please enter a valid Email Id
+                                    </div>
                                 </div>
                                 <div class="item-input">
                                     <label for="password" class="form-label">Password</label>
                                     <div class="form-input position-relative">
-                                        <input id="password" name="password" class="form-control" type="password" required="" placeholder="Password" />
-                                        <div class="show-hide">
-                                            <span class="show">
-                                            </span>
+                                        <input id="password" name="password" class="form-control" type="password" placeholder="Password" required />
+                                        <div class="show-hide"><span class="show"></span></div>
+                                        <div class="invalid-feedback">
+                                            <i class="ri-information-line"></i> Password field cannot be blank!
                                         </div>
-                                        <div class="invalid-feedback"><i class="ri-information-line"></i> Password field cannot be blank!</div>
                                     </div>
                                 </div>
-                                <button type="submit" class="login-btns">
-                                    Log In
-                                </button>
+                                <button type="submit" class="login-btns">Log In</button>
                             </form>
                         </div>
                         <div>
@@ -88,20 +84,18 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
+
     <script>
         $(".show-hide span").click(function () {
             if ($(this).hasClass("show")) {
-                      $('input[name="password"]').attr("type", "text");
-                  $(this).removeClass("show");
-            }
-            else
-            {
-                  $('input[name="password"]').attr("type", "password");
-              $(this).addClass("show");
+                $('input[name="password"]').attr("type", "text");
+                $(this).removeClass("show");
+            } else {
+                $('input[name="password"]').attr("type", "password");
+                $(this).addClass("show");
             }
         });
     </script>

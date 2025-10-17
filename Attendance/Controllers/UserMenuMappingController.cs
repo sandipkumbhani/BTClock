@@ -3,7 +3,6 @@ using Attendance.Domain.Helper;
 using Attendance.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Runtime.CompilerServices;
 
 namespace Attendance.Controllers
 {
@@ -19,8 +18,13 @@ namespace Attendance.Controllers
         private readonly IUserService _userService;
         private readonly IMenuItemService _menuItemService;
 
-
-		public UserMenuMappingController(ILogger<UserMenuMappingController> logger, IConfiguration configuration, IUserMenuMappingService userMenuMappingService, IMenuMasterService menuService,IUserService userService,IMenuItemService menuItemService) : base(menuService, userMenuMappingService,menuItemService)
+        public UserMenuMappingController(
+            ILogger<UserMenuMappingController> logger,
+            IConfiguration configuration,
+            IUserMenuMappingService userMenuMappingService,
+            IMenuMasterService menuService,
+            IUserService userService,
+            IMenuItemService menuItemService) : base(menuService, userMenuMappingService, menuItemService)
         {
             _logger = logger;
             _configuration = configuration;
@@ -28,124 +32,74 @@ namespace Attendance.Controllers
             _applicationURL = new ApplicationURL(configuration);
             _userMenuMappingService = userMenuMappingService;
             _menuService = menuService;
-      			_userService = userService;
+            _userService = userService;
             _menuItemService = menuItemService;
-		}
+        }
 
         public async Task<IActionResult> UserMenuMapping()
-		    {
-				var users = await _userService.GetAllUser();
-				var menus = await _menuService.GetAllMenuMasters();
-				var menuItems = await _menuItemService.GetAll();
-				var validMenus = menuItems.Where(item => menus.Any(menu => menu.Menuid == item.Menuid)).ToList();
-				ViewBag.User = users;
-				ViewBag.Menus = validMenus;
-				var model = new UserMenuMappingDto();
-				return View(model);
-		    }
+        {
+            var users = await _userService.GetAllUser();
+            var menus = await _menuService.GetAllMenuMasters();
+            var menuItems = await _menuItemService.GetAllMenuItems();
+            var validMenus = menuItems.Where(item => menus.Any(menu => menu.MenuId == item.MenuId)).ToList();
+
+            ViewBag.User = users;
+            ViewBag.Menus = validMenus;
+
+            return View(new UserMenuMappingDto());
+        }
+
         [HttpPost]
         public async Task<IActionResult> UserMenuMapping(UserMenuMappingDto userMenuMappingDto)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
+                ViewBag.errormsg = "Please select user and menu items.";
+                return View(userMenuMappingDto);
+            }
+
+            try
+            {
+                if (userMenuMappingDto.MenuItemIds != null && userMenuMappingDto.MenuItemIds.Any())
                 {
-                    if (userMenuMappingDto.MenuIds != null && userMenuMappingDto.MenuIds.Any())
-                    {
-                        var existingMappings = await _userMenuMappingService.GetAll();
-                        var userMappings = existingMappings.Where(m => m.UserId == userMenuMappingDto.UserId).ToList();
-                        var existingMenuIds = userMappings.Select(m => m.MenuItemId ?? 0).ToList();
-                        var newMenuIds = userMenuMappingDto.MenuIds;
+                    var result = await _userMenuMappingService.UpdateUserMenuMappingsForUser(
+                        userMenuMappingDto.UserId,
+                        userMenuMappingDto.MenuItemIds
+                    );
 
-                        var toAdd = newMenuIds.Except(existingMenuIds).ToList();
-                        var toDelete = existingMenuIds.Except(newMenuIds).ToList();
-                        var toUpdate = existingMenuIds.Intersect(newMenuIds).ToList();
+                    ViewBag.msg = result;
 
-                        bool addMade = false, updateMade = false, deleteMade = false;
+                    var users = await _userService.GetAllUser();
+                    var menus = await _menuService.GetAllMenuMasters();
+                    var menuItems = await _menuItemService.GetAllMenuItems();
+                    var validMenus = menuItems.Where(item => menus.Any(menu => menu.MenuId == item.MenuId)).ToList();
 
-                        if (toAdd.Any())
-                        {
-                            foreach (var menuId in toAdd)
-                            {
-                                var newMapping = new UserMenuMappingDto
-                                {
-                                    //Id=userMenuMappingDto.MenuItem.Menuid,
-                                    UserId = userMenuMappingDto.UserId,
-                                    MenuItemId = menuId,
+                    ViewBag.User = users;
+                    ViewBag.Menus = validMenus;
 
-                                    InsertBy = userMenuMappingDto.UserId,
-                                    InsertDate = DateTime.Now
-                                };
-                                await _userMenuMappingService.AddUserMenuMapping(newMapping);
-                                addMade = true;
-                            }
-                        }
-
-                        if (toUpdate.Any())
-                        {
-                            foreach (var menuId in toUpdate)
-                            {
-                                var existingMapping = userMappings.FirstOrDefault(m => m.MenuItem?.Menuid == menuId);
-                                if (existingMapping != null)
-                                {
-                                    existingMapping.UpdateBy = userMenuMappingDto.UserId;
-                                    existingMapping.UpdateDate = DateTime.Now;
-                                    await _userMenuMappingService.UpdateMenuMapping(existingMapping, existingMapping.Id);
-                                    updateMade = true;
-                                }
-                            }
-                        }
-
-                        if (toDelete.Any())
-                        {
-                            foreach (var mapping in userMappings.Where(m => toDelete.Contains(m.MenuItemId ?? 0)))
-                            {
-                                await _userMenuMappingService.DeleteUserMenuMapping(mapping.Id);
-                                deleteMade = true;
-                            }
-                        }
-
-                        if (addMade || deleteMade)
-                        {
-                            ViewBag.msg = "User menu mapping updated successfully!";
-                        }
-                        else
-                        {
-                            ViewBag.errormsg = "No changes were made.";
-                        }
-                        //var users = await _userMenuMappingService.GetAllUser();
-                        var users = await _userService.GetAllUser();
-						//var userlist = users.Where(x => x.RoleId != 1).ToList();
-						var menus = await _menuService.GetAllMenuMasters();
-						var menuItems = await _menuItemService.GetAll();
-						var validMenus = menuItems.Where(item => menus.Any(menu => menu.Menuid == item.Menuid)).ToList();
-						ViewBag.User = users;
-						ViewBag.Menus = validMenus;
-						var model = new UserMenuMappingDto();
-						return View(userMenuMappingDto);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error updating user menu mappings");
-                    ViewBag.errormsg = "An error occurred while saving the user menu mappings.";
+                    return View(userMenuMappingDto);
                 }
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating user menu mappings");
+                ViewBag.errormsg = "An error occurred while saving the user menu mappings.";
+            }
+
             return View(userMenuMappingDto);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetUserMenus(int userId)
         {
-            var allMappings = await _userMenuMappingService.GetAll();
-            var userMenus = allMappings
-                .Where(m => m.UserId == Convert.ToInt32(userId))
-                .Select(m => m.MenuItemId ?? 0)
+            var userMenus = (await _userMenuMappingService.GetUserMenuMappingsByUserId(userId))
+                .Select(m => m.MenuItemId)
                 .ToList();
+
             if (!userMenus.Any())
             {
                 var menus = await _menuService.GetAllMenuMasters();
-				userMenus = menus.Where(m => m.isDefault).Select(m => m.Menuid).ToList();
+                userMenus = menus.Where(m => m.IsDefault).Select(m => m.MenuId).ToList();
             }
 
             return Json(new { menuIds = userMenus });

@@ -1,53 +1,61 @@
+using Attendance.Domain.Helper;
 using Attendance.Domain.Interfaces;
 using Attendance.Domain.Models;
-using Attendance.Domain.Helper;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
+using System;
+using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Attendance.Infrastructure.Efcore.Providers
 {
     public class LoginAdaptor : ILoginAdaptor
     {
         private readonly HttpClient _httpClient;
-        private readonly IConfiguration _configuration;
-        private APICredential apiCredential;
+        private readonly APICredential _apiCredential;
         private readonly GlobalClass _globalClass;
 
-        public LoginAdaptor(HttpClient httpClient, IConfiguration configuration, GlobalClass globalClass)
+        public LoginAdaptor(IHttpClientFactory httpClientFactory, IConfiguration configuration, GlobalClass globalClass)
         {
-            _httpClient = httpClient;
-            _configuration = configuration;
-            apiCredential = new APICredential(configuration);
+            _httpClient = httpClientFactory.CreateClient("ApiClient");
+            _apiCredential = new APICredential(configuration);
             _globalClass = globalClass;
         }
-        public async Task<string> PostApiDataAsync(Employee employeeModel)
+
+        public async Task<LoginResponseData?> LoginAsync(User model)
         {
             try
             {
-                var baseUrl = apiCredential.url + "Login";
+                var baseUrl = _apiCredential.url + "login";
+                var userJson = JsonConvert.SerializeObject(model);
 
-                var user = JsonConvert.SerializeObject(employeeModel);
-                var requestContent = new StringContent(user, Encoding.UTF8, "application/json");
-                var response = await _httpClient.PostAsync(baseUrl, requestContent);
+                var content = new StringContent(userJson, Encoding.UTF8, "application/json");
+                var response = await _httpClient.PostAsync(baseUrl, content);
                 var responseData = await response.Content.ReadAsStringAsync();
-                var responseModel = JsonConvert.DeserializeObject<CommanResponseDto>(responseData);
-                if (responseModel != null)
+
+                Console.WriteLine("Raw API response: " + responseData);
+
+                var loginResponse = JsonConvert.DeserializeObject<CommanResponseDto>(responseData);
+
+                if (loginResponse?.Data != null)
                 {
-                    var responseToken = JsonConvert.DeserializeObject<ResponseToken>(responseModel?.Data.ToString()!);
-                    return responseToken.Token;
+                    var loginData = JsonConvert.DeserializeObject<LoginResponseData>(Convert.ToString(loginResponse.Data));
+                    return loginData;
                 }
-                return string.Empty;
+
+                Console.WriteLine("Login failed: Data was null or invalid");
+                return null;
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Console.WriteLine($"LoginAdaptor Error: {ex.Message}");
+                return null;
             }
-            return null;
         }
-        public class ResponseToken
-        {
-            public string? Token { get; set; }
-        }
+
+
     }
 }

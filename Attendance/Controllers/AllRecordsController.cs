@@ -17,10 +17,9 @@ namespace Attendance.Controllers
 		private readonly IUserMenuMappingService _userMenuMappingService;
 		private readonly IUserService _userService;
 		private readonly IMenuItemService _menuItemService;
-        private readonly ILogger<BaseClockInController> _logger;
 
 
-        public AllRecordsController(IConfiguration configuration, GlobalClass globalClass, IAttendanceService service, IMenuMasterService menuService, IUserMenuMappingService userMenuMappingService, IUserService userService, IMenuItemService menuItemService, ILogger<BaseClockInController> logger) : base(menuService, userMenuMappingService, menuItemService,logger)
+        public AllRecordsController(IConfiguration configuration, GlobalClass globalClass, IAttendanceService service, IMenuMasterService menuService, IUserMenuMappingService userMenuMappingService, IUserService userService, IMenuItemService menuItemService, ILogger<BaseClockInController> logger) : base(menuService, userMenuMappingService, menuItemService)
         {
             _configuration = configuration;
             applicationURL = new ApplicationURL(configuration);
@@ -30,7 +29,6 @@ namespace Attendance.Controllers
             _userMenuMappingService = userMenuMappingService;
             _userService = userService;
             _menuItemService = menuItemService;
-            _logger = logger;
         }
         public async Task<IActionResult> AllRecords()
 		{
@@ -39,7 +37,7 @@ namespace Attendance.Controllers
 				var userList = await _userService.GetAllUser();
 				ViewBag.userList = userList;
                 var jwt = new JwtSecurityTokenHandler().ReadJwtToken(_globalClass.Token);
-				var claims = UserUtility.addClaimstoUser(HttpContext, jwt.Claims);
+				var claims = UserUtility.AddClaimsToUser(HttpContext, jwt.Claims);
 				ViewBag.appUrl = applicationURL.url;
 			}
 			return View();

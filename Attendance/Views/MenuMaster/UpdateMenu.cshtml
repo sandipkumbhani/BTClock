@@ -1,4 +1,4 @@
-﻿@model Attendance.Domain.Models.menuMasterDto
+﻿@model Attendance.Domain.Models.MenuMasterDto
 @using System.Security.Claims
 @using Attendance.Domain.Models
 @{
@@ -28,19 +28,19 @@
                     <div class="">
                         <div class="item-input" style="display:none;">
                             <label for="MenuId" class="form-label col-form-label required fw-semibold fs-6">Menu Name</label>
-                            <input type="text" class="form-control userinput" id="MenuId" name="MenuId" value="@Model.Menuid" style="width:659.46px; height:48px;" required>
+                            <input type="text" class="form-control userinput" id="MenuId" name="MenuId" value="@Model.MenuId" style="width:659.46px; height:48px;" required>
                         </div>
                     </div>
                     <div class="">
                         <div class="item-input">
                             <label for="MenuName" class="form-label col-form-label required fw-semibold fs-6">Menu Name</label>
-                            <input type="text" class="form-control userinput" id="MenuName" name="MenuName" value="@Model.Menuname" style="width:659.46px; height:48px;" required>
+                            <input type="text" class="form-control userinput" id="MenuName" name="MenuName" value="@Model.MenuName" style="width:659.46px; height:48px;" required>
                         </div>
                     </div>
                     <div class="">
                         <div class="item-input">
                             <label for="MenuPath" class="form-label col-form-label required fw-semibold fs-6">Path</label>
-                            <input type="text" class="form-control userinput" id="MenuPath" name="MenuPath" value="@Model.MenuPath" style="width:659.46px; height:48px;" required>
+                            <input type="text" class="form-control userinput" id="MenuPath" name="MenuPath" value="@Model.Path" style="width:659.46px; height:48px;" required>
                         </div>
                     </div>
                     <div class="">
@@ -52,7 +52,7 @@
                     <div class="col-xl-12 col-lg-6">
                         <div class="item-input">
                             <label class="form-label col-form-label required fw-semibold fs-6" for="IsDefault">
-                                <input type="checkbox" class="form-check-input" id="IsDefault" value="true" @(Model.isDefault ? "checked" : "") name="IsDefault"> &nbsp;
+                                <input type="checkbox" class="form-check-input" id="IsDefault" value="true" @(Model.IsDefault ? "checked" : "") name="IsDefault"> &nbsp;
                                 Is Default
                             </label>
                         </div>
@@ -61,7 +61,7 @@
                         <div class="item-input">
                             <label for="modules" class="form-label col-form-label required fw-semibold fs-6">Module</label>
                             <select class="select2-custom form-control select2-hidden-accessible; form-select" id="ModuleMasterId" name="ModuleMasterId" style="width:659.46px; height:48px;">
-                                <option value="@Model.ModuleMasterId" selected>@Model.ModuleMaster?.ModuleName</option>
+                                <option value="@Model.ModuleMasterId" selected>@Model.ModuleMaster?.Name</option>
                                 @foreach (var module in ViewBag.Modules)
                                 {
                                     @if (module.Id != Model.ModuleMasterId)
@@ -72,29 +72,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="item-input">
-                        <label for="Parent" class="form-label col-form-label required fw-semibold fs-6">ParentMenuName</label>
-                        <select class="select2-custom form-control select2-hidden-accessible; form-select" id="ParentId" name="ParentId" style="width:659.46px; height:48px;">
-                            @if (Model.ParentId != 0 && Model.ParentId != null)
-                            {
-                                <option value="@Model.ParentId" selected>
-                                    @foreach (var item in ViewBag.menu)
-                                    {
-                                        ViewBag.ParentMenu = ((List<menuMasterDto>)ViewBag.menu)?.FirstOrDefault(p => p.Menuid == Model.ParentId)?.Menuname;
-                                    }
-                                    @ViewBag.ParentMenu
-                                </option>
-                            }
-                            else
-                            {
-                                <option value="0" disabled selected>Select ParentMenu</option>
-                            }
-                            @foreach (var item in ViewBag.menu)
-                            {
-                                <option value="@item.Menuid">@item.Menuname</option>
-                            }
-                        </select>
-                    </div>
+                    
                 </div>
                 <div class="col-xl-6" style="margin-left:30px;">
                     @if (ViewBag.msg != null)

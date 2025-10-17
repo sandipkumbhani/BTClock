@@ -41,7 +41,7 @@ namespace Attendance.Controllers
             if (_globalClass.Token != null)
             {
                 var jwt = new JwtSecurityTokenHandler().ReadJwtToken(_globalClass.Token);
-                var claims = UserUtility.addClaimstoUser(HttpContext, jwt.Claims);
+                var claims = UserUtility.AddClaimsToUser(HttpContext, jwt.Claims);
                 string currentPage = "Leave Transaction";
                 var canAccess = UserUtility.CanAccessMenu(HttpContext, currentPage);
 
