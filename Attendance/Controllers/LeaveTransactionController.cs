@@ -102,10 +102,10 @@ namespace Attendance.Controllers
                             Reason = leaveTransaction.Reason,
                             Ishalfday = leaveTransaction.Ishalfday,
                             AppliedOn = DateTime.Now,
-                            AppliedBy = userid,
+                            AppliedBy = Convert.ToInt32(userid),
                             LeaveStatus = LeaveStatus.Pending,
                             AddFile = filename,
-                            UserId = userid,
+                            UserId = Convert.ToInt32(userid),
                         });
                         ViewBag.appUrl = applicationURL.url;
                         ViewBag.msg = "Leave saved successfully!";
@@ -135,7 +135,7 @@ namespace Attendance.Controllers
         {
             var currentUserId = UserUtility.GetUserId(HttpContext); 
             var leavesList = await _leaveTransactionService.GetAllLeaveTransactions();
-            var userLeaves = leavesList.Where(l => l.UserId == currentUserId).ToList();
+            var userLeaves = leavesList.Where(l => l.UserId == Convert.ToInt32(currentUserId)).ToList();
 
             var leaveMasters = await _leaveMasterService.GetAllLeaveMasters();
             var user = await _userService.GetAllUser();

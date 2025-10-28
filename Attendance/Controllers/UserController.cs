@@ -1,8 +1,11 @@
 ﻿using Attendance.Application.Interface;
+using Attendance.Application.service;
 using Attendance.Domain.Helper;
 using Attendance.Domain.Models;
+using Attendance.Domain.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Attendance.Controllers
 {
@@ -36,11 +39,32 @@ namespace Attendance.Controllers
 
         public async Task<IActionResult> AddUser()
         {
-            ViewBag.Roles = await _roleService.GetAll();
-            ViewBag.Users = await _userService.GetAllUser();
-            ViewBag.appUrl = _applicationURL.url;
-            return View();
+            if (_globalClass.Token != null)
+            {
+                var jwt = new JwtSecurityTokenHandler().ReadJwtToken(_globalClass.Token);
+                var claims = UserUtility.AddClaimsToUser(HttpContext, jwt.Claims);
+                string currentPage = "Add User";
+                var canAccess = UserUtility.CanAccessMenu(HttpContext, currentPage);
+
+                if (canAccess)
+                {
+                    var User = claims.Claims.FirstOrDefault(x => x.Type == "UserId");
+                    int UserId = User != null ? (!string.IsNullOrEmpty(User.Value) ? Convert.ToInt32(User.Value) : 0) : 0;
+                    ViewBag.UserId = UserId;
+                    ViewBag.appUrl = _applicationURL.url;
+                    ViewBag.Roles = await _roleService.GetAll();
+                    ViewBag.Users = await _userService.GetAllUser();
+                    return View();
+                }
+                else
+                {
+                    return RedirectToAction("AccessDenied", "Home");
+                }
+            }
+
+            return RedirectToAction("Login", "Account");
         }
+
 
         [HttpPost]
         public async Task<IActionResult> AddUser(UserDto userDto)
@@ -66,6 +90,16 @@ namespace Attendance.Controllers
             ViewBag.appUrl = _applicationURL.url;
 
             return View("AddUser", userDto);
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetRole()
+        {
+            if (_globalClass.Token != null)
+            {
+                var result = await _roleService.GetAll();
+                return Json(result);
+            }
+            return Json(new { result = "failure" });
         }
 
         public IActionResult Userview()

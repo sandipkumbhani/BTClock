@@ -119,5 +119,19 @@ namespace Attendance.Infrastructure.Provider
                 return $"Error: {ex.Message}";
             }
         }
+        public async Task<IEnumerable<MenuItemDto>> GetAccessibleMenusByUserIdAsync(int userId)
+        {
+            using var client = CreateHttpClient();
+            var response = await client.GetAsync($"{_apiCredential.url}MenuItem/GetAccessibleMenus/{userId}");
+            var responseData = await response.Content.ReadAsStringAsync();
+            var responseModel = JsonConvert.DeserializeObject<CommanResponseDto>(responseData);
+
+            if (responseModel?.Data != null)
+            {
+                return JsonConvert.DeserializeObject<List<MenuItemDto>>(Convert.ToString(responseModel.Data));
+            }
+
+            return new List<MenuItemDto>();
+        }
     }
 }

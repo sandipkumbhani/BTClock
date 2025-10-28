@@ -9,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Register GlobalClass as Scoped (per request)
 builder.Services.AddScoped<GlobalClass>();
+builder.Services.AddSingleton<GlobalClass>();
+builder.Services.AddHttpContextAccessor();
 
 // Read API base URL from appsettings.json
 var apiBaseUrl = builder.Configuration["APICredential:url"];

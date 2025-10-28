@@ -12,6 +12,7 @@ namespace Attendance.Domain.Interfaces
         Task<string> AddUserMenuMappingAsync(UserMenuMappingDto userMenuMappingDto);
         Task<string> UpdateUserMenuMappingAsync(int id, UserMenuMappingDto userMenuMappingDto);
         Task<int> DeleteUserMenuMappingAsync(int id);
-        Task<string> UpdateUserMenuMappingsForUserAsync(int userId, List<int> menuIds);  // New method
+        Task<string> UpdateUserMenuMappingsForUserAsync(int userId, List<int> menuIds);
+        Task<IEnumerable<MenuItemDto>> GetAccessibleMenusByUserIdAsync(int userId);
     }
 }

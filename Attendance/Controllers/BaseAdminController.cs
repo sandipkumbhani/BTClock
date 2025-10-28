@@ -3,84 +3,99 @@ using Attendance.Domain.Models;
 using Attendance.Domain.Utility;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text.Json;
 
-namespace Attendance.Controllers
+public class BaseAdminController : Controller
 {
-    public class BaseAdminController : Controller
+    private readonly IMenuMasterService _menuService;
+    private readonly IUserMenuMappingService _userMenuMappingService;
+    private readonly IMenuItemService _menuItemService;
+
+    private const int ModuleMasterId = 5;
+
+    public BaseAdminController(
+        IMenuMasterService menuService,
+        IUserMenuMappingService userMenuMappingService,
+        IMenuItemService menuItemService)
     {
-        private readonly IMenuMasterService _menuService;
-        private readonly IUserMenuMappingService _userMenuMappingService;
-        private readonly IMenuItemService _menuItemService;
+        _menuService = menuService;
+        _userMenuMappingService = userMenuMappingService;
+        _menuItemService = menuItemService;
+    }
 
-        public BaseAdminController(
-            IMenuMasterService menuService,
-            IUserMenuMappingService userMenuMappingService,
-            IMenuItemService menuItemService)
+    public override async Task OnActionExecutionAsync(ActionExecutingContext filterContext, ActionExecutionDelegate next)
+    {
+        try
         {
-            _menuService = menuService;
-            _userMenuMappingService = userMenuMappingService;
-            _menuItemService = menuItemService;
-        }
+            var role = UserUtility.GetRole(HttpContext);
+            var userId = UserUtility.GetUserId(HttpContext);
 
-        public override async Task OnActionExecutionAsync(ActionExecutingContext filterContext, ActionExecutionDelegate next)
-        {
-            try
+            HttpContext.Items["CurrentModuleId"] = ModuleMasterId;
+
+            var allMenuItems = (await _menuItemService.GetAllMenuItems())?.ToList() ?? new List<MenuItemDto>();
+            var allMenuMasters = (await _menuService.GetAllMenuMasters())?.ToList() ?? new List<MenuMasterDto>();
+
+            foreach (var menuItem in allMenuItems)
             {
-                var userId = UserUtility.GetUserId(HttpContext);
-                var roleId = UserUtility.GetRoleId(HttpContext);
+                menuItem.MenuMaster = allMenuMasters.FirstOrDefault(m => m.MenuId == menuItem.MenuId);
+            }
 
-                // Get all menu items and menu masters
-                var allMenuItems = (await _menuItemService.GetAllMenuItems())?.ToList() ?? new List<MenuItemDto>();
-                var allMenuMasters = (await _menuService.GetAllMenuMasters())?.ToList() ?? new List<MenuMasterDto>();
+            List<MenuItemDto> accessibleMenuItems;
 
-                // Assign MenuMasterDto to each MenuItemDto
-                foreach (var menuItem in allMenuItems)
-                {
-                    menuItem.MenuMaster = allMenuMasters.FirstOrDefault(m => m.MenuId == menuItem.MenuId);
-                }
+            if (role == "3")
+            {
+                var userMenus = await _userMenuMappingService.GetAccessibleMenusByUserId(Convert.ToInt32(userId));
+                var assignedMenuIds = userMenus.Where(x => x.IsActive).Select(x => x.MenuItemId).ToList();
 
-                // Determine accessible menu items based on role
-                List<MenuItemDto> accessibleMenuItems;
-                if (roleId == 3) // Role 3: default menus + assigned menus
-                {
-                    var userMenus = await _userMenuMappingService.GetUserMenuMappingsByUserId(userId);
-                    var assignedMenuIds = userMenus.Where(x => x.IsActive).Select(x => x.MenuItemId).ToList();
+                var defaultMenus = allMenuItems.Where(m => m.MenuMaster?.IsDefault == true).ToList();
+                var assignedMenus = allMenuItems.Where(m => assignedMenuIds.Contains(m.MenuItemId)).ToList();
 
-                    var defaultMenus = allMenuItems.Where(m => m.MenuMaster?.IsDefault == true).ToList();
-                    var assignedMenus = allMenuItems.Where(m => assignedMenuIds.Contains(m.MenuItemId)).ToList();
+                accessibleMenuItems = defaultMenus.Union(assignedMenus).Distinct().ToList();
+            }
+            else
+            {
+                accessibleMenuItems = allMenuItems;
+            }
+            accessibleMenuItems = accessibleMenuItems
+                .Where(m => m.MenuMaster?.ModuleMaster != null &&
+                            m.MenuMaster.ModuleMaster.ModuleMasterId == ModuleMasterId)
+                .ToList();
 
-                    accessibleMenuItems = defaultMenus.Union(assignedMenus).ToList();
-                }
-                else // Other roles: all menu items
-                {
-                    accessibleMenuItems = allMenuItems;
-                }
+            var topLevelItems = accessibleMenuItems
+                .Where(m => m.ParentId == null || m.ParentId == 0)
+                .ToList();
 
-                // Filter by ModuleMasterId for admin module (ModuleMasterId = 8)
-                accessibleMenuItems = accessibleMenuItems
-                    .Where(m => m.MenuMaster?.ModuleMaster != null && m.MenuMaster.ModuleMaster.ModuleMasterId == 8)
+            foreach (var parent in topLevelItems)
+            {
+                parent.Children = accessibleMenuItems
+                    .Where(c => c.ParentId == parent.MenuItemId)
                     .ToList();
-
-                // Build parent-child hierarchy
-                var topLevelItems = accessibleMenuItems.Where(m => m.ParentId == null || m.ParentId == 0).ToList();
-                foreach (var parent in topLevelItems)
-                {
-                    parent.Children = accessibleMenuItems.Where(c => c.ParentId == parent.MenuItemId).ToList();
-                }
-
-                ViewBag.MainMenu = topLevelItems;
-            }
-            catch (Exception ex)
-            {
-                ViewBag.MainMenu = new List<MenuItemDto>();
             }
 
-            await next();
+            ViewBag.MainMenu = topLevelItems;
+
+            var menuAccessList = accessibleMenuItems
+                .Select(m => m.MenuName?.Trim())
+                .Where(name => !string.IsNullOrEmpty(name))
+                .Distinct()
+                .ToList();
+
+            string cookieKey = $"MenuAccess_Module{ModuleMasterId}";
+            string menuAccessJson = JsonSerializer.Serialize(menuAccessList);
+            HttpContext.Items[cookieKey] = menuAccessList;
+
+            HttpContext.Items["CurrentModuleId"] = ModuleMasterId;
+            HttpContext.Response.Cookies.Append("CurrentModuleId", ModuleMasterId.ToString());
+            HttpContext.Response.Cookies.Append(cookieKey, menuAccessJson);
+
+            System.Diagnostics.Debug.WriteLine($"[CurrentModuleId set] {ModuleMasterId}");
         }
+        catch (Exception ex)
+        {
+            ViewBag.MainMenu = new List<MenuItemDto>();
+            System.Diagnostics.Debug.WriteLine($"Error in BaseClockInController: {ex.Message}");
+        }
+
+        await next();
     }
 }

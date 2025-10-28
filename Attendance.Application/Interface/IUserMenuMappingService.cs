@@ -13,5 +13,6 @@ namespace Attendance.Application.Interface
         Task<string> UpdateUserMenuMapping(int id, UserMenuMappingDto userMenuMappingDto);
         Task<int> DeleteUserMenuMapping(int id);
         Task<string> UpdateUserMenuMappingsForUser(int userId, List<int> menuIds);
+        Task<IEnumerable<MenuItemDto>> GetAccessibleMenusByUserId(int userId);
     }
 }

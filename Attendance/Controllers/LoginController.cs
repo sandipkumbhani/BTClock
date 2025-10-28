@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using System.Text.Json;
 
-namespace Attendance.UI.Controllers
+namespace Attendance.Controllers
 {
     [Authorize]
     public class LoginController : Controller
@@ -22,11 +22,15 @@ namespace Attendance.UI.Controllers
         {
             _loginServices = loginServices;
             _configuration = configuration;
-            _applicationURL = new(_configuration);
+            _applicationURL = new ApplicationURL(configuration);
+
         }
 
         [AllowAnonymous]
-        public IActionResult Login() => View();
+        public IActionResult Login()
+        {
+            return View();
+        }
 
         [AllowAnonymous]
         [HttpPost]
@@ -49,8 +53,8 @@ namespace Attendance.UI.Controllers
             Response.Cookies.Append("jwtToken", tokenString.Token, new CookieOptions
             {
                 HttpOnly = true,
-                Secure = false, // allow HTTP during dev
-                SameSite = SameSiteMode.Lax,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
                 Expires = DateTime.Now.AddHours(24)
             });
 
@@ -59,14 +63,14 @@ namespace Attendance.UI.Controllers
             Response.Cookies.Append("MenuAccess", menuJson, new CookieOptions
             {
                 HttpOnly = true,
-                Secure = false,
-                SameSite = SameSiteMode.Lax,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
                 Expires = DateTime.Now.AddHours(24)
             });
 
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, tokenString.User.UserId.ToString()),
+                new Claim(ClaimTypes.UserData, tokenString.User.UserId.ToString()),
                 new Claim(ClaimTypes.Name, tokenString.User.Name ?? ""),
                 new Claim(ClaimTypes.Email, tokenString.User.Email ?? ""),
                 new Claim(ClaimTypes.Role, tokenString.User.RoleId.ToString() ?? "0"),
@@ -81,7 +85,6 @@ namespace Attendance.UI.Controllers
                 : LocalRedirect(returnUrl);
         }
 
-        [HttpPost]
         public async Task<IActionResult> Logout()
         {
             Response.Cookies.Delete("jwtToken");
