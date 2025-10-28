@@ -2,12 +2,15 @@
 using Attendance.Domain.Helper;
 using Attendance.Domain.Models;
 using Attendance.Domain.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace Attendance.Controllers
 {
-	public class AllRecordsController : BaseClockInController
+    [Authorize]
+
+    public class AllRecordsController : BaseClockInController
 	{
 		private readonly IConfiguration _configuration;
 		private ApplicationURL applicationURL;
@@ -122,7 +125,7 @@ namespace Attendance.Controllers
 				existingRecord.UpdatedAt = DateTime.Now;
 				existingRecord.CreatedAt = existingRecord.CreatedAt;
 				existingRecord.CreatedBy = existingRecord.CreatedBy;
-				existingRecord.UpdatedBy = UserUtility.GetUserId(HttpContext);
+				//existingRecord.UpdatedBy = UserUtility.GetUserId(HttpContext);
 				await _service.UpdateAttendance(existingRecord, existingRecord.Id);
 
 				TempData["msg"] = "Data updated successfully !";

@@ -109,7 +109,7 @@ namespace Attendance.Controllers
         {
             var currentUserId = UserUtility.GetUserId(HttpContext);
             var leaveList = await _leaveBalanceService.GetAllLeaveBalances();
-            var userLeaveList = leaveList.Where(l => l.UserId == currentUserId).ToList();
+            var userLeaveList = leaveList.Where(l => l.UserId == Convert.ToInt32(currentUserId)).ToList();
 
             return Json(userLeaveList);
         }

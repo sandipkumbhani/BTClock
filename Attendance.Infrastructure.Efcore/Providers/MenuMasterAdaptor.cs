@@ -33,14 +33,15 @@ namespace Attendance.Infrastructure.Efcore.Providers
         public async Task<IEnumerable<MenuMasterDto>> GetAllMenuMastersAsync()
         {
             var client = GetHttpClient();
-            var response = await client.GetAsync($"{_apiCredential.url}MenuMaster/GetAllMenuMasters");
+            var response = await client.GetAsync(_apiCredential.url+"MenuMaster/GetAllMenuMaster");
             var responseData = await response.Content.ReadAsStringAsync();
             var responseModel = JsonConvert.DeserializeObject<CommanResponseDto>(responseData);
-            if (responseModel?.Data != null)
+            if (responseModel != null)
             {
-                return JsonConvert.DeserializeObject<List<MenuMasterDto>>(Convert.ToString(responseModel.Data));
+                var details = JsonConvert.DeserializeObject<List<MenuMasterDto>>(Convert.ToString(responseModel.Data!));
+                return details;
             }
-            return new List<MenuMasterDto>();
+            return null;
         }
 
         public async Task<MenuMasterDto> GetByIdAsync(int id)

@@ -46,5 +46,9 @@ namespace Attendance.Application.Services
         {
             return await _userMenuMappingAdaptor.UpdateUserMenuMappingsForUserAsync(userId, menuIds);
         }
+        public async Task<IEnumerable<MenuItemDto>> GetAccessibleMenusByUserId(int userId)
+        {
+            return await _userMenuMappingAdaptor.GetAccessibleMenusByUserIdAsync(userId);
+        }
     }
 }
