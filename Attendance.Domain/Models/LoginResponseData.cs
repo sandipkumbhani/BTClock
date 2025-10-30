@@ -31,6 +31,12 @@ namespace Attendance.Domain.Models
 
         [JsonProperty("roleName")]
         public string? RoleName { get; set; }
+
+        [JsonProperty("companyId")]
+        public int CompanyId { get; set; }
+
+        [JsonProperty("companyName")]
+        public string? CompanyName { get; set; }
     }
 
     public class LoginMenuItemDto

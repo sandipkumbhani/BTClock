@@ -16,7 +16,7 @@
     </div>
     <div class="col-12">
         <div class="card com-profile-info">
-            <form class="form" id="userForm" method="post" asp-action="MenuItem" asp-controller="MenuItem">
+            <form class="form" id="userForm" method="post" asp-action="AddMenuItem" asp-controller="MenuItem">
                 <div class="top-details">
                     <h2 class="page-form-title">Menu Item</h2>
                     <div class="">
@@ -30,7 +30,7 @@
                                 <option value="" disabled selected>Select Menu</option>
                                 @foreach (var item in ViewBag.Menus)
                                 {
-                                    <option value="@item.Menuid">@item.Menuname</option>
+                                    <option value="@item.MenuId">@item.MenuName</option>
                                 }
                             </select>
 
@@ -42,7 +42,7 @@
                                     <option value="" disabled selected>Select Parent</option>
                                     @foreach (var item in ViewBag.Menus)
                                     {
-                                        <option value="@item.Menuid">@item.Menuname</option>
+                                        <option value="@item.MenuId">@item.MenuName</option>
                                     }
                                 </select>
 

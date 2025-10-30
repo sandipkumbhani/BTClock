@@ -36,7 +36,6 @@ namespace Attendance.Controllers
             _globalClass = new GlobalClass();
         }
 
-        // GET: MenuItem
         public async Task<IActionResult> MenuItem()
         {
             ViewBag.MenuItems = await _menuItemService.GetAllMenuItems();
@@ -81,7 +80,7 @@ namespace Attendance.Controllers
             var users = (await _userService.GetAllUser())
                         .Select(u => new { id = u.UserId, name = u.Name })
                         .ToList();
-
+            var parents = (await _menuItemService.GetAllMenuItems()).Select(u => new { parents = u.ParentId }).ToList();
             var menuItemData = menuItems.Select(menu => new
             {
                 menu.MenuItemId,
@@ -101,7 +100,7 @@ namespace Attendance.Controllers
                 } : null
             }).ToList();
 
-            return Json(new { result = "success", data = menuItemData, users, menuMasters });
+            return Json(new { result = "success", data = menuItemData, users, menuMasters ,parents});
         }
 
         public async Task<IActionResult> UpdateMenuItem(int id)

@@ -22,20 +22,20 @@
     </div>
     <div class="col-12">
         <div class="card com-profile-info">
-            <form class="form" id="userForm" method="post" asp-action="MenuMaster" asp-controller="MenuMaster">
+            <form class="form" id="userForm" method="post" asp-action="AddMenuMaster" asp-controller="MenuMaster">
                 <div class="top-details">
                     <h2 class="page-form-title">Menu Master</h2>
                     <div class="">
                         <div class="item-input">
-                            <label for="Menuname" class="form-label col-form-label required fw-semibold fs-6">Menu Name</label>
-                            <input type="text" class="form-control userinput" id="Menuname" name="Menuname" placeholder="Enter Menu Name" style="width:359.46px; height:48px;" required>
+                            <label for="MenuName" class="form-label col-form-label required fw-semibold fs-6">Menu Name</label>
+                            <input type="text" class="form-control userinput" id="MenuName" name="MenuName" placeholder="Enter Menu Name" style="width:359.46px; height:48px;" required>
                         </div>
                     </div>
 
                     <div class="">
                         <div class="item-input">
-                            <label for="MenuPath" class="form-label col-form-label required fw-semibold fs-6">Path</label>
-                            <input type="text" class="form-control userinput" id="MenuPath" name="MenuPath" placeholder="Enter Path" style="width:359.46px; height:48px;" required>
+                            <label for="Path" class="form-label col-form-label required fw-semibold fs-6">Path</label>
+                            <input type="text" class="form-control userinput" id="Path" name="Path" placeholder="Enter Path" style="width:359.46px; height:48px;" required>
                         </div>
                     </div>
                     <div class="">
@@ -54,12 +54,12 @@
                     </div>
                     <div class="">
                         <div class="item-input">
-                            <label for="modules" class="form-label col-form-label required fw-semibold fs-6; form-label">Module</label>
+                            <label for="ModuleMasterId" class="form-label col-form-label required fw-semibold fs-6; form-label">Module</label>
                             <select class="select2-custom form-control select2-hidden-accessible; form-select" id="ModuleMasterId" name="ModuleMasterId" style="width:359.46px; height:48px;">
                                 <option value="0" disabled selected>Select Module</option>
                                 @foreach (var module in ViewBag.Modules)
                                 {
-                                    <option value="@module.Id">@module.ModuleName</option>
+                                    <option value="@module.ModuleMasterId">@module.Name</option>
                                 }
                             </select>
                         </div>

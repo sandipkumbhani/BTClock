@@ -3,17 +3,12 @@ using Attendance.Domain.Interfaces;
 using Attendance.Domain.Models;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Attendance.Infrastructure.Efcore.Providers
 {
     public class LeaveAssignmentAdaptor : ILeaveAssignmentAdaptor
     {
-
         private readonly IConfiguration _configuration;
         private APICredential apiCredential;
         private readonly GlobalClass _globalClass;
@@ -24,6 +19,7 @@ namespace Attendance.Infrastructure.Efcore.Providers
             _configuration = configuration;
             apiCredential = new APICredential(configuration);
         }
+
         public async Task<List<LeaveAssignmentDto>> GetAllLeaveAssignments()
         {
             var _httpClient = new HttpClient();
@@ -85,8 +81,8 @@ namespace Attendance.Infrastructure.Efcore.Providers
             {
                 return "LeaveAssign Not Updated";
             }
-                
         }
+
         public async Task<int> DeleteLeaveAssignment(int id)
         {
             var _httpClient = new HttpClient();
