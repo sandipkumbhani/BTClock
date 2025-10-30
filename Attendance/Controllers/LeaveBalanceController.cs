@@ -74,7 +74,7 @@ namespace Attendance.Controllers
 
                     var usedLeaves = leaveTransactions
                         .Where(x => x.UserId == user.UserId && x.LeaveMasterId == master.LeaveMasterId && x.LeaveStatus == LeaveStatus.Approved)
-                        .Sum(x => x.Ishalfday ? 0.5 : x.TotalDays);
+                        .Sum(x => x.IsHalfDay ? 0.5 : x.TotalDays);
                     var balance = allocatedLeaves - usedLeaves;
                     if (balance < 0) balance = 0;
 

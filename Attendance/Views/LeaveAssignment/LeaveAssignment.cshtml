@@ -25,7 +25,7 @@
                                 <option value="" disabled selected>Select Leave Type</option>
                                 @foreach (var leave in ViewBag.leaveMasters)
                                 {
-                                    <option value="@leave.LeaveMasterId">@leave.LeaveType</option>
+                                    <option value="@leave.LeaveMasterId">@leave.name</option>
                                 }
                             </select>
                         </div>

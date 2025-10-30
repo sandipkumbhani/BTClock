@@ -309,7 +309,7 @@ namespace Attendance.Controllers
 				{
 					var leaveMaster = new LeaveMasterDto
 					{
-						LeaveType = leaveMasterDto.LeaveType,
+						Name = leaveMasterDto.Name,
 					};
 					var result = await _leaveMasterService.AddLeaveMaster(leaveMaster);
 					if (result != null)

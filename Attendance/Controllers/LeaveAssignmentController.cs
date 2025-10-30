@@ -94,7 +94,7 @@ namespace Attendance.Controllers
             var masters = leaveMasters.Select(e => new
             {
                 id = e.LeaveMasterId,
-                name = e.LeaveType
+                name = e.Name
             }).ToList();
             
             return Json(new { result = "success", data = leaveAssignments, masters });

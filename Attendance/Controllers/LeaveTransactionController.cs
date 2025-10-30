@@ -4,332 +4,200 @@ using Attendance.Domain.Models;
 using Attendance.Domain.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace Attendance.Controllers
 {
-    [Authorize]
-    public class LeaveTransactionController : BaseLeaveController
-    {
-        private readonly ILogger<UserMenuMappingController> _logger;
-        private readonly IConfiguration _configuration;
-        private ApplicationURL applicationURL;
-        private readonly GlobalClass _globalClass;
-        private readonly ILeaveTransactionService _leaveTransactionService;
-        private readonly ILeaveMasterService _leaveMasterService;
-        private readonly IUserMenuMappingService _userMenuMappingService;
-        private readonly IMenuMasterService _menuService;
-        private readonly IMenuItemService _menuItemService;
-        private readonly IUserService _userService;
+	[Authorize]
+	public class LeaveTransactionController : BaseLeaveController
+	{
+		private readonly ILogger<LeaveTransactionController> _logger;
+		private readonly IConfiguration _configuration;
+		private readonly GlobalClass _globalClass;
+		private readonly ApplicationURL _applicationURL;
 
-        public LeaveTransactionController(ILogger<UserMenuMappingController> logger, IConfiguration configuration, GlobalClass globalClass, ILeaveTransactionService leaveTransactionService, ILeaveMasterService leaveMasterService, IUserMenuMappingService userMenuMappingService, IMenuMasterService menuService, IMenuItemService menuItemService, IUserService userService) : base(menuService, userMenuMappingService, menuItemService)
-        {
-            _logger = logger;
-            _configuration = configuration;
-            applicationURL = new ApplicationURL(configuration);
-            _globalClass = globalClass;
-            _leaveTransactionService = leaveTransactionService;
-            _leaveMasterService = leaveMasterService;
-            _userMenuMappingService = userMenuMappingService;
-            _menuService = menuService;
-            _menuItemService = menuItemService;
-            _userService = userService;
-        }
+		private readonly ILeaveTransactionService _leaveTransactionService;
+		private readonly ILeaveMasterService _leaveMasterService;
+		private readonly IUserService _userService;
+		private readonly IMenuMasterService _menuService;
+		private readonly IUserMenuMappingService _userMenuMappingService;
+		private readonly IMenuItemService _menuItemService;
 
-        public async Task<IActionResult> LeaveTransaction()
-        {
-            if (_globalClass.Token != null)
-            {
-                var jwt = new JwtSecurityTokenHandler().ReadJwtToken(_globalClass.Token);
-                var claims = UserUtility.AddClaimsToUser(HttpContext, jwt.Claims);
-                string currentPage = "Leave Transaction";
-                var canAccess = UserUtility.CanAccessMenu(HttpContext, currentPage);
+		public LeaveTransactionController(
+			ILogger<LeaveTransactionController> logger,
+			IConfiguration configuration,
+			GlobalClass globalClass,
+			ILeaveTransactionService leaveTransactionService,
+			ILeaveMasterService leaveMasterService,
+			IUserService userService,
+			IMenuMasterService menuService,
+			IUserMenuMappingService userMenuMappingService,
+			IMenuItemService menuItemService
+		) : base(menuService, userMenuMappingService, menuItemService)
+		{
+			_logger = logger;
+			_configuration = configuration;
+			_globalClass = globalClass;
+			_applicationURL = new ApplicationURL(configuration);
+			_leaveTransactionService = leaveTransactionService;
+			_leaveMasterService = leaveMasterService;
+			_userService = userService;
+			_menuService = menuService;
+			_userMenuMappingService = userMenuMappingService;
+			_menuItemService = menuItemService;
+		}
 
-                if (canAccess)
-                {
-                    var user = claims.Claims.FirstOrDefault(x => x.Type == "UserId");
-                    int UserId = user != null ? (!string.IsNullOrEmpty(user.Value) ? Convert.ToInt32(user.Value) : 0) : 0;
-                    ViewBag.UserId = UserId;
-                    ViewBag.appUrl = applicationURL.url;
-                    var leaveMasters = await _leaveMasterService.GetAllLeaveMasters();
-                    var leaves = await _leaveTransactionService.GetAllLeaveTransactions();
-                    ViewBag.leaveMasters = leaveMasters;
-                    ViewBag.leaves = leaves;
-                    return View();
-                }
-                else
-                {
-                    return RedirectToAction("AccessDenied", "Home");
-                }
-            }
-            return View();
-        }
+		public async Task<IActionResult> LeaveTransaction()
+		{
+			try
+			{
+				var leaveTransactions = await _leaveTransactionService.GetAllLeaveTransactions();
+				var leaveMasters = await _leaveMasterService.GetAllLeaveMasters();
+				var users = await _userService.GetAllUser();
 
-        [HttpPost]
-        public async Task<IActionResult> LeaveTransaction(LeaveTransactionDto leaveTransaction, IFormFile AddFile)
-        {
-            if (ModelState.IsValid || leaveTransaction.AddFile == null)
-            {
-                try
-                {
-                    string filename = null;
+				ViewBag.LeaveTransactions = leaveTransactions;
+				ViewBag.LeaveMasters = leaveMasters;
+				ViewBag.Users = users;
+				ViewBag.appUrl = _applicationURL.url;
 
-                    if (AddFile != null && AddFile.Length > 0)
-                    {
-                        filename = UploadFile(AddFile);
-                    }
+				return View();
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error loading Leave Transaction page");
+				ViewBag.errormsg = "An error occurred while loading leave transactions.";
+				return View();
+			}
+		}
 
-                    var existingLeaves = await _leaveTransactionService.GetAllLeaveTransactions();
-                    var leaveExists = existingLeaves.Any(l => l.UserId == leaveTransaction.UserId &&
-                                                             l.LeaveMasterId == leaveTransaction.LeaveMasterId &&
-                                                             l.StartDate == leaveTransaction.StartDate &&
-                                                             l.EndDate == leaveTransaction.EndDate);
+		[HttpPost]
+		public async Task<IActionResult> LeaveTransaction(LeaveTransactionDto leaveTransactionDto, IFormFile AddFile)
+		{
+			if (!ModelState.IsValid)
+			{
+				ViewBag.errormsg = "Please fill all required fields.";
+				return await ReloadViewData(leaveTransactionDto);
+			}
 
-                    if (leaveExists)
-                    {
-                        ViewBag.errormsg = "Leave Transaction Already Exists";
-                    }
-                    else
-                    {
-                        var userid = UserUtility.GetUserId(HttpContext);
-                        await _leaveTransactionService.AddLeaveTransaction(new LeaveTransactionDto
-                        {
-                            LeaveMasterId = leaveTransaction.LeaveMasterId,
-                            IsPaid = leaveTransaction.IsPaid,
-                            StartDate = leaveTransaction.StartDate,
-                            EndDate = leaveTransaction.EndDate,
-                            TotalDays = leaveTransaction.TotalDays,
-                            Reason = leaveTransaction.Reason,
-                            Ishalfday = leaveTransaction.Ishalfday,
-                            AppliedOn = DateTime.Now,
-                            AppliedBy = Convert.ToInt32(userid),
-                            LeaveStatus = LeaveStatus.Pending,
-                            AddFile = filename,
-                            UserId = Convert.ToInt32(userid),
-                        });
-                        ViewBag.appUrl = applicationURL.url;
-                        ViewBag.msg = "Leave saved successfully!";
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error in LeaveTransaction ");
-                    ViewBag.errormsg = "An error occurred while processing your request.";
-                }
-            }
-            else
-            {
-                ViewBag.errormsg = "Fill The Form.";
-            }
-            var leaveMasters = await _leaveMasterService.GetAllLeaveMasters();
-            ViewBag.leaveMasters = leaveMasters;
-            var leaves = await _leaveTransactionService.GetAllLeaveTransactions();
-            ViewBag.leaves = leaves;
-            return View(leaveTransaction);
-        }
-        public async Task<IActionResult> LeaveTransactionView()
-        {
-            return View();
-        }
-        public async Task<IActionResult> LeaveTransactionViewDetails()
-        {
-            var currentUserId = UserUtility.GetUserId(HttpContext); 
-            var leavesList = await _leaveTransactionService.GetAllLeaveTransactions();
-            var userLeaves = leavesList.Where(l => l.UserId == Convert.ToInt32(currentUserId)).ToList();
+			try
+			{
+				var userId = UserUtility.GetUserId(HttpContext);
+				leaveTransactionDto.UserId = int.Parse(userId);
+				leaveTransactionDto.CompanyId=2;
+				leaveTransactionDto.LeaveStatus = LeaveStatus.Pending;
+				leaveTransactionDto.CreatedAt = DateTime.Now;
+				leaveTransactionDto.CreatedBy = int.Parse(userId);
 
-            var leaveMasters = await _leaveMasterService.GetAllLeaveMasters();
-            var user = await _userService.GetAllUser();
+				if (AddFile != null && AddFile.Length > 0)
+				{
+					var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "leavefiles");
+					if (!Directory.Exists(uploadsFolder))
+						Directory.CreateDirectory(uploadsFolder);
 
-            var masters = leaveMasters.Select(e => new
-            {
-                id = e.LeaveMasterId,
-                name = e.LeaveType
-            }).ToList();
+					var uniqueFileName = $"{Guid.NewGuid()}_{Path.GetFileName(AddFile.FileName)}";
+					var filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
-            var users = user.Select(e => new
-            {
-                id = e.UserId,
-                name = e.Name
-            }).ToList();
+					using (var stream = new FileStream(filePath, FileMode.Create))
+					{
+						await AddFile.CopyToAsync(stream);
+					}
 
-            return Json(new { result = "success", data = userLeaves, users, masters });
-        }
-        public string UploadFile(IFormFile file)
-        {
-            string fileName = null;
-            if (file != null)
-            {
-                if (file.Length > 0)
-                {
-                    string file_path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\leave_pdf\\");
-                    fileName = Path.GetFileName(file.FileName);
-                    var fileExtention = Path.GetExtension(fileName);
-                    if (!Directory.Exists(file_path))
-                    {
-                        Directory.CreateDirectory(file_path);
-                    }
-                    using (FileStream fileStream = System.IO.File.Create(file_path + fileName))
-                    {
-                        file.CopyTo(fileStream);
-                        fileStream.Flush();
-                    }
-                    return fileName;
-                }
-            }
-            return fileName;
-        }
-        public async Task<IActionResult> UpdateLeaveTransaction(int id)
-        {
-            var leaveTransaction = await _leaveTransactionService.GetLeaveTransactionById(id);
-            var leaveMasters = await _leaveMasterService.GetAllLeaveMasters();
-            ViewBag.leaveMasters = leaveMasters;
-            var leaves = await _leaveTransactionService.GetAllLeaveTransactions();
-            ViewBag.leaves = leaves;
-            return View(leaveTransaction);
-        }
-        [HttpPost]
-        public async Task<IActionResult> UpdateLeaveTransaction(LeaveTransactionDto leaveTransaction, IFormFile AddFile, string ExistingFile)
-        {
-            try
-            {
-                var existingLeaves = await _leaveTransactionService.GetAllLeaveTransactions();
-                var leaveExists = existingLeaves.Any(l =>
-                    l.LeaveMasterId == leaveTransaction.LeaveMasterId &&
-                    l.StartDate == leaveTransaction.StartDate &&
-                    l.EndDate == leaveTransaction.EndDate &&
-                    l.LeaveTransactionId != leaveTransaction.LeaveTransactionId);
+					leaveTransactionDto.AddFile = filePath;
+				}
+				else
+				{
+					_logger.LogWarning("⚠️ No file was received in LeaveTransaction");
+				}
 
-                var existingLeaveTransaction = await _leaveTransactionService.GetLeaveTransactionById(leaveTransaction.LeaveTransactionId);
-                if (existingLeaveTransaction == null)
-                {
-                    ViewBag.errormsg = "Leave Transaction not found.";
-                    return View(leaveTransaction);
-                }
+				await _leaveTransactionService.AddLeaveTransaction(leaveTransactionDto);
 
-                string fileName = ExistingFile;
-                if (AddFile != null && AddFile.Length > 0)
-                {
-                    fileName = UploadFile(AddFile);
-                }
-
-                var newStatus = existingLeaveTransaction.LeaveStatus == LeaveStatus.Rejected
-                    ? LeaveStatus.Pending
-                    : existingLeaveTransaction.LeaveStatus;
-
-                var currentUserId = UserUtility.GetUserId(HttpContext);
-
-                var updatedLeaveTransaction = new LeaveTransactionDto
-                {
-                    LeaveMasterId = leaveTransaction.LeaveMasterId,
-                    IsPaid = leaveTransaction.IsPaid,
-                    StartDate = leaveTransaction.StartDate,
-                    EndDate = leaveTransaction.EndDate,
-                    TotalDays = leaveTransaction.TotalDays,
-                    Reason = leaveTransaction.Reason,
-                    Ishalfday = leaveTransaction.Ishalfday,
-                    AppliedOn = existingLeaveTransaction.AppliedOn,
-                    Updatedat = DateTime.Now,
-                    Updatedby = Convert.ToInt32(currentUserId),
-                    UserId = existingLeaveTransaction.UserId,
-                    LeaveStatus = newStatus,
-                    AddFile = fileName
-                };
+				TempData["msg"] = "Leave request submitted successfully!";
+				return RedirectToAction("LeaveTransactionView");
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error adding Leave Transaction");
+				ViewBag.errormsg = "An error occurred while submitting leave request.";
+				return await ReloadViewData(leaveTransactionDto);
+			}
+		}
 
 
-                await _leaveTransactionService.UpdateLeaveTransaction(updatedLeaveTransaction, leaveTransaction.LeaveTransactionId);
+		public async Task<IActionResult> LeaveTransactionView()
+		{
+			var leaveTransactions = await _leaveTransactionService.GetAllLeaveTransactions();
+			ViewBag.LeaveTransactions = leaveTransactions;
+			return View();
+		}
 
-                TempData["msg"] = newStatus == LeaveStatus.Pending
-                    ? "Leave updated and status reset to pending."
-                    : "Leave updated successfully!";
+		[HttpGet]
+		public async Task<IActionResult> LeaveTransactionViewDetails()
+		{
+			var currentUserId = UserUtility.GetUserId(HttpContext);
+			var leavesList = await _leaveTransactionService.GetAllLeaveTransactions();
+			var userLeaves = leavesList.Where(l => l.UserId == Convert.ToInt32(currentUserId)).ToList();
 
-                return RedirectToAction("LeaveTransactionView", "LeaveTransaction");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in UpdateLeaveTransaction POST");
-                ViewBag.errormsg = "An error occurred while processing your request.";
-            }
+			var leaveMasters = await _leaveMasterService.GetAllLeaveMasters();
+			var user = await _userService.GetAllUser();
 
-            ViewBag.leaveMasters = await _leaveMasterService.GetAllLeaveMasters();
-            ViewBag.leaves = await _leaveTransactionService.GetAllLeaveTransactions();
-            return View(leaveTransaction);
-        }
+			var masters = leaveMasters.Select(e => new
+			{
+				id = e.LeaveMasterId,
+				name = e.Name
+			}).ToList();
 
+			var users = user.Select(e => new
+			{
+				id = e.UserId,
+				name = e.Name
+			}).ToList();
 
-        [HttpPost]
-        public async Task<IActionResult> DeleteLeaveTransaction(int id)
-        {
-            try
-            {
-                await _leaveTransactionService.DeleteLeaveTransaction(id);
+			return Json(new { result = "success", data = userLeaves, users, masters });
+		}
 
-                TempData["msg"] = "Leave Transaction deleted successfully.";
-                return RedirectToAction("LeaveTransactionView", "LeaveTransaction");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error deleting Leave Transaction");
-                TempData["ErrorMsg"] = "Error occurred while deleting Leave Transaction.";
-                return RedirectToAction("LeaveTransactionView", "LeaveTransaction");
-            }
-        }
+		[HttpPost]
+		public async Task<IActionResult> UpdateLeaveStatus(int id, LeaveStatus newStatus)
+		{
+			try
+			{
+				var leave = await _leaveTransactionService.GetLeaveTransactionById(id);
+				if (leave == null)
+					return Json(new { result = "error", message = "Leave transaction not found." });
 
-        [HttpPost]
-        public async Task<IActionResult> UpdateLeaveTransactionStatus(List<int?> leaveTransactionIds, string status, IFormFile AddFile)
-        {
-            if (leaveTransactionIds == null || !leaveTransactionIds.Any())
-            {
-                return BadRequest(new { success = false, message = "No leave IDs provided." });
-            }
+				leave.LeaveStatus = newStatus; 
+				leave.UpdatedAt = DateTime.Now;
 
-            if (status != "Approved" && status != "Rejected")
-            {
-                return BadRequest(new { success = false, message = "Invalid status value." });
-            }
+				await _leaveTransactionService.UpdateLeaveTransaction(leave, id);
 
-            var approve = await _leaveTransactionService.GetLeaveTransactionById(leaveTransactionIds.First().Value);
-            if (approve == null)
-            {
-                return BadRequest(new { success = false, message = "First leave transaction not found." });
-            }
+				return Json(new { result = "success", message = $"Leave status updated to {newStatus}." });
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error updating Leave Transaction status");
+				return Json(new { result = "error", message = "Error updating leave status." });
+			}
+		}
 
-            var currentUserId = UserUtility.GetUserId(HttpContext);
+		[HttpPost]
+		public async Task<IActionResult> DeleteLeaveTransaction(int id)
+		{
+			try
+			{
+				await _leaveTransactionService.DeleteLeaveTransaction(id);
+				return Json(new { result = "success", message = "Leave transaction deleted successfully." });
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error deleting Leave Transaction");
+				return Json(new { result = "error", message = "An error occurred while deleting the record." });
+			}
+		}
 
-            string uploadedFileName = null;
-            if (AddFile != null && AddFile.Length > 0)
-            {
-                uploadedFileName = UploadFile(AddFile);
-            }
-            var updatedLeaveStatus = new LeaveTransactionDto
-            {
-                ApprovedAt = DateTime.Now,
-                ApprovedBy = Convert.ToInt32(currentUserId)
-            };
-
-            foreach (var id in leaveTransactionIds)
-            {
-                var leave = await _leaveTransactionService.GetLeaveTransactionById(id.Value);
-                if (leave != null)
-                {
-
-                    var appliedOn = leave.AppliedOn;
-
-                    leave.LeaveStatus = status == "Approved" ? LeaveStatus.Approved : LeaveStatus.Rejected;
-
-                    if (status == "Approved")
-                    {
-                        leave.ApprovedAt = updatedLeaveStatus.ApprovedAt;
-                        leave.ApprovedBy = updatedLeaveStatus.ApprovedBy;
-                    }
-                    leave.AppliedOn = appliedOn;
-                    leave.AddFile = !string.IsNullOrEmpty(uploadedFileName) ? uploadedFileName : leave.AddFile;
-
-                    await _leaveTransactionService.UpdateLeaveTransaction(leave, id.Value);
-                }
-            }
-
-            return Json(new { success = true, message = $"Status updated to '{status}' for selected leaves." });
-        }
-
-    }
+		private async Task<IActionResult> ReloadViewData(LeaveTransactionDto dto)
+		{
+			ViewBag.LeaveMasters = await _leaveMasterService.GetAllLeaveMasters();
+			ViewBag.Users = await _userService.GetAllUser();
+			ViewBag.LeaveTransactions = await _leaveTransactionService.GetAllLeaveTransactions();
+			return View("LeaveTransaction", dto);
+		}
+	}
 }
