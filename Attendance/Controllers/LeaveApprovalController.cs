@@ -38,7 +38,7 @@ namespace Attendance.Controllers
 			var masters = leaveMasters.Select(e => new
             {
                 id = e.LeaveMasterId,
-                name = e.LeaveType
+                name = e.Name
             }).ToList();
 
             var users = user.Select(e => new
@@ -54,12 +54,12 @@ namespace Attendance.Controllers
                 leave.LeaveMasterId,
                 leave.StartDate,
                 leave.EndDate,
-                TotalDays = leave.Ishalfday ? 0.5 : leave.TotalDays, 
+                TotalDays = leave.IsHalfDay ? 0.5 : leave.TotalDays, 
                 leave.Reason,
-                leave.Ishalfday,
-                leave.AppliedOn,
-                leave.Updatedat,
-                leave.Updatedby,
+                leave.IsHalfDay,
+                leave.CreatedAt,
+                leave.UpdatedAt,
+                leave.UpdatedBy,
                 leave.ApprovedAt,
                 leave.ApprovedBy,
                 leave.LeaveStatus,

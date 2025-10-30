@@ -22,7 +22,7 @@
                 $.each(result, function (index, detail) {
                     newRows.push([
                         detail.user.name,
-                        detail.leaveMaster.leaveType,
+                        detail.leaveMaster.name,
                         detail.assignedLeaves,
                         detail.usedLeaves,
                         detail.remainingLeaves,

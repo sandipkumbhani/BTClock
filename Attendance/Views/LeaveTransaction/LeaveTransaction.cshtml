@@ -28,7 +28,7 @@
                                 <option value="" disabled selected>Select Leave Type</option>
                                 @foreach (var leave in ViewBag.leaveMasters)
                                 {
-                                    <option value="@leave.LeaveMasterId">@leave.LeaveType</option>
+                                    <option value="@leave.LeaveMasterId">@leave.Name</option>
                                 }
                             </select>
                         </div>
@@ -77,7 +77,12 @@
                     <div class="">
                         <div class="item-input">
                             <label for="AddFile" class="form-label col-form-label fw-semibold fs-6">Add File</label>
-                            <input type="file" accept=".pdf" id="AddFile" name="AddFile" class="form-control userinput" placeholder="Upload file" style="width:359.46px;" onchange="previewFile()">
+                            <input type="file"
+                                   accept=".pdf"
+                                   id="AddFile"
+                                   name="AddFile"
+                            class="form-control userinput" />
+
                         </div>
                     </div>
                 </div>

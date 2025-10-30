@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -19,29 +20,40 @@ namespace Attendance.Domain.Models
 
     public class LeaveTransactionDto
     {
-        public int LeaveTransactionId { get; set; }
-        [ForeignKey("UserId")]
-        public int UserId { get; set; }
-        public User? User { get; set; }
-        [ForeignKey("LeaveMasterId")]
-        public int LeaveMasterId { get; set; }
-        public LeaveMaster? LeaveMaster { get; set; }
-        public bool IsPaid { get; set; }
-        public string? StartDate { get; set; }
-        public string? EndDate { get; set; }
-        public int TotalDays { get; set; }
-        public string? Reason { get; set; }
-        public DateTime AppliedOn { get; set; }
-        public int AppliedBy { get; set; }
-        public DateTime? Updatedat { get; set; }
-        public int? Updatedby { get; set; }
-        public DateTime? ApprovedAt { get; set; }
-        public int? ApprovedBy { get; set; }
-        [Column(TypeName = "nvarchar(50)")]
-        public LeaveStatus? LeaveStatus { get; set; }
-        public bool Ishalfday { get; set; }
-        public string? AddFile { get; set; }
-    }
+		public int LeaveTransactionId { get; set; }
+
+		public int CompanyId { get; set; }
+
+		public int UserId { get; set; }
+
+		public int LeaveMasterId { get; set; }
+
+		public bool IsPaid { get; set; } = true;
+
+		public DateTime StartDate { get; set; }
+		public DateTime EndDate { get; set; }
+
+		public int TotalDays { get; set; }
+
+		public string Reason { get; set; }
+
+		public LeaveStatus LeaveStatus { get; set; } = LeaveStatus.Pending;
+		public DateTime? ApprovedAt { get; set; }
+
+		public int? ApprovedBy { get; set; }
+
+		public bool IsHalfDay { get; set; } = false;
+
+		public string? AddFile { get; set; }
+
+		public bool IsActive { get; set; } = true;
+
+		public DateTime? CreatedAt { get; set; }
+
+		public int? CreatedBy { get; set; }
+		public DateTime? UpdatedAt { get; set; }
+		public int? UpdatedBy { get; set; }
+	}
     public enum LeaveStatus
     {
         Pending,
