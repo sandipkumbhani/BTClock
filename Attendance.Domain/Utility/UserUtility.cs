@@ -65,5 +65,12 @@ namespace Attendance.Domain.Utility
             Claim userIdClaim = currentUser?.FindFirst(ClaimTypes.Role);
             return userIdClaim?.Value;
         }
+        public static string GetCompanyId(HttpContext context)
+        {
+            ClaimsPrincipal currentUser = context.User;
+            Claim userIdClaim = currentUser?.FindFirst(ClaimTypes.UserData);
+            return userIdClaim?.Value;
+        }
+
     }
 }

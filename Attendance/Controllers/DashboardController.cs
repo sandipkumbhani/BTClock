@@ -7,13 +7,11 @@ namespace Attendance.Controllers
 	[Authorize]
 	public class DashboardController : Controller
     {
-        private readonly ILogger<DashboardController> _logger;
         private ApplicationURL applicationURL;
         private readonly IConfiguration _configuration;
 
-        public DashboardController(ILogger<DashboardController> logger, IConfiguration configuration)
+        public DashboardController( IConfiguration configuration)
         {
-            _logger = logger;
             _configuration = configuration;
             applicationURL = new ApplicationURL(configuration);
         }

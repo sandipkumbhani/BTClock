@@ -41,8 +41,8 @@ namespace Attendance.Controllers
                 var canAccess = UserUtility.CanAccessMenu(HttpContext, currentPage);
                 if (canAccess == true)
                 {
-                    var employee = claims.Claims.FirstOrDefault(x => x.Type == "UserId");
-                    int UserId = employee != null ? (!string.IsNullOrEmpty(employee.Value) ? Convert.ToInt32(employee.Value) : 0) : 0;
+                    var user = claims.Claims.FirstOrDefault(x => x.Type == "UserId");
+                    int UserId = user != null ? (!string.IsNullOrEmpty(user.Value) ? Convert.ToInt32(user.Value) : 0) : 0;
                     ViewBag.UserId = UserId;
                     ViewBag.appUrl = applicationURL.url;
                     return View();

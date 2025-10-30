@@ -1,6 +1,7 @@
 ﻿using Attendance.Application.Interface;
 using Attendance.Domain.Helper;
 using Attendance.Domain.Models;
+using Attendance.Domain.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,7 +10,6 @@ namespace Attendance.Controllers
     [Authorize]
     public class MenuMasterController : BaseAdminController
     {
-        private readonly ILogger<MenuMasterController> _logger;
         private readonly IMenuMasterService _menuService;
         private readonly IModuleMasterService _moduleMasterService;
         private readonly IUserMenuMappingService _userMenuMappingService;
@@ -19,7 +19,6 @@ namespace Attendance.Controllers
         private readonly GlobalClass _globalClass;
 
         public MenuMasterController(
-            ILogger<MenuMasterController> logger,
             IConfiguration configuration,
             IMenuMasterService menuService,
             IModuleMasterService moduleMasterService,
@@ -28,7 +27,6 @@ namespace Attendance.Controllers
             IUserService userService)
             : base(menuService, userMenuMappingService, menuItemService)
         {
-            _logger = logger;
             _menuService = menuService;
             _moduleMasterService = moduleMasterService;
             _userMenuMappingService = userMenuMappingService;
@@ -48,6 +46,10 @@ namespace Attendance.Controllers
         [HttpPost]
         public async Task<IActionResult> AddMenuMaster(MenuMasterDto menuMasterDto)
         {
+            var user = UserUtility.GetUserId(HttpContext);
+            menuMasterDto.CompanyId = Convert.ToInt32(user);
+
+
             if (!ModelState.IsValid)
             {
                 ViewBag.errormsg = "Fill the form.";
@@ -56,13 +58,14 @@ namespace Attendance.Controllers
 
             try
             {
+                
                 await _menuService.AddMenuMaster(menuMasterDto);
                 ViewBag.msg = "Menu saved successfully!";
             }
+            
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error saving menu");
-                ViewBag.errormsg = ex.Message;
+                ViewBag.errormsg = "Menu failed!";
             }
 
             ViewBag.Modules = await _moduleMasterService.GetAllModuleMaster();
@@ -85,7 +88,7 @@ namespace Attendance.Controllers
             return Json(new { result = "success", data = menuList, users });
         }
 
-        public async Task<IActionResult> UpdateMenu(int id)
+        public async Task<IActionResult> UpdateMenuMaster(int id)
         {
             var menu = await _menuService.GetById(id);
             if (menu == null) return NotFound();
@@ -96,8 +99,14 @@ namespace Attendance.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateMenu(MenuMasterDto menuMasterDto)
+        public async Task<IActionResult> UpdateMenuMaster(MenuMasterDto menuMasterDto)
         {
+            var companyId = UserUtility.GetCompanyId(HttpContext);
+            var userId = UserUtility.GetUserId(HttpContext);
+
+            menuMasterDto.CompanyId = Convert.ToInt32(companyId);
+            menuMasterDto.UpdatedBy = Convert.ToInt32(userId);
+
             if (!ModelState.IsValid)
             {
                 ViewBag.errormsg = "Fill the form.";
@@ -112,7 +121,6 @@ namespace Attendance.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error updating menu");
                 ViewBag.errormsg = ex.Message;
             }
 
@@ -121,7 +129,7 @@ namespace Attendance.Controllers
             return View(menuMasterDto);
         }
 
-        public async Task<IActionResult> DeleteMenu(int id)
+        public async Task<IActionResult> DeleteMenuMaster(int id)
         {
             try
             {
@@ -130,7 +138,6 @@ namespace Attendance.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error deleting menu");
                 return Json(new { success = false, message = ex.Message });
             }
         }

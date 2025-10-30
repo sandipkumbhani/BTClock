@@ -14,7 +14,5 @@ namespace Attendance.Domain.Interfaces
         Task<string> AddLeaveAssignment(LeaveAssignmentDto leaveAssignment);
         Task<string> UpdateLeaveAssignment(LeaveAssignmentDto leaveAssignment, int id);
         Task<int> DeleteLeaveAssignment(int id);
-
-
     }
 }

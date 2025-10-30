@@ -70,10 +70,10 @@ namespace Attendance.Infrastructure.Efcore.Providers
             return new List<MenuMasterDto>();
         }
 
-        public async Task<string> AddMenuMasterAsync(MenuMasterDto menuMaster)
+        public async Task<string> AddMenuMasterAsync(MenuMasterDto menuMasterDto)
         {
             var client = GetHttpClient();
-            var jsonContent = JsonConvert.SerializeObject(menuMaster);
+            var jsonContent = JsonConvert.SerializeObject(menuMasterDto);
             var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
             var response = await client.PostAsync($"{_apiCredential.url}MenuMaster/AddMenuMaster", content);
             var responseData = await response.Content.ReadAsStringAsync();
@@ -81,10 +81,10 @@ namespace Attendance.Infrastructure.Efcore.Providers
             return responseModel?.Message ?? "Error adding menu master";
         }
 
-        public async Task<string> UpdateMenuMasterAsync(MenuMasterDto menuMaster, int id)
+        public async Task<string> UpdateMenuMasterAsync(MenuMasterDto menuMasterDto, int id)
         {
             var client = GetHttpClient();
-            var jsonContent = JsonConvert.SerializeObject(menuMaster);
+            var jsonContent = JsonConvert.SerializeObject(menuMasterDto);
             var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
             var response = await client.PutAsync($"{_apiCredential.url}MenuMaster/UpdateMenuMaster/{id}", content);
             var responseData = await response.Content.ReadAsStringAsync();

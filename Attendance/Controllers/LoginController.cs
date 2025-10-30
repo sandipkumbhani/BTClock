@@ -18,7 +18,7 @@ namespace Attendance.Controllers
         private readonly IConfiguration _configuration;
         private readonly ApplicationURL _applicationURL;
 
-        public LoginController(ILoginAdaptor loginAdaptor, ILoginServices loginServices, IConfiguration configuration)
+        public LoginController(ILoginServices loginServices, IConfiguration configuration)
         {
             _loginServices = loginServices;
             _configuration = configuration;
@@ -58,8 +58,12 @@ namespace Attendance.Controllers
                 Expires = DateTime.Now.AddHours(24)
             });
 
-            var menuNames = new List<string>();
-            var menuJson = JsonSerializer.Serialize(menuNames);
+            var menuIds = tokenString.MenuItems?
+                 .Select(m => m.MenuItemId)
+                 .Distinct()
+                 .ToList() ?? new List<int>();
+
+            var menuJson = JsonSerializer.Serialize(menuIds);
             Response.Cookies.Append("MenuAccess", menuJson, new CookieOptions
             {
                 HttpOnly = true,
@@ -74,7 +78,8 @@ namespace Attendance.Controllers
                 new Claim(ClaimTypes.Name, tokenString.User.Name ?? ""),
                 new Claim(ClaimTypes.Email, tokenString.User.Email ?? ""),
                 new Claim(ClaimTypes.Role, tokenString.User.RoleId.ToString() ?? "0"),
-                new Claim("RoleName", tokenString.User.Role?.RoleName ?? "")
+                new Claim("RoleName", tokenString.User.Role?.RoleName ?? ""),
+                new Claim("CompanyId", tokenString.User.CompanyId.ToString())
             };
 
             var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme));

@@ -16,7 +16,8 @@
 		</div>
 		<div class="col-12">
 			<div class="card com-profile-info">
-				<form class="form" id="userForm" method="post" action="@Url.Action("User", "User")">
+				<form class="form" id="userForm" method="post" asp-action="AddUser" asp-controller="User">
+
 					<div class="top-details">
 						<h2 class="page-form-title">Add User</h2>
 						<div class="file-input">

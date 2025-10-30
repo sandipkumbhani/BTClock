@@ -22,7 +22,7 @@
     </div>
     <div class="col-12">
         <div class="card com-profile-info">
-            <form class="form" id="userForm" method="post" asp-action="UpdateMenu" asp-controller="MenuMaster">
+            <form class="form" id="userForm" method="post" asp-action="UpdateMenuMaster" asp-controller="MenuMaster">
                 <div class="top-details">
                     <h2 class="page-form-title">Update Menu Master</h2>
                     <div class="">
@@ -39,8 +39,8 @@
                     </div>
                     <div class="">
                         <div class="item-input">
-                            <label for="MenuPath" class="form-label col-form-label required fw-semibold fs-6">Path</label>
-                            <input type="text" class="form-control userinput" id="MenuPath" name="MenuPath" value="@Model.Path" style="width:659.46px; height:48px;" required>
+                            <label for="Path" class="form-label col-form-label required fw-semibold fs-6">Path</label>
+                            <input type="text" class="form-control userinput" id="Path" name="Path" value="@Model.Path" style="width:659.46px; height:48px;" required>
                         </div>
                     </div>
                     <div class="">
@@ -64,9 +64,9 @@
                                 <option value="@Model.ModuleMasterId" selected>@Model.ModuleMaster?.Name</option>
                                 @foreach (var module in ViewBag.Modules)
                                 {
-                                    @if (module.Id != Model.ModuleMasterId)
+                                    @if (module.ModuleMasterId != Model.ModuleMasterId)
                                     {
-                                        <option value="@module.Id">@module.ModuleName</option>
+                                        <option value="@module.ModuleMasterId">@module.Name</option>
                                     }
                                 }
                             </select>
