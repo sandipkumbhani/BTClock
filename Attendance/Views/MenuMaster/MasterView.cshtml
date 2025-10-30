@@ -8,14 +8,6 @@
 <div class="content-page" style="margin:35px 0 0 0">
     <div class="content">
         <div class="main-inner container-fluid">
-            @{
-                ViewBag.Breadcrumbs = new List<Attendance.Domain.Models.BreadcrumbItem>
-                        {
-                        new BreadcrumbItem { Title = "Dashboard", Url = Url.Action("Dashboard", "Dashboard"), IsActive = false },
-                        new BreadcrumbItem { Title = "MenuMaster", Url = Url.Action("MenuMaster", "MenuMaster"), IsActive = false },
-                        new BreadcrumbItem { Title = "MasterView", Url = "", IsActive = true }
-                        };
-            }
             <div id="userList">
                 <div class="card com-profile-info">
                     <div class="row mt-3">
@@ -54,7 +46,6 @@
                                     <th>Menu Name</th>
                                     <th>Icon</th>
                                     <th>Module</th>
-                                    <th>ParentMenu</th>
                                     <th>Is Default</th>
                                     <th>Is Active</th>
                                     <th>Updated By</th>
@@ -101,8 +92,8 @@
 
 @section Scripts {
     <script type="text/javascript">
-        var url = '@Url.Action("UpdateMenu", "MenuMaster")' + '?id=';
-        var deleteurl = '@Url.Action("DeleteMenu", "MenuMaster")' + '?id=';
+        var url = '@Url.Action("UpdateMenuMaster", "MenuMaster")' + '?id=';
+        var deleteurl = '@Url.Action("DeleteMenuMaster", "MenuMaster")' + '?id=';
     </script>
     <script src="~/js/masterview.js"></script>
 }

@@ -5,11 +5,8 @@
     $userSelect.select2();
 
     const checkboxes = document.querySelectorAll(".menu-checkbox");
-
-    // Reset checkboxes initially
     checkboxes.forEach(cb => cb.checked = false);
 
-    // Clear All
     if (clearButton) {
         clearButton.addEventListener("click", function (e) {
             e.preventDefault();
@@ -21,14 +18,13 @@
         });
     }
 
-    // Load user's menus on selection
     if ($userSelect.length) {
         $userSelect.on("change", function () {
             const selectedUser = $(this).val();
             checkboxes.forEach(cb => cb.checked = false);
 
             if (selectedUser) {
-                fetch(`/api/UserMenuMapping/GetUserMenuMappingsByUserId/${selectedUser}`)
+                fetch(`/api/UserMenuMapping/GetAllUserMenuMappings/${selectedUser}`)
                     .then(res => res.json())
                     .then(data => {
                         if (data && Array.isArray(data.menuItemIds)) {
@@ -47,7 +43,6 @@
         });
     }
 
-    // Save selected menu items via API
     if (saveButton) {
         saveButton.addEventListener("click", function () {
             const selectedUser = $userSelect.val();

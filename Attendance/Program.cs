@@ -23,9 +23,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LogoutPath = "/Login/Logout";
         options.SlidingExpiration = true;
         options.Cookie.HttpOnly = true;
-
         options.Cookie.SecurePolicy = CookieSecurePolicy.None; 
-        options.Cookie.SameSite = SameSiteMode.Lax;            
+        options.Cookie.SameSite = SameSiteMode.Strict;
     });
 
 builder.Services.AddAuthorization();
@@ -53,7 +52,6 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
 app.Use(async (context, next) =>
 {
     var globalClass = context.RequestServices.GetRequiredService<GlobalClass>();

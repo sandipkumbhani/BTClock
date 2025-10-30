@@ -62,7 +62,7 @@ namespace Attendance.Controllers
                 }
             }
 
-            return RedirectToAction("Login", "Account");
+            return RedirectToAction("Login", "Login");
         }
 
 
@@ -77,6 +77,7 @@ namespace Attendance.Controllers
 
             try
             {
+
                 await _userService.AddUser(userDto);
                 ViewBag.msg = "User saved successfully!";
             }

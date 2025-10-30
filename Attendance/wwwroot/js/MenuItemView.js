@@ -12,21 +12,22 @@
             console.log(result);
             table.clear();
 
+
             const newRows = [];
 
             if (result.data && result.data.length > 0) {
                 $('#userList').show();
 
                 $.each(result.data, function (index, item) {
-                    var parent = result.parents.find(x => x.menuid === item.parentId);
+                    var parent = result.parents.find(x => x.menuItemId === item.parentId);
                     var parentName = parent ? parent.menuname : '-';
 
                     var user = result.users.find(x => x.id === item.updatedBy);
-                    var updatedBy = user ? user.name : '';
+                    var updatedBy = user ? user.name : '-';
 
                     var updatedAt = item.updatedAt
                         ? new Date(item.updatedAt).toLocaleString()
-                        : '';
+                        : '-';
 
                     newRows.push([
                         item.menuName || '',

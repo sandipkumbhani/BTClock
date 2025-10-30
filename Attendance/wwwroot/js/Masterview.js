@@ -76,26 +76,22 @@ $(document).ready(function () {
                 const newRows = [];
 
                 $.each(result.data, function (index, detail) {
-                    var parent = result.data.find(x => x.menuid === detail.parentId);
-                    var parentName = parent ? parent.menuname : '-';
-
                     var username = result.users.find(x => x.id === detail.updatedBy);
-                    var user = username?.name || '';
+                    var user = username?.name || '-';
                     var updatedAt = detail.updatedAt
                         ? new Date(detail.updatedAt).toLocaleString()
-                        : '—';
+                        : '-';
 
                     newRows.push([
-                        detail.menuname || '',
+                        detail.menuName || '',
                         detail.icon || '',
-                        detail.moduleMaster?.moduleName || '',
-                        parentName || '-',
+                        detail.moduleMaster?.name || '',
                         detail.isDefault ? 'Yes' : 'No',
                         detail.isActive ? 'Active' : 'Deactive',
                         user,
                         updatedAt,
-                        `<a href="${url + detail.menuid}" style="margin-right: 10px;"><i class="ri-edit-2-line" style="font-size:x-large;"></i></a>
-     <a href="${deleteurl + detail.menuid}" onclick="return confirm('Are you sure you want to delete this record?');">
+                        `<a href="${url + detail.menuId}" style="margin-right: 10px;"><i class="ri-edit-2-line" style="font-size:x-large;"></i></a>
+     <a href="${deleteurl + detail.menuId}" onclick="return confirm('Are you sure you want to delete this record?');">
      <i class="ri-delete-bin-3-line" style="font-size:x-large;color:red;"></i></a>`
                     ]);
 

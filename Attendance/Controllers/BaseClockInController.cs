@@ -30,7 +30,7 @@ public class BaseClockInController : Controller
             var role = UserUtility.GetRole(HttpContext);
             var userId = UserUtility.GetUserId(HttpContext);
 
-            HttpContext.Items["CurrentModuleId"] = ModuleMasterId;
+            HttpContext.Items["CurrentModuleId"] = 1;
 
             var allMenuItems = (await _menuItemService.GetAllMenuItems())?.ToList() ?? new List<MenuItemDto>();
             var allMenuMasters = (await _menuService.GetAllMenuMasters())?.ToList() ?? new List<MenuMasterDto>();
